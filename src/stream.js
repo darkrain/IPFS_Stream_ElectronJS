@@ -13,8 +13,7 @@ const fsPath = require('path');
 
 class Stream {
 
-	constructor(ipfs, nameOfStreem, path = 'videos'){
-
+	constructor(ipfs, nameOfStreem, path = 'videos') {
 		this.ipfs = ipfs;
 		this.ipfsready = false;
 
@@ -49,6 +48,9 @@ class Stream {
 
 	}
 
+	getInstance() { 
+		return this;
+	}
 
 	loadCameras(){
 		console.log(`FFMPEG PATH ${this.ffmpegBinPath}`);
@@ -90,33 +92,27 @@ class Stream {
 		}
 	}
 
-	ffmpeg( debug = 0){
-		
-
+	ffmpeg( debug = 0){		
 		console.log('send stream to '+ this.keep);
 		console.log('Use camera ' + this.camera)
 
 		this.ffmpegProc = spawn(this.ffmpegBinPath, 
-			[
-				'-f' , 'dshow',
-				'-i', `${ this.camera }`, 
-				'-profile:v', 'baseline',
-				'-level', '3.0',
-				'-c:v', 'libx264',
-				'-crf','21',
-				'-preset','veryfast',
-				'-c:a', 'aac', 
-				'-b:a', '128k', 
-				'-ac','2',
-				'-f', 'hls', 
-				'-hls_time', '6', 
-				'-hls_playlist_type', 'event', 
-				`${ this.keep }`
-			]);
-
-
-		let x = this;
-
+		[
+			'-f' , 'dshow',
+			'-i', `${ this.camera }`, 
+			'-profile:v', 'baseline',
+			'-level', '3.0',
+			'-c:v', 'libx264',
+			'-crf','21',
+			'-preset','veryfast',
+			'-c:a', 'aac', 
+			'-b:a', '128k', 
+			'-ac','2',
+			'-f', 'hls', 
+			'-hls_time', '6', 
+			'-hls_playlist_type', 'event', 
+			`${ this.keep }`
+		]);
 
 		if( debug )
 			this.ffmpegProc
@@ -129,15 +125,9 @@ class Stream {
 
 			  	if( err.includes('Input/output error') ){
 			  		console.log('Try again');
-
-
-			  		x.ffmpegProc.kill();
-
-			  		x.ffmpeg();
-
-			  	}
-
-			    
+			  		this.getInstance().ffmpegProc.kill();
+			  		this.getInstance().ffmpeg();
+			  	}		    
 			  })
 	}
 
@@ -145,15 +135,12 @@ class Stream {
 	createRooms(){
 
 		let rooms = ['borgStream',this.nameOfStreem];
-		let x = this;
 
-		x.ipfs.once('ready', () => this.ipfs.id((err, peerInfo) => {
+		this.getInstance().ipfs.once('ready', () => this.ipfs.id((err, peerInfo) => {
 			for (var i = 0; i < rooms.length; i++) {
 				let nameRoom = rooms[i];
-				x.rooms[nameRoom] = Room(x.ipfs, nameRoom);
+				this.getInstance().rooms[nameRoom] = Room(this.getInstance().ipfs, nameRoom);
 			}
-
-
 		}))
 
 	}
@@ -162,8 +149,6 @@ class Stream {
 	uploadM3U8(){
 
 		let output = this.headers;
-		let x = this;
-
 		for( const [key, value] of Object.entries(this.blocks) ){
 			output += value;
 
@@ -174,16 +159,15 @@ class Stream {
 
 	    fs.writeFile(this.m3u8IPFS, output, function(err) {
 
-
-			x.ipfs.addFromFs(x.m3u8IPFS, (err, result) => {
+			this.getInstance().ipfs.addFromFs(this.getInstance().m3u8IPFS, (err, result) => {
 			  if (err) { throw err }
 
 			  	let data = {
-			  		live : x.ipfsID+"/"+x.nameOfStreem
+			  		live : this.getInstance().ipfsID+"/"+this.getInstance().nameOfStreem
 			  	};
 
-			  	x.rooms.borgStream.broadcast(JSON.stringify(data));
-			  	x.rooms[x.nameOfStreem].broadcast(JSON.stringify(result));
+			  	this.getInstance().rooms.borgStream.broadcast(JSON.stringify(data));
+			  	this.getInstance().rooms[this.getInstance().nameOfStreem].broadcast(JSON.stringify(result));
 			})	
 
 
@@ -194,16 +178,13 @@ class Stream {
 
 
 	isReadyM3U8(){
-
-		let x = this;
-		
 		this.isReadyM3U8Interval =	setInterval(function(){
 				
-			if( x.processUpload == 'executed'){
-				let i = Object.keys(x.blocks).length;
+			if( this.getInstance().processUpload == 'executed'){
+				let i = Object.keys(this.getInstance().blocks).length;
 				let r = 0;
 
-				for( const [key, value] of Object.entries(x.blocks) ){
+				for( const [key, value] of Object.entries(this.getInstance().blocks) ){
 
 					if( value.includes('EXTINF') ) 
 						r++;
@@ -211,47 +192,31 @@ class Stream {
 
 
 				if( r == i ){
-					x.uploadM3U8()
+					this.getInstance().uploadM3U8()
 				}
 			}
 			
 		},200)
 	}
 
-	start(){
+	start() {
 
-		let x = this;
-
-
-		if(!this.camera){
+		if(!this.camera) {
 			throw 'Camera is not set';
-		}
-		
-		
-		
-		x.isReadyM3U8()
-		x.ffmpeg(true);
-		x.watcher()
+		}		
 
+		this.getInstance().isReadyM3U8()
+		this.getInstance().ffmpeg(true);
+		this.getInstance().watcher()
 	}
 
 
 	watcher(){
-
-
-
-		let x = this;
-
-
-		x.watcherPID = watch(this.keepPath, function(evt, name) {
-
-			console.log(x.keep + ' -- '+name)
-
-			if( evt == 'update' && name == x.keep){
-				
-				x.processUpload = 'executed';
-				fs.readFile(x.keep, 'utf8', function(err, contents) {				
-
+		this.getInstance().watcherPID = watch(this.keepPath, function(evt, name) {
+			console.log(this.getInstance().keep + ' -- '+name)
+			if( evt == 'update' && name == this.getInstance().keep) {				
+				this.getInstance().processUpload = 'executed';
+				fs.readFile(this.getInstance().keep, 'utf8', function(err, contents) {				
 					let blocks = contents.split('#');
 
 
@@ -259,18 +224,17 @@ class Stream {
 				    	let element = blocks[i];
 
 				    	if( element.includes('EXTINF') )  		
-	  						x.blocks[md5(element)] = element.split(',');
+							this.getInstance().blocks[md5(element)] = element.split(',');
 				    }
 
-					for( const [key, value] of Object.entries(x.blocks) ){
-
-						x.ipfs.addFromFs(x.keepPath+value[1].trim(), (err, result) => {
+					for( const [key, value] of Object.entries(this.getInstance().blocks) ){
+						this.getInstance().ipfs.addFromFs(this.getInstance().keepPath+value[1].trim(), (err, result) => {
 						  if (err) { throw err }
 						  console.log('add new chunk with hash '+ result[0].hash)
 
 							let data = '#IPFSHASH-'+result[0].hash+","+value[1].trim()+"\n"+"#"+value[0]+","+value[1];
 
-							x.blocks[key] = data; 
+							this.getInstance().blocks[key] = data; 
 
 						})		  						
 
