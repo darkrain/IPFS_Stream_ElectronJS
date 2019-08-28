@@ -132,27 +132,3 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
-
-
-
-
-
-
-
-
-
-/*stream.setCamera(0)
-//stream.createRooms();
-stream.start()
-
-
-setTimeout(function(){
-	stream.stop()	
-},30*1000)
-
-
-setTimeout(function(){
-	stream.start()	
-},150*1000)
-*/
