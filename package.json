@@ -9,14 +9,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "directcam": "^1.0.3",
+    "ipfs": "0.37.0",
+    "ipfs-pubsub-room": "1.4.1",
     "ipld": "^0.24.1",
     "ipns": "^0.5.2",
     "libp2p-crypto": "^0.16.0",
     "ls": "^0.2.1",
     "md5": "^2.2.1",
-    "ipfs": "0.37.0",
-    "ipfs-pubsub-room": "1.4.1",
-    "node-watch": "0.6.3"
+    "node-watch": "0.6.3",
+    "node-webcam": "^0.5.0"
   },
   "devDependencies": {
     "electron": "^6.0.0"
