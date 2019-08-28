@@ -79,7 +79,6 @@ ipc.on('update-stream-state', function (event, arg) {
   	stream.stop()
   	win.webContents.send('streamState', 'stoped')
   }
-
 })
 
 

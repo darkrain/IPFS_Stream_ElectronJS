@@ -4,7 +4,8 @@ const ipc = electron.ipcRenderer;
 document.addEventListener('DOMContentLoaded',function(){
 	const startStreamBtn = document.getElementById('startStream');
 	const stopStreamBtn = document.getElementById('stopStream');
-
+	const cameraSelection = document.getElementById('cameraSelection');
+	
 	startStreamBtn.addEventListener('click', function () {
 	  ipc.send('update-stream-state', 'start')
 	})
