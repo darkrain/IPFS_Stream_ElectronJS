@@ -71,14 +71,11 @@ class Stream {
 			.stderr
 			.on('data', (err) => {
 				err = new String(err);
-
 				console.log('Cameras: '+err);
 
 			})
 
 		return false;
-
-
 	}
 
 	getCameraList(){
@@ -146,16 +143,13 @@ class Stream {
 	}
 
 
-	uploadM3U8(){
-
+	uploadM3U8() {
 		let output = this.headers;
 		for( const [key, value] of Object.entries(this.blocks) ){
 			output += value;
 
 		}
-
 		output += '#EXT-X-ENDLIST\n';
-
 
 	    fs.writeFile(this.m3u8IPFS, output, function(err) {
 
@@ -169,8 +163,6 @@ class Stream {
 			  	this.getInstance().rooms.borgStream.broadcast(JSON.stringify(data));
 			  	this.getInstance().rooms[this.getInstance().nameOfStreem].broadcast(JSON.stringify(result));
 			})	
-
-
 	    }); 		
 
 		this.processUpload = 'wait';
@@ -239,8 +231,6 @@ class Stream {
 						})		  						
 
 					}
-
-
 				})
 			}
 		});
