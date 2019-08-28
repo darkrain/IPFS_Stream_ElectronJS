@@ -93,7 +93,7 @@ class Stream {
 	ffmpeg( debug = 0){
 		
 
-		console.log('send stream to '+this.keep);
+		console.log('send stream to '+ this.keep);
 		console.log('Use camera ' + this.camera)
 
 		this.ffmpegProc = spawn(this.ffmpegBinPath, 
