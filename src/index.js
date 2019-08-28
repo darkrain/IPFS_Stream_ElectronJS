@@ -22,7 +22,7 @@ const ipfs = new IPFS({
 	config: {
 	  Addresses: {
 		Swarm: [
-		  "/ip4/0.0.0.0/tcp/4001",
+		  "/ip4/0.0.0.0/tcp/5001",
 		]
 	  }
 	},
@@ -61,44 +61,15 @@ ipfs.once('ready', () => ipfs.id((err, peerInfo) => {
 
 const stream = new Stream(ipfs, 'mydefaultStream');
 global.stream = stream;
-stream.setCamera(0)
+//stream.setCamera(0)
 stream.createRooms();
 
-
-
-//ES15
-class Misha {
-	constructor(name) {
-		this.name = name;
-	}
-
-	getHui() {
-		return 'Hui';
-	}
-}
-
-//Old
-function MishaOld(name){
-	this.name = name;
-	this.getHui = function() {
-		'Hui'};
-} 
-
-global.mishaNew = new Misha("MishaNew");
-global.mishaOld = new MishaOld("MishaOld");
-
-global.stream = stream;
-
 ipc.on('set-camera', function(event, index){
-
 	stream.setCamera(index);
-
 })
 
 
 ipc.on('update-stream-state', function (event, arg) {
-  
-
   if( arg == 'start' ){
   	stream.start()
   	win.webContents.send('streamState', 'started')
@@ -132,7 +103,7 @@ function createWindow () {
   win.loadFile('front/index.html')
 
   // Отображаем средства разработчика.
-  win.webContents.openDevTools()
+  //win.webContents.openDevTools()
 
   // Будет вызвано, когда окно будет закрыто.
   win.on('closed', () => {

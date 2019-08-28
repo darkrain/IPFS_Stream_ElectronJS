@@ -8,6 +8,7 @@ const watch = require('node-watch');
 const fs = require('fs');	
 const md5 = require('md5');	 
 const ls = require('ls');
+const fsPath = require('path');
 
 
 class Stream {
@@ -28,7 +29,9 @@ class Stream {
 		this.camera = false;
 		this.nameOfStreem = nameOfStreem;
 		this.m3u8IPFS = this.keepPath + 'streamIPFS.m3u8';		
-		this.cameras = loadCameras();
+
+		this.ffmpegBinPath = fsPath.join(__dirname.replace('src','bin'), 'ffmpeg.exe');
+		this.cameras = this.loadCameras();
 
 		if (!fs.existsSync(path)){
 		    fs.mkdirSync(path);
@@ -48,14 +51,19 @@ class Stream {
 
 
 	loadCameras(){
-		let ffmpegListCameras = spawn('../bin/ffmpeg.exe', 
+		console.log(`FFMPEG PATH ${this.ffmpegBinPath}`);
+
+		if(!fs.existsSync(this.ffmpegBinPath)){
+
+			console.log("NO FFMPEG.EXE in path: " + this.ffmpegBinPath);
+			return;
+		}
+		let ffmpegListCameras = spawn(this.ffmpegBinPath, 
 				[
 					'-list_devices', 'true',
 					'-f', 'dshow',
 					'-i', 'dummy'	
 				]);
-
-		console.log('asdfsdfs')
 
 		ffmpegListCameras
 			.stderr
@@ -88,7 +96,7 @@ class Stream {
 		console.log('send stream to '+this.keep);
 		console.log('Use camera ' + this.camera)
 
-		this.ffmpegProc = spawn('../bin/ffmpeg.exe', 
+		this.ffmpegProc = spawn(this.ffmpegBinPath, 
 			[
 				'-f' , 'dshow',
 				'-i', `${ this.camera }`, 
