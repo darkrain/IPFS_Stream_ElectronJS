@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "directcam": "^1.0.3",
     "ipfs": "0.37.0",
     "ipfs-pubsub-room": "1.4.1",
     "ipld": "^0.24.1",
