@@ -68,20 +68,14 @@ class Stream {
 		this.camera = camName;
 	}
 
-	setCamera(index){
-		if( this.cameras[index] ){
-			this.camera = this.cameras[index].full;
-		}
-	}
-
-	ffmpeg( debug = 0 ){		
+	ffmpeg(debug){		
 		console.log('send stream to '+ this.keep);
 		console.log('Use camera ' + this.camera)
-
+		const cameraDetectCommand = `video=\"${this.camera}\"`;
 		this.ffmpegProc = spawn(this.ffmpegBinPath, 
 		[
 			'-f' , 'dshow',
-			'-i', `\"${ this.camera }\"`, 
+			'-i', cameraDetectCommand, 
 			'-profile:v', 'baseline',
 			'-level', '3.0',
 			'-c:v', 'libx264',
@@ -110,7 +104,13 @@ class Stream {
 			  		this.getInstance().ffmpegProc.kill();
 			  		this.getInstance().ffmpeg();
 			  	}		    
-			  })
+			  });
+
+			this.ffmpegProc
+				.stdout
+				.on('data', (chunk) => {
+					console.log("FFMPEG OUT: " + chunk);
+				});
 	}
 
 

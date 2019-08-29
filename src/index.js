@@ -66,11 +66,15 @@ stream.createRooms();
 stream.loadCamerasAsync().then((data) => {
   console.log(`CAM DATA LOADED!\n ${typeof(data)} \n Send to web-view...`);
   win.webContents.send('camera-list-update', data);
+  //Set camera to default at start:
+  if(data.length > 0) {
+    const cameraName = data[0].name;
+    stream.setCameraByName(cameraName);
+  } else {
+    throw new Error("NO CAMERAS!");
+  }
 });
 
-ipc.on('set-camera', function(event, index){
-	stream.setCamera(index);
-})
 
 ipc.on('update-stream-state', function (event, arg) {
   if( arg == 'start' ){
