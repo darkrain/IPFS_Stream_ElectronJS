@@ -8,13 +8,12 @@ const getCameraNamesAsync = async (ffmpegPath) => {
         });
     const parsedCameraNames = await getParsedCameraNames(cmdData);  
     
-    await parsedCameraNames;
+    return parsedCameraNames;
 }
 
 const getParsedCameraNames = async (data) => {
     let camNames = [];
     const dataLines = data.split('\n');
-    console.log("LINES LENGTH: " + dataLines.length);
     const videoKeyWord = "DirectShow video devices";
     const audioKeyWord = "DirectShow audio devices";
     const alternativeNameKey = "Alternative name";
@@ -73,7 +72,6 @@ const getProcessData = (ffmpegPath) => {
         //Wait before all data can recieved
         const delay = 2000;       
         setTimeout(() => {
-            console.log("CMD event! : " + dataChunks );
             resolve(dataChunks);
         }, delay);
     });   

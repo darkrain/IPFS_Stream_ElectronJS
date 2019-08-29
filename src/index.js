@@ -63,10 +63,15 @@ global.stream = stream;
 //stream.setCamera(0)
 stream.createRooms();
 
+//LoadCameras and update web-view list
+stream.loadCamerasAsync().then((data) => {
+  console.log(`CAM DATA LOADED!\n ${typeof(data)} \n Send to web-view...`);
+  win.webContents.send('camera-list-update', data);
+});
+
 ipc.on('set-camera', function(event, index){
 	stream.setCamera(index);
 })
-
 
 ipc.on('update-stream-state', function (event, arg) {
   if( arg == 'start' ){
@@ -97,7 +102,7 @@ function createWindow () {
   win.loadFile('front/index.html')
 
   // Отображаем средства разработчика.
-  //win.webContents.openDevTools()
+  win.webContents.openDevTools()
 
   // Будет вызвано, когда окно будет закрыто.
   win.on('closed', () => {

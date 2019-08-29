@@ -3,8 +3,11 @@
   <head>
     <meta charset="UTF-8">
     <title>BorgStream</title>
+    <!-- Insert this line above script imports  -->
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <script src="./lib/jquery-3.4.1.js"> </script>
-    <script src="index.js"> </script>
+    <script src="index.js"> </script> 
+    <script>if (window.module) module = window.module;</script>
     <link rel="stylesheet" type="text/css" href="index.css" />
   </head>
   <body>
@@ -15,10 +18,6 @@
     <button id="stopStream">Stop stream</button>
     
     <select id="cameraSelection"> <!--Camera selection-->
-      <option value="volvo">Volvo</option>
-      <option value="saab">Saab</option>
-      <option value="mercedes">Mercedes</option>
-      <option value="audi">Audi</option>
     </select>
   </body>
 </html>

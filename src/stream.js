@@ -17,7 +17,6 @@ class Stream {
 		this.ipfs = ipfs;
 		this.ipfsready = false;
 		this.ffmpegBinPath = fsPath.join(__dirname.replace('src','bin'), 'ffmpeg.exe');
-		this.loadCameras();
 		this.headers = '#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:8\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:EVENT\n';
 		this.blocks = {};
 		this.rooms = {};
@@ -49,12 +48,15 @@ class Stream {
 		return this;
 	}
 
-	loadCameras() {
-		cameraHelper.getCameraNamesAsync(this.ffmpegBinPath).then((
-			(data) => {
-				console.log("CAMERAS LOADED IN STREAM.JS!");
-				this.cameras = data;
-			}));
+	loadCamerasAsync() {
+		return new Promise((resolve, rejected) => {
+			cameraHelper.getCameraNamesAsync(this.ffmpegBinPath).then((
+				(data) => {
+					console.log("CAMERAS LOADED IN STREAM.JS! " + typeof(data));
+					this.cameras = data;
+					resolve(data);
+				}));
+		});		
 	}
 
 	getCameraList(){
