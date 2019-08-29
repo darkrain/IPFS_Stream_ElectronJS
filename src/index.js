@@ -80,10 +80,6 @@ ipc.on('update-stream-state', function (event, arg) {
   }
 })
 
-
-
-
-
 let win
 
 function createWindow () {
