@@ -1,22 +1,21 @@
-const nodeWebCam = require('node-webcam');
 const dshow = require('directcam');
 
-//TEST
-getNameOfCameras();
-
-function getNameOfCameras() {
+function getNamesOfCameras() {
     let cameras = [];
     dshow.cameras(null, function (err, data) {
-        const camsJson = JSON.stringify(data);
-        console.log(`CAMERAS: \n ${camsJson}`);
+        if(err) {
+            console.log("CAnnot load cameras!");
+            return cameras;
+        }
+        for(let i = 0; i < data.length; i++) {
+            const camName = data[i].Name;
+            cameras.push(camName);
+        }
+        return cameras;
     });
 }
 
-function parseDataForCameras(dataToParse) {
-
-}
 
 module.exports = {
-    parseDataForCameras,
-    getNameOfCameras
+    getNamesOfCameras
 }

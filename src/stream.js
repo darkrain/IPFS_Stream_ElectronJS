@@ -10,6 +10,8 @@ const md5 = require('md5');
 const ls = require('ls');
 const fsPath = require('path');
 
+//external help
+const cameraHelper = require('./ffmpegCameraHelper.js');
 
 class Stream {
 

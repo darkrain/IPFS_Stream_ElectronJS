@@ -7,8 +7,6 @@ const IPFS = require('ipfs')
 const { app, BrowserWindow } = require('electron');
 const ipc = require('electron').ipcMain;
 
-//external help
-const cameraHelper = require('./ffmpegCameraHelper');
 
 //const Room = require('ipfs-pubsub-room')
 const fs = require('fs');	
