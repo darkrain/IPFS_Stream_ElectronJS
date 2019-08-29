@@ -9,16 +9,15 @@ const fs = require('fs');
 const md5 = require('md5');	 
 const ls = require('ls');
 const fsPath = require('path');
-
-//external help
-const cameraHelper = require('./ffmpegCameraHelper.js');
+const cameraHelper = require('./ffmpegCameraHelper');
 
 class Stream {
 
 	constructor(ipfs, nameOfStreem, path = 'videos') {
 		this.ipfs = ipfs;
 		this.ipfsready = false;
-
+		this.ffmpegBinPath = fsPath.join(__dirname.replace('src','bin'), 'ffmpeg.exe');
+		this.loadCameras();
 		this.headers = '#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:8\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:EVENT\n';
 		this.blocks = {};
 		this.rooms = {};
@@ -30,10 +29,7 @@ class Stream {
 		this.camera = false;
 		this.nameOfStreem = nameOfStreem;
 		this.m3u8IPFS = this.keepPath + 'streamIPFS.m3u8';		
-
-		this.ffmpegBinPath = fsPath.join(__dirname.replace('src','bin'), 'ffmpeg.exe');
-		this.cameras = this.loadCameras();
-
+		
 		if (!fs.existsSync(path)){
 		    fs.mkdirSync(path);
 
@@ -46,38 +42,19 @@ class Stream {
 			fs.mkdirSync(this.keepPath);
 		    
 		
-		this.createRooms()
-
+		this.createRooms();
 	}
 
 	getInstance() { 
 		return this;
 	}
 
-	loadCameras(){
-		console.log(`FFMPEG PATH ${this.ffmpegBinPath}`);
-
-		if(!fs.existsSync(this.ffmpegBinPath)){
-
-			console.log("NO FFMPEG.EXE in path: " + this.ffmpegBinPath);
-			return;
-		}
-		let ffmpegListCameras = spawn(this.ffmpegBinPath, 
-				[
-					'-list_devices', 'true',
-					'-f', 'dshow',
-					'-i', 'dummy'	
-				]);
-
-		ffmpegListCameras
-			.stderr
-			.on('data', (err) => {
-				err = new String(err);
-				console.log('Cameras: '+err);
-
-			})
-
-		return false;
+	loadCameras() {
+		cameraHelper.getCameraNamesAsync(this.ffmpegBinPath).then((
+			(data) => {
+				console.log("CAMERAS LOADED IN STREAM.JS!");
+				this.cameras = data;
+			}));
 	}
 
 	getCameraList(){

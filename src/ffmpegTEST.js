@@ -1,5 +1,7 @@
 const spawn = require('child_process').spawn;
 const fs = require('fs');
+const fsPath = require('path');
+
 const getCameraNamesAsync = async (ffmpegPath) => {
     let cmdData;
     await getProcessData(ffmpegPath).then(
@@ -32,21 +34,19 @@ const getProcessData = (ffmpegPath) => {
                     '-f', 'dshow',
                     '-i', 'dummy'	
                 ]);
-
-        let dataChunks;
+    
         ffmpegListCameras
             .stderr
-            .on('data', (chunk) => {
-                dataChunks += chunk.toString();               
+            .once('data', (chunk) => {
+                const data = chunk.toString();
+                console.log("CMD event! : " + data );
+                resolve(data);	
             });
-        //Wait before all data can recieved
-        const delay = 2000;       
-        setTimeout(() => {
-            console.log("CMD event! : " + dataChunks );
-            resolve(dataChunks);
-        }, delay);
     });   
 }
+
+const ffmpegBinPath = fsPath.join(__dirname.replace('src','bin'), 'ffmpeg.exe');
+getCameraNamesAsync(ffmpegBinPath);
 
 module.exports = {
     getCameraNamesAsync
