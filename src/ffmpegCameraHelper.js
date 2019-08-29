@@ -12,9 +12,7 @@ const getCameraNamesAsync = async (ffmpegPath) => {
 }
 
 const getParsedCameraNames = async (data) => {
-
     let camNames = [];
-
     const dataLines = data.split('\n');
     console.log("LINES LENGTH: " + dataLines.length);
     const videoKeyWord = "DirectShow video devices";
