@@ -15,6 +15,12 @@ document.addEventListener('DOMContentLoaded',function(){
 		ipc.send('update-stream-state', 'stop')
 	})	
 
+	cameraSelection.addEventListener('change', () => {
+		const value = cameraSelection.options[cameraSelection.selectedIndex].value;
+		const text = cameraSelection.options[cameraSelection.selectedIndex].text;
+		ipc.send('camera-changed', text);
+	});
+
 });
 
 ipc.on('streamState', function (event, arg) {
@@ -24,8 +30,10 @@ ipc.on('streamState', function (event, arg) {
 
 ipc.on('camera-list-update', (event, args) => {
 	const camData = args;	
+
+	camData.push({name: 'HUEC-OGUREC'}); //test
 	console.log(camData)
-	//alert("HUI! \n" + JSON.stringify(camData));	 //test	
+
 	$.each(camData, function(key, value) {   
 		console.log(value);
 		$('#cameraSelection')

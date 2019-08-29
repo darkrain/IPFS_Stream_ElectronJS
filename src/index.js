@@ -60,7 +60,6 @@ ipfs.once('ready', () => ipfs.id((err, peerInfo) => {
 
 const stream = new Stream(ipfs, 'mydefaultStream');
 global.stream = stream;
-//stream.setCamera(0)
 stream.createRooms();
 
 //LoadCameras and update web-view list
@@ -84,6 +83,11 @@ ipc.on('update-stream-state', function (event, arg) {
   	win.webContents.send('streamState', 'stoped')
   }
 })
+
+ipc.on('camera-changed', (event, args) => {
+  const camText = args;
+  stream.setCameraByName(camText);
+});
 
 let win
 

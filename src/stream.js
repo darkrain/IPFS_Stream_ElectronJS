@@ -63,6 +63,10 @@ class Stream {
 		return this.cameras
 	}
 
+	setCameraByName(camName){
+		console.log("Camera changed to: " + camName);
+		this.camera = camName;
+	}
 
 	setCamera(index){
 		if( this.cameras[index] ){
@@ -70,14 +74,14 @@ class Stream {
 		}
 	}
 
-	ffmpeg( debug = 0){		
+	ffmpeg( debug = 0 ){		
 		console.log('send stream to '+ this.keep);
 		console.log('Use camera ' + this.camera)
 
 		this.ffmpegProc = spawn(this.ffmpegBinPath, 
 		[
 			'-f' , 'dshow',
-			'-i', `${ this.camera }`, 
+			'-i', `\"${ this.camera }\"`, 
 			'-profile:v', 'baseline',
 			'-level', '3.0',
 			'-c:v', 'libx264',
