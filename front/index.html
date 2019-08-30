@@ -12,11 +12,23 @@
   <body>
   	<div id="bar">
   		<span id="streamState">Stream stoped</span>
-  	</div>
-  	<button id="startStream">Start stream</button>
-    <button id="stopStream">Stop stream</button>
-    
-    <select id="cameraSelection"> <!--Camera selection-->
-    </select>
+    </div>
+    <div id="controlButtonsContainer">
+      <button id="startStream">Start stream</button>
+      <button id="stopStream">Stop stream</button>
+    </div>
+    <div id="camSelectionContainer">
+      <select id="cameraSelection"> <!--Camera selection-->
+      </select>
+    </div>  
+    <div id="streamerAvaContainer">
+      <img id="streamerAvaImg" src="../user/unknown.jpg">
+    </div>
+    <div>
+      <button id="loadImgBtn">Upload image</button>
+    </div>
+    <div id="streamerNameContainer">
+        <input type="text" placeholder="Streamer name" value="AR_Baby">
+    </div>
   </body>
 </html>

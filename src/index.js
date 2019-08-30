@@ -6,8 +6,11 @@ let fileName = 'master';
 const IPFS = require('ipfs')
 const { app, BrowserWindow } = require('electron');
 const ipc = require('electron').ipcMain;
-
+const dialog = require('electron').dialog;
 const StreamInitializer = require('./stream/streamInitializer.js');
+const fs = require('fs');
+const pathModule = require('path');
+const appRootPath = require('app-root-path');
 
 const ipfs = new IPFS({
 	repo: 'ipfs/pubsub-demo/borgStream',
@@ -60,8 +63,7 @@ if(!isCamerasInitialized) {
   });
 }
 
-
-
+//### IPC calls ###
 ipc.on('update-stream-state', function (event, arg) {
   if( arg == 'start' ){  
   	streamInitializer.startStream();
@@ -80,8 +82,53 @@ ipc.on('camera-changed', (event, args) => {
   streamInitializer.setCameraByName(camText);
 });
 
-let win
+ipc.on('open-file-dialog', (event, args) => { 
+  dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [
+      { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+    ]
+  }).then(result => { 
+    console.log(result.canceled);
+    console.log(result.filePaths);
+    const file = result.filePaths[0];
+      if(file) {
+        console.log("Try to openFile: " + file.toString());
+        copyImageToApplicationFolerAsync(file).then((copiedImgPath) => {
+          const fileName = pathModule.basename(copiedImgPath); //to send in client script without path
+          event.sender.send('selected-file', fileName);
+          onAvaImageUploaded(copiedImgPath);
+      })};
+    })
+    .catch(err => {
+      console.err(err);
+    });
+});
+//### END IPC calls ###
 
+//### Callbacks for IPC's ###
+async function copyImageToApplicationFolerAsync(sourceImgPath) {
+  const imgExtension = pathModule.extname(sourceImgPath);
+  const userFolder = 'user';
+  const avaImgName = 'streamerAva' + imgExtension;
+  const avaImgPathToCopy = pathModule.join(appRootPath.toString(), userFolder, avaImgName);
+  // destination.txt will be created or overwritten by default.
+  await fs.copyFile(sourceImgPath, avaImgPathToCopy, (err) => {
+    if (err) {
+      console.error("UNABLE TO COPY IMG.... \n" + err);
+      throw err;
+    }
+  });
+
+  return avaImgPathToCopy;
+}
+
+function onAvaImageUploaded(filePath) {
+
+}
+//### END Callbacks for IPC's ###
+
+let win
 function createWindow () {
   // Создаём окно браузера.
   win = new BrowserWindow({
