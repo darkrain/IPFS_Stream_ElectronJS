@@ -25,16 +25,26 @@ class StreamInitializer {
     }
 
     resetStream() {
+        const date = new Date();
+        console.log(`Reset stream in .. ${date.getMinutes()}m ${date.getSeconds()}`);
         const videoFolderName = "videos";
         const binFolder = this.getBinFolder();
         const streamName = this.generateRandomStreamName(); 
-        console.log("Try to send bin folder: " + binFolder);
+        console.log("Create new stream instance inside initializer..");
         this.stream = new Stream(this.ipfs, streamName, videoFolderName, binFolder);
+        if(this.lastCameraName)
+            this.stream.setCameraByName(this.lastCameraName);
+
         this.stream.createRooms();
     };  
 
     startStream() {
-        this.stream.start();
+        try {
+            this.stream.start();
+        } catch(e) {
+            console.log(`Unable to start stream! Coz \n ${e}`);
+        }
+        
     };
 
     stopStream() {
@@ -42,6 +52,7 @@ class StreamInitializer {
     };
 
     initializeCameras = async () => {
+        let cameraName;
         const currentStream = this.stream;
         if(!currentStream) {
             console.error("Cannot initialize cameras becouse stream is NULL!")
@@ -53,12 +64,13 @@ class StreamInitializer {
             console.log(`CAM DATA LOADED!\n ${typeof(data)} \n Send to web-view...`);            
             //Set camera to default at start:
             if(data.length > 0) {
-              const cameraName = data[0].name;
+              cameraName = data[0].name;
               currentStream.setCameraByName(cameraName);
             } else {
               throw new Error("NO CAMERAS!");
             }
           });
+        this.lastCameraName = cameraName;
         return dataOfCamers;
     };
 

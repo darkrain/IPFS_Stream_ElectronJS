@@ -28,9 +28,7 @@ class Stream {
 		this.path = path;
 		this.keepPath = this.path+'/'+nameOfStreem+'/';
 		this.nameOfStreem = nameOfStreem;
-		this.keep = this.keepPath + 'master.m3u8';
-		
-		this.camera = false;		
+		this.keep = this.keepPath + 'master.m3u8';		
 		this.m3u8IPFS = this.keepPath + 'streamIPFS.m3u8';		
 		
 		if (!fs.existsSync(this.path)){
@@ -80,7 +78,8 @@ class Stream {
 		const cameraDetectCommand = 'video=' + '"' + this.camera + '"';
 		console.log('Try execute camera with command: ' + cameraDetectCommand);
 		const spawnOpts = {
-			windowsVerbatimArguments: true
+			windowsVerbatimArguments: true,
+			
 		};
 		this.ffmpegProc = spawn(this.ffmpegBinPath, 
 		[
@@ -185,12 +184,11 @@ class Stream {
 	}
 
 	start() {
-
 		if(!this.camera) {
 			throw 'Camera is not set';
 		}		
 		this.getInstance().isReadyM3U8()
-		this.getInstance().ffmpeg(true);
+		this.getInstance().ffmpeg(false);
 		this.getInstance().watcher()
 	}
 
@@ -235,12 +233,7 @@ class Stream {
 			this.watcherPID.close()
 		this.blocks = {};
 		this.processUpload = 'wait';
-
-		//this.watcherPID = false;
-
-
 	}
-
 }
 
 module.exports = Stream;

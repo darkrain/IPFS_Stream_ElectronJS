@@ -48,23 +48,29 @@ ipfs.once('ready', () => ipfs.id((err, peerInfo) => {
 }))
 
 
+let isCamerasInitialized = false;
 
-const streamInitializer = new StreamInitializer(ipfs);
+let streamInitializer = new StreamInitializer(ipfs);
 
+if(!isCamerasInitialized) {
 //LoadCameras and update web-view list
-streamInitializer.initializeCameras().then((data) => {
-  win.webContents.send('camera-list-update', data);
-});
+  streamInitializer.initializeCameras().then((data) => {
+    win.webContents.send('camera-list-update', data);
+    isCamerasInitialized = true;
+  });
+}
+
 
 
 ipc.on('update-stream-state', function (event, arg) {
-  if( arg == 'start' ){
+  if( arg == 'start' ){  
   	streamInitializer.startStream();
   	win.webContents.send('streamState', 'started')
   }
 
-  if( arg == 'stop' ){
-  	streamInitializer.stopStream();
+  if( arg == 'stop' ){  
+    streamInitializer.stopStream();
+    streamInitializer.resetStream();
   	win.webContents.send('streamState', 'stoped')
   }
 })
@@ -121,3 +127,13 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+//Handle uncaught exceptions
+process
+  .on('unhandledRejection', (reason, p) => {
+    console.error(reason, 'Unhandled Rejection at Promise', p);
+  })
+  .on('uncaughtException', err => {
+    console.error(err, 'Uncaught Exception thrown');
+    process.exit(1);
+  });
