@@ -32,8 +32,12 @@ class StreamInitializer {
         const streamName = this.generateRandomStreamName(); 
         console.log("Create new stream instance inside initializer..");
         this.stream = new Stream(this.ipfs, streamName, videoFolderName, binFolder);
-        if(this.lastCameraName)
+        if(this.lastCameraName) {
             this.stream.setCameraByName(this.lastCameraName);
+        }       
+        else {
+            console.error("Last camera name isnt saved! Next start will throws error!!!");
+        }
 
         this.stream.createRooms();
     };  
