@@ -9,33 +9,35 @@ const fs = require('fs');
 const md5 = require('md5');	 
 const ls = require('ls');
 const fsPath = require('path');
-const cameraHelper = require('./ffmpegCameraHelper');
+const cameraHelper = require('../helpers/ffmpegCameraHelper');
 
 class Stream {
 
-	constructor(ipfs, nameOfStreem, path = 'videos') {
+	constructor(ipfs, nameOfStreem, path = 'videos', binFolderPath) {
+		
+		console.log(`Try initialize sream with fields: \n ${ipfs} \n ${nameOfStreem} \n ${binFolderPath}`);
+
 		this.ipfs = ipfs;
 		this.ipfsready = false;
-		this.ffmpegBinPath = fsPath.join(__dirname.replace('src','bin'), 'ffmpeg.exe');
+		this.ffmpegBinPath = fsPath.join(binFolderPath, 'ffmpeg.exe');
 		this.headers = '#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:8\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:EVENT\n';
 		this.blocks = {};
 		this.rooms = {};
 		this.processUpload = 'wait';
 
-		this.keepPath = path+'/'+nameOfStreem+'/';
-		this.keep = this.keepPath+'master.m3u8';
-		
-		this.camera = false;
+		this.path = path;
+		this.keepPath = this.path+'/'+nameOfStreem+'/';
 		this.nameOfStreem = nameOfStreem;
+		this.keep = this.keepPath + 'master.m3u8';
+		
+		this.camera = false;		
 		this.m3u8IPFS = this.keepPath + 'streamIPFS.m3u8';		
 		
-		if (!fs.existsSync(path)){
-		    fs.mkdirSync(path);
-
+		if (!fs.existsSync(this.path)){
+		    fs.mkdirSync(this.path);
 
 		    if (!fs.existsSync(this.keepPath))
-		    	fs.mkdirSync(this.keepPath);
-		    
+		    	fs.mkdirSync(this.keepPath);		    
 
 		}else if(!fs.existsSync(this.keepPath))
 			fs.mkdirSync(this.keepPath);
@@ -187,11 +189,11 @@ class Stream {
 		if(!this.camera) {
 			throw 'Camera is not set';
 		}		
-
 		this.getInstance().isReadyM3U8()
 		this.getInstance().ffmpeg(true);
 		this.getInstance().watcher()
 	}
+
 
 
 	watcher(){

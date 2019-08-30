@@ -7,11 +7,7 @@ const IPFS = require('ipfs')
 const { app, BrowserWindow } = require('electron');
 const ipc = require('electron').ipcMain;
 
-
-//const Room = require('ipfs-pubsub-room')
-const fs = require('fs');	
-const Stream = require('./stream.js')
-
+const StreamInitializer = require('./stream/streamInitializer.js');
 
 const ipfs = new IPFS({
 	repo: 'ipfs/pubsub-demo/borgStream',
@@ -30,15 +26,10 @@ const ipfs = new IPFS({
 ipfs.on('ready', () => {
 
   
-	ipfs.id((err, id) => {
-		
+	ipfs.id((err, id) => {	
 		if (err) {
 			return console.log(err)
 		}
-  
-
-
-		//console.log(id)
 	})
 
 })
@@ -58,39 +49,30 @@ ipfs.once('ready', () => ipfs.id((err, peerInfo) => {
 
 
 
-const stream = new Stream(ipfs, 'mydefaultStream');
-global.stream = stream;
-stream.createRooms();
+const streamInitializer = new StreamInitializer(ipfs);
 
 //LoadCameras and update web-view list
-stream.loadCamerasAsync().then((data) => {
-  console.log(`CAM DATA LOADED!\n ${typeof(data)} \n Send to web-view...`);
+streamInitializer.initializeCameras().then((data) => {
   win.webContents.send('camera-list-update', data);
-  //Set camera to default at start:
-  if(data.length > 0) {
-    const cameraName = data[0].name;
-    stream.setCameraByName(cameraName);
-  } else {
-    throw new Error("NO CAMERAS!");
-  }
 });
+
 
 
 ipc.on('update-stream-state', function (event, arg) {
   if( arg == 'start' ){
-  	stream.start()
+  	streamInitializer.startStream();
   	win.webContents.send('streamState', 'started')
   }
 
   if( arg == 'stop' ){
-  	stream.stop()
+  	streamInitializer.stopStream();
   	win.webContents.send('streamState', 'stoped')
   }
 })
 
 ipc.on('camera-changed', (event, args) => {
   const camText = args;
-  stream.setCameraByName(camText);
+  streamInitializer.setCameraByName(camText);
 });
 
 let win
