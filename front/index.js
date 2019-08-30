@@ -1,12 +1,18 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
+let docButtons = [];
 
 document.addEventListener('DOMContentLoaded',function(){
 	const startStreamBtn = document.getElementById('startStream');
+	docButtons.push({btnID: startStreamBtn.id, isControl: true});
 	const stopStreamBtn = document.getElementById('stopStream');
-	const cameraSelection = document.getElementById('cameraSelection');
+	docButtons.push({btnID: stopStreamBtn.id, isControl: true});	
 	const avaSelectBtn = document.getElementById('loadImgBtn');
+	docButtons.push({btnID: avaSelectBtn.id, isControl: false});
+
+	const cameraSelection = document.getElementById('cameraSelection');
+
 	startStreamBtn.addEventListener('click', function () {
 		ipc.send('update-stream-state', 'start')
 	});
@@ -54,5 +60,20 @@ ipc.on('selected-file', (event, args) => {
 	const imgAvaElement = document.getElementById('streamerAvaImg');
 	imgAvaElement.src = filePathForHTML;
 });
+
+ipc.on('all-data-ready', (event, args) => {
+	const isReady = args;
+	//When data is ready activate control buttons
+	setActiveAllButtons(true, isReady);
+	
+});
 // ### END Client event subscriber handlers ###
 
+function setActiveAllButtons(isControl, isActive) {
+	for(let i = 0; i < docButtons.length; i++) {
+		let docBtn = docButtons[i];
+		if(docBtn.isControl == isControl) {
+			document.getElementById(docBtn.btnID).disabled = !isActive;
+		}		
+	}
+}

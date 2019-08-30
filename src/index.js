@@ -27,12 +27,12 @@ const ipfs = new IPFS({
 })
 
 ipfs.on('ready', () => {
-
-  
 	ipfs.id((err, id) => {	
 		if (err) {
 			return console.log(err)
-		}
+		} else {
+      console.log("YOUR NODE ID : " + id);
+    }
 	})
 
 })
@@ -46,8 +46,8 @@ ipfs.on('error', (err) => {
 ipfs.once('ready', () => ipfs.id((err, peerInfo) => {
 	if (err) { throw err }
 
-	console.log('IPFS node started and has ID ' + peerInfo.id)
-
+  console.log('IPFS node started and has ID ' + peerInfo.id)
+  onIpfsNodeIDGetted(peerInfo.id);
 }))
 
 
@@ -126,14 +126,24 @@ async function copyImageToApplicationFolerAsync(sourceImgPath) {
 function onAvaImageUploaded(filePath) {
 
 }
+
+function onIpfsNodeIDGetted(nodeID) {
+
+}
+
+function onMainPageLoaded() {
+  console.log("MAIN PAGE LOADED!");
+  //By default at start disable control buttons
+  win.webContents.send('all-data-ready', false);
+}
 //### END Callbacks for IPC's ###
 
 let win
 function createWindow () {
   // Создаём окно браузера.
   win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1280,
+    height: 768,
     frame: false,
     webPreferences: {
       nodeIntegration: true
@@ -141,7 +151,9 @@ function createWindow () {
   })
 
   // and load the index.html of the app.
-  win.loadFile('front/index.html')
+  win.loadFile('front/index.html').then(() => {
+      onMainPageLoaded();
+  });
 
   // Отображаем средства разработчика.
   win.webContents.openDevTools()
@@ -152,9 +164,8 @@ function createWindow () {
     // в массиве, если ваше приложение поддерживает несколько окон в это время,
     // тогда вы должны удалить соответствующий элемент.
     win = null
-  })
+  }) 
 }
-
 
 app.on('ready', createWindow)
 
