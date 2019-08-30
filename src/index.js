@@ -57,7 +57,6 @@ streamInitializer.initializeCameras().then((data) => {
 });
 
 
-
 ipc.on('update-stream-state', function (event, arg) {
   if( arg == 'start' ){
   	streamInitializer.startStream();

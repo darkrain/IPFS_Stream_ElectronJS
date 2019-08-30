@@ -25,10 +25,11 @@ class StreamInitializer {
     }
 
     resetStream() {
+        const videoFolderName = "videos";
         const binFolder = this.getBinFolder();
         const streamName = this.generateRandomStreamName(); 
         console.log("Try to send bin folder: " + binFolder);
-        this.stream = new Stream(this.ipfs, streamName, binFolder);
+        this.stream = new Stream(this.ipfs, streamName, videoFolderName, binFolder);
         this.stream.createRooms();
     };  
 
