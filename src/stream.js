@@ -44,7 +44,7 @@ class Stream {
 		this.createRooms();
 	}
 
-	getInstance() { 
+	getInstance = () => { 
 		return this;
 	}
 
@@ -69,13 +69,21 @@ class Stream {
 	}
 
 	ffmpeg(debug){		
+
+		const streamObj = this.getInstance();
+
 		console.log('send stream to '+ this.keep);
 		console.log('Use camera ' + this.camera)
-		const cameraDetectCommand = `video=\"${this.camera}\"`;
+		//const cameraDetectCommand = `video=\"${this.camera}\"`;
+		const cameraDetectCommand = 'video=' + '"' + this.camera + '"';
+		console.log('Try execute camera with command: ' + cameraDetectCommand);
+		const spawnOpts = {
+			windowsVerbatimArguments: true
+		};
 		this.ffmpegProc = spawn(this.ffmpegBinPath, 
 		[
 			'-f' , 'dshow',
-			'-i', cameraDetectCommand, 
+			'-i',cameraDetectCommand, 
 			'-profile:v', 'baseline',
 			'-level', '3.0',
 			'-c:v', 'libx264',
@@ -88,40 +96,39 @@ class Stream {
 			'-hls_time', '6', 
 			'-hls_playlist_type', 'event', 
 			`${ this.keep }`
-		]);
+		], spawnOpts);
 
-		if( debug )
-			this.ffmpegProc
-			  .stderr
-			  .on('data', (err) => {
+		const ffmpegProcess = this.ffmpegProc;
 
-			  	err = new String(err);
-
-				console.log('Process:', err)
-
-			  	if( err.includes('Input/output error') ){
-			  		console.log('Try again');
-			  		this.getInstance().ffmpegProc.kill();
-			  		this.getInstance().ffmpeg();
-			  	}		    
-			  });
-
-			this.ffmpegProc
-				.stdout
-				.on('data', (chunk) => {
-					console.log("FFMPEG OUT: " + chunk);
+		if(debug == true) {
+			console.log("FFMPEG Input debug process...");			
+			//handle process
+			ffmpegProcess
+				.stderr.addListener('data', (data) => {
+					const dataString = data.toString();
+					if( dataString.includes('Input/output error') ){
+						console.log('Try again');
+						streamObj.ffmpegProc.kill();
+						streamObj.ffmpeg();
+					}		
+					console.log(`FFMPEG data! \n ${dataString}`)
 				});
+			ffmpegProcess
+				.stdin.addListener('error', (err) => {
+					console.log('FFMPEG STDIN ERROR! \n ' + err.toString());
+				});
+		}			
 	}
 
 
 	createRooms(){
-
+		const streamObj = this.getInstance();
 		let rooms = ['borgStream',this.nameOfStreem];
 
-		this.getInstance().ipfs.once('ready', () => this.ipfs.id((err, peerInfo) => {
+		streamObj.ipfs.once('ready', () => this.ipfs.id((err, peerInfo) => {
 			for (var i = 0; i < rooms.length; i++) {
 				let nameRoom = rooms[i];
-				this.getInstance().rooms[nameRoom] = Room(this.getInstance().ipfs, nameRoom);
+				streamObj.rooms[nameRoom] = Room(streamObj.ipfs, nameRoom);
 			}
 		}))
 
@@ -129,24 +136,23 @@ class Stream {
 
 
 	uploadM3U8() {
+		const streamObj = this.getInstance();
 		let output = this.headers;
 		for( const [key, value] of Object.entries(this.blocks) ){
 			output += value;
 
 		}
 		output += '#EXT-X-ENDLIST\n';
-
 	    fs.writeFile(this.m3u8IPFS, output, function(err) {
-
-			this.getInstance().ipfs.addFromFs(this.getInstance().m3u8IPFS, (err, result) => {
+			streamObj.ipfs.addFromFs(streamObj.m3u8IPFS, (err, result) => {
 			  if (err) { throw err }
 
 			  	let data = {
-			  		live : this.getInstance().ipfsID+"/"+this.getInstance().nameOfStreem
+			  		live : streamObj.ipfsID+"/"+streamObj.nameOfStreem
 			  	};
 
-			  	this.getInstance().rooms.borgStream.broadcast(JSON.stringify(data));
-			  	this.getInstance().rooms[this.getInstance().nameOfStreem].broadcast(JSON.stringify(result));
+			  	streamObj.rooms.borgStream.broadcast(JSON.stringify(data));
+			  	streamObj.rooms[streamObj.nameOfStreem].broadcast(JSON.stringify(result));
 			})	
 	    }); 		
 
@@ -154,14 +160,15 @@ class Stream {
 	}
 
 
-	isReadyM3U8(){
-		this.isReadyM3U8Interval =	setInterval(function(){
+	isReadyM3U8() {
+		const thisStream = this.getInstance();
+		this.isReadyM3U8Interval =	setInterval(function() {
 				
-			if( this.getInstance().processUpload == 'executed'){
-				let i = Object.keys(this.getInstance().blocks).length;
+			if(thisStream.processUpload == 'executed'){
+				let i = Object.keys(thisStream.blocks).length;
 				let r = 0;
 
-				for( const [key, value] of Object.entries(this.getInstance().blocks) ){
+				for( const [key, value] of Object.entries(thisStream.blocks) ){
 
 					if( value.includes('EXTINF') ) 
 						r++;
@@ -169,10 +176,9 @@ class Stream {
 
 
 				if( r == i ){
-					this.getInstance().uploadM3U8()
+					thisStream.uploadM3U8()
 				}
-			}
-			
+			}			
 		},200)
 	}
 
@@ -189,30 +195,27 @@ class Stream {
 
 
 	watcher(){
-		this.getInstance().watcherPID = watch(this.keepPath, function(evt, name) {
-			console.log(this.getInstance().keep + ' -- '+name)
-			if( evt == 'update' && name == this.getInstance().keep) {				
-				this.getInstance().processUpload = 'executed';
-				fs.readFile(this.getInstance().keep, 'utf8', function(err, contents) {				
+		const streamObj = this.getInstance();
+		streamObj.watcherPID = watch(this.keepPath, function(evt, name) {
+			console.log(streamObj.keep + ' -- '+name)
+			if( evt == 'update' && name == streamObj.keep) {				
+				streamObj.processUpload = 'executed';
+				fs.readFile(this.streamObj.keep, 'utf8', function(err, contents) {				
 					let blocks = contents.split('#');
-
 
 				    for (var i = 0; i < blocks.length; i++) {
 				    	let element = blocks[i];
 
 				    	if( element.includes('EXTINF') )  		
-							this.getInstance().blocks[md5(element)] = element.split(',');
+						streamObj.blocks[md5(element)] = element.split(',');
 				    }
 
-					for( const [key, value] of Object.entries(this.getInstance().blocks) ){
-						this.getInstance().ipfs.addFromFs(this.getInstance().keepPath+value[1].trim(), (err, result) => {
+					for( const [key, value] of Object.entries(streamObj.blocks) ){
+						streamObj.ipfs.addFromFs(streamObj.keepPath+value[1].trim(), (err, result) => {
 						  if (err) { throw err }
 						  console.log('add new chunk with hash '+ result[0].hash)
-
 							let data = '#IPFSHASH-'+result[0].hash+","+value[1].trim()+"\n"+"#"+value[0]+","+value[1];
-
-							this.getInstance().blocks[key] = data; 
-
+							streamObj.blocks[key] = data; 
 						})		  						
 
 					}
