@@ -51,17 +51,15 @@ ipfs.once('ready', () => ipfs.id((err, peerInfo) => {
 }))
 
 
-let isCamerasInitialized = false;
-
 let streamInitializer = new StreamInitializer(ipfs);
 
-if(!isCamerasInitialized) {
+
 //LoadCameras and update web-view list
-  streamInitializer.initializeCameras().then((data) => {
-    win.webContents.send('camera-list-update', data);
-    isCamerasInitialized = true;
-  });
-}
+streamInitializer.initializeCameras().then((data) => {
+  win.webContents.send('camera-list-update', data);
+  isCamerasInitialized = true;
+});
+
 
 //### IPC calls ###
 ipc.on('update-stream-state', function (event, arg) {
@@ -117,6 +115,7 @@ function onIpfsNodeIDGetted(nodeID) {
 
 function onMainPageLoaded() {
   console.log("MAIN PAGE LOADED!");
+
   //By default at start disable control buttons
   win.webContents.send('all-data-ready', false);
 }

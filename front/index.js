@@ -59,7 +59,6 @@ ipc.on('selected-file', (event, args) => {
 	const filePathForHTML = `../user/${fileName}` + '?v' + Date.now();
 	const imgAvaElement = document.getElementById('streamerAvaImg');
 	imgAvaElement.src = filePathForHTML;
-	alert("selected file updated!");
 });
 
 ipc.on('all-data-ready', (event, args) => {
@@ -69,7 +68,6 @@ ipc.on('all-data-ready', (event, args) => {
 	
 });
 // ### END Client event subscriber handlers ###
-
 function setActiveAllButtons(isControl, isActive) {
 	for(let i = 0; i < docButtons.length; i++) {
 		let docBtn = docButtons[i];
