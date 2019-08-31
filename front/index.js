@@ -30,6 +30,11 @@ document.addEventListener('DOMContentLoaded',function(){
 		const text = cameraSelection.options[cameraSelection.selectedIndex].text;
 		ipc.send('camera-changed', text);
 	});	
+
+	const streamerNameInputText = document.getElementById('streamerNameInputText');
+	streamerNameInputText.addEventListener('change', () => {
+		alert("TEXT CHANGED! : " + streamerNameInputText.value);
+	});
 });
 
 // ### Client event subscriber handlers ###

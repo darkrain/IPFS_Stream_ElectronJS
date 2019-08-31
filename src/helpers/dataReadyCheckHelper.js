@@ -11,7 +11,7 @@ async function checkDataIsReadyAsync(electronWindow, streamInitializer) {
         electronWindow.webContents.send('camera-list-update', camData);  
         dataDependingFlags.isCameraReady = camData.length > 0;    
     }
-    
+    //TODO: Complete data!   
     return isAllDataReady();
 }
 

@@ -13,6 +13,9 @@ const pathModule = require('path');
 const imgHelper = require('./helpers/imageLoaderHelper.js');
 const dataReadyHelper = require('./helpers/dataReadyCheckHelper.js');
 
+//Streamer data
+let streamerName;
+
 const ipfs = new IPFS({
 	repo: 'ipfs/pubsub-demo/borgStream',
 	EXPERIMENTAL: {
