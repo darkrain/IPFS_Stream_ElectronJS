@@ -2,7 +2,6 @@
 let camera = '/dev/video0';
 let fileName = 'master';
 
-
 const IPFS = require('ipfs')
 const { app, BrowserWindow } = require('electron');
 const ipc = require('electron').ipcMain;
@@ -11,6 +10,9 @@ const StreamInitializer = require('./stream/streamInitializer.js');
 const fs = require('fs');
 const pathModule = require('path');
 const appRootPath = require('app-root-path');
+
+//External helpers
+const imgHelper = require('./helpers/imageLoaderHelper.js');
 
 const ipfs = new IPFS({
 	repo: 'ipfs/pubsub-demo/borgStream',
@@ -94,7 +96,7 @@ ipc.on('open-file-dialog', (event, args) => {
     const file = result.filePaths[0];
       if(file) {
         console.log("Try to openFile: " + file.toString());
-        copyImageToApplicationFolerAsync(file).then((copiedImgPath) => {
+        imgHelper.copyImageToApplicationFolerAsync(file).then((copiedImgPath) => {
           const fileName = pathModule.basename(copiedImgPath); //to send in client script without path
           event.sender.send('selected-file', fileName);
           onAvaImageUploaded(copiedImgPath);
@@ -107,22 +109,6 @@ ipc.on('open-file-dialog', (event, args) => {
 //### END IPC calls ###
 
 //### Callbacks for IPC's ###
-async function copyImageToApplicationFolerAsync(sourceImgPath) {
-  const imgExtension = pathModule.extname(sourceImgPath);
-  const userFolder = 'user';
-  const avaImgName = 'streamerAva' + imgExtension;
-  const avaImgPathToCopy = pathModule.join(appRootPath.toString(), userFolder, avaImgName);
-  // destination.txt will be created or overwritten by default.
-  await fs.copyFile(sourceImgPath, avaImgPathToCopy, (err) => {
-    if (err) {
-      console.error("UNABLE TO COPY IMG.... \n" + err);
-      throw err;
-    }
-  });
-
-  return avaImgPathToCopy;
-}
-
 function onAvaImageUploaded(filePath) {
 
 }
