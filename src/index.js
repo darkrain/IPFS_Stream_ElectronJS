@@ -12,9 +12,11 @@ const pathModule = require('path');
 //External helpers
 const imgHelper = require('./helpers/imageLoaderHelper.js');
 const dataReadyHelper = require('./helpers/dataReadyCheckHelper.js');
-
-//Streamer data
+const StreamInfoGenerator = require('./data/StreamerInfoGenerator.js');
+//Streamer data fields
 let streamerName;
+let ipfsNodeID;
+let streamerImgPath;
 
 const ipfs = new IPFS({
 	repo: 'ipfs/pubsub-demo/borgStream',
@@ -55,7 +57,9 @@ ipfs.once('ready', () => ipfs.id((err, peerInfo) => {
 }))
 
 
+//Initializers
 let streamInitializer = new StreamInitializer(ipfs);
+let streamInfoGenerator;
 
 //### IPC calls ###
 ipc.on('update-stream-state', function (event, arg) {
@@ -98,15 +102,34 @@ ipc.on('open-file-dialog', (event, args) => {
       console.err(err);
     });
 });
+
+ipc.on('streamerNameChanged', (event, args) => {
+    onStreamerNameChanged(args);
+});
 //### END IPC calls ###
 
 //### Callbacks for IPC's ###
 function onAvaImageUploaded(filePath) {
-
+    streamerImgPath = filePath;
+    onStreamerDataUpdated();
 }
 
 function onIpfsNodeIDGetted(nodeID) {
+    ipfsNodeID = nodeID;
+    onStreamerDataUpdated();
+}
 
+function onStreamerNameChanged(name) {
+    streamerName = name;
+    onStreamerDataUpdated();
+}
+
+function onStreamerDataUpdated() {
+    console.log("Try update streamer data by values: " + JSON.stringify([streamerName, streamerImgPath, ipfsNodeID]));
+    if(streamerName && streamerImgPath && ipfsNodeID) {
+        streamInfoGenerator = new StreamInfoGenerator(ipfsNodeID, streamerName, streamerImgPath);
+        checkAllData();
+    }
 }
 
 function onMainPageLoaded() {
@@ -119,7 +142,7 @@ function onMainPageLoaded() {
 
 //### Checking functions
 function checkAllData(){
-  dataReadyHelper.checkDataIsReadyAsync(win, streamInitializer).then((isReady) => {
+  dataReadyHelper.checkDataIsReadyAsync(win, streamInitializer, streamInfoGenerator).then((isReady) => {
     console.log("Data checking... result: " + isReady);
     win.webContents.send('all-data-ready', isReady);
   });

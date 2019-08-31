@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 	const streamerNameInputText = document.getElementById('streamerNameInputText');
 	streamerNameInputText.addEventListener('change', () => {
-		alert("TEXT CHANGED! : " + streamerNameInputText.value);
+		ipc.send('streamerNameChanged', streamerNameInputText.value);
 	});
 });
 

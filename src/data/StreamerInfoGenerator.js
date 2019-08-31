@@ -5,14 +5,13 @@ class StreamerInfoGenerator {
     constructor(ipfsNodeID, streamerName, streamerImg) {    
         this.nodeID = ipfsNodeID;
         this.streamerName = streamerName;
-        this.streamerImgPath = streamerImg;
-
-        const nameData = this.nodeID + this.streamerName;
-        this.streamDataHash = crypto.createHash('md5').update(nameData).digest("hex");
- 
+        this.streamerImgPath = streamerImg;     
     }
 
     getGeneratedStreamerInfo() {
+        const nameData = this.nodeID + this.streamerName;
+        this.streamDataHash = crypto.createHash('md5').update(nameData).digest("hex");
+
         const streamerDataHash = this.streamDataHash;
         const streamerImgPath = this.streamerImgPath;
         return new Promise((resolve, rejected) => {
