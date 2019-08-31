@@ -117,7 +117,7 @@ function onMainPageLoaded() {
 //### Checking functions
 function checkAllData(){
   dataReadyHelper.checkDataIsReadyAsync(win, streamInitializer).then((isReady) => {
-    console.log("Data checking... result:" + isReady);
+    console.log("Data checking... result: " + isReady);
     win.webContents.send('all-data-ready', isReady);
   });
 }
