@@ -7,9 +7,7 @@ const { app, BrowserWindow } = require('electron');
 const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
 const StreamInitializer = require('./stream/streamInitializer.js');
-const fs = require('fs');
 const pathModule = require('path');
-const appRootPath = require('app-root-path');
 
 //External helpers
 const imgHelper = require('./helpers/imageLoaderHelper.js');

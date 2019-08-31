@@ -56,9 +56,10 @@ ipc.on('camera-list-update', (event, args) => {
 //When user selected file for ava
 ipc.on('selected-file', (event, args) => {
 	const fileName = args;
-	const filePathForHTML = `../user/${fileName}`;
+	const filePathForHTML = `../user/${fileName}` + '?v' + Date.now();
 	const imgAvaElement = document.getElementById('streamerAvaImg');
 	imgAvaElement.src = filePathForHTML;
+	alert("selected file updated!");
 });
 
 ipc.on('all-data-ready', (event, args) => {

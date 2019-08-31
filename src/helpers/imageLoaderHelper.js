@@ -1,9 +1,19 @@
+const pathModule = require('path');
+const fs = require('fs');
+const appRootPath = require('app-root-path');
+
+const USER_FOLDER = 'user';
+const AVA_FILE_NAME = 'streamerAva';
+const USER_PATH = pathModule.join(appRootPath.toString(), USER_FOLDER); 
+
 async function copyImageToApplicationFolerAsync(sourceImgPath) {
+
+    //firstable clear another avaImages if it exists..
+    await removeImagesIfFileExistsAsync();
+
     const imgExtension = pathModule.extname(sourceImgPath);
-    const userFolder = 'user';
-    const avaFileName = 'streamerAva';
-    const avaImgNameWithExtension = avaFileName + imgExtension;
-    const avaImgPathToCopy = pathModule.join(appRootPath.toString(), userFolder, avaImgNameWithExtension);
+    const avaImgNameWithExtension = AVA_FILE_NAME + imgExtension;
+    const avaImgPathToCopy = pathModule.join(USER_PATH, avaImgNameWithExtension);
     // destination.txt will be created or overwritten by default.
     await fs.copyFile(sourceImgPath, avaImgPathToCopy, (err) => {
       if (err) {
@@ -12,6 +22,27 @@ async function copyImageToApplicationFolerAsync(sourceImgPath) {
         }
     }); 
     return avaImgPathToCopy;
+}
+
+function removeImagesIfFileExistsAsync() {
+    return new Promise((resolve, reject) => {
+        fs.readdir(USER_PATH, (err, files) => {
+            if(err) {
+                console.error("Cannot read path: " + USER_PATH + "\n" + err.name);
+                reject();
+            }
+            for(let i = 0; i < files.length; i++) {
+                const fileName = files[i];
+                if(fileName.includes(AVA_FILE_NAME)) {
+                    const filePath = pathModule.join(USER_PATH, fileName);
+                    console.log("Try to remove file: " + filePath + "....");
+                    fs.unlinkSync(filePath);
+                }
+            }
+
+            resolve();
+        });
+    });
 }
 
 module.exports = {
