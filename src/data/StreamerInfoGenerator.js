@@ -1,5 +1,4 @@
 const crypto = require('crypto');
-const ipfsClient = require('ipfs-http-client');
 
 class StreamerInfoGenerator {
     constructor(ipfsNodeID, streamerName, streamerImg) {    
@@ -15,8 +14,6 @@ class StreamerInfoGenerator {
         const streamerDataHash = this.streamDataHash;
         const streamerImgPath = this.streamerImgPath;
         return new Promise((resolve, rejected) => {
-            const ipfs = ipfsClient("/ip4/0.0.0.0/tcp/5001");
-
             //upload image
             ipfs.addFromFs(streamerImgPath, { }, (err, result) => {
                 if (err) { 
