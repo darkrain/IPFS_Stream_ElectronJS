@@ -26,7 +26,7 @@ class StreamerInfoGenerator {
             });
         }); 
         if(!avaHashInfo || avaHashInfo === AVA_IMG_NOHASH_ERR_KEY) {
-            console.err("AVA HASH INFO IS " + AVA_IMG_NOHASH_ERR_KEY + "! Try again.");
+            console.error("AVA HASH INFO IS " + AVA_IMG_NOHASH_ERR_KEY + "! Try again.");
             return streamerInfo;
         }
         const uploadedAvaHash = avaHashInfo[0].hash;

@@ -1,11 +1,17 @@
 const express = require("express");
 const path = require('path');
 const fs = require('fs');
-const app = express();
-function startLocalServer(streamPath) {    
+let app;
+let closed = false;
+function startLocalServer(streamPath) { 
+    closed = false;
+    app = express();   
     //check which file being requested
     app.use((req, res, next) => 
     {
+        if(closed === true)
+            return res.end();
+
         const fileName = path.basename(req.url);
         const extension = path.extname(fileName);
 
@@ -46,11 +52,15 @@ function startLocalServer(streamPath) {
     });
 
     app.on('close', () => {
+        console.log(" * * * CLOSE CONNECTION * * *");
         server.close();
+        closed = true;
+        return;
     })
 }
 
-function stopLocalServer() {
+function stopLocalServer() 
+{
     app.emit('close', ()=> {});
 }
 
