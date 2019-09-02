@@ -2,7 +2,7 @@ const pathModule = require('path');
 const appRootPath = require('app-root-path');
 const EventEmitter = require('events');
 const Stream = require('./stream.js');
-
+const localServer = require('../localServer/localServer.js');
 class OnStreamVideoRelativePathUpdatedEvent extends EventEmitter {};
 
 class StreamInitializer {
@@ -39,8 +39,9 @@ class StreamInitializer {
         const binFolder = this.getBinFolder();
         const streamName = this.generateRandomStreamName(); 
         console.log("Create new stream instance inside initializer..");
-
+      
         this.relativeVideoPath = '../' + videoFolderName + '/' + streamName;
+        this.fullVideoPath = pathModule.join(this.getModuleFolderPath(videoFolderName), streamName);
         this.onStreamVideoRelativePathUpdatedEvent.emit('onVideoFolderUpdated', this.relativeVideoPath);
 
         this.stream = new Stream(this.ipfs, streamName, videoFolderName, binFolder);
@@ -51,13 +52,14 @@ class StreamInitializer {
             console.error("Last camera name isnt saved! Next start will throws error!!!");
         }
 
-        this.stream.createRooms();
+        this.stream.createRooms();      
     };  
 
     startStream(playListReadyCallBack) {
         try {
             this.isStreamStarted = true;
-            this.stream.start(playListReadyCallBack);        
+            this.stream.start(playListReadyCallBack); 
+            localServer.startLocalServer(this.fullVideoPath);       
         } catch(e) {
             console.log(`Unable to start stream! Coz \n ${e}`);
         }
@@ -67,6 +69,7 @@ class StreamInitializer {
     stopStream() {
         this.isStreamStarted = false;
         this.stream.stop();
+        localServer.stopLocalServer();
     };
 
     initializeCameras = async () => {
@@ -98,6 +101,10 @@ class StreamInitializer {
 
     onVideoPathUpdatedWithRelativePath = (callback) => {
         callback(path);
+    }
+
+    getLastFullVideoPath = () => {
+        return this.fullVideoPath;
     }
 
     getLastVideoRelativePath = () => {

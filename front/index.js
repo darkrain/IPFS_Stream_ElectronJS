@@ -97,14 +97,16 @@ ipc.on('update-requirements', (event, args) => {
 
 ipc.on('video-playlist-path-changed', (event, args) => {
 	const relativePath = args + '/master.m3u8';
-	const videoPlayerElement = document.getElementById('video-player');
-	const videoPlayerSource = document.createElement('source');
-	videoPlayerSource.setAttribute('id', "video-player-source");
-	videoPlayerSource.setAttribute('src', relativePath);
-	videoPlayerSource.setAttribute('type', "application/x-mpegURL");
-	videoPlayerElement.appendChild(videoPlayerSource);
-	videoPlayerElement.play();	
-	alert("PLAYER START PLAYLIST: " + relativePath);	
+	const httpPath = "http://localhost:4000/master.m3u8";
+	var video = document.getElementById('video-player');
+	if(Hls.isSupported()) {
+		var hls = new Hls();
+		hls.loadSource(httpPath);
+		hls.attachMedia(video);
+		hls.on(Hls.Events.MANIFEST_PARSED,function() {
+		video.play();
+	});
+	}
 });
 
 // ### END Client event subscriber handlers ###

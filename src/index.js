@@ -145,9 +145,9 @@ function onMainPageLoaded() {
 }
 
 function onPlaylistRelativePathUpdated() {
-    const videoRelativePath = streamInitializer.getLastVideoRelativePath();
-    console.log("Relative path for videos updated!: " + videoRelativePath);
-    win.webContents.send('video-playlist-path-changed', videoRelativePath);
+    const videoPath = streamInitializer.getLastFullVideoPath(); 
+    console.log("Relative path for videos updated!: " + videoPath);
+    win.webContents.send('video-playlist-path-changed', videoPath);
 }
 
 //### END Callbacks for Event's ###

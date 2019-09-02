@@ -18,7 +18,7 @@ class StreamerInfoGenerator {
             ipfsInstance.addFromFs(streamerImgPath, { }, (err, result) => {
                 if (err) { 
                     console.error("CANNOT UPLOAD AVA TO IPFS!: \n" + err);
-                    rejected(AVA_IMG_NOHASH_ERR_KEY);
+                    resolve(AVA_IMG_NOHASH_ERR_KEY);
                 }
 
                 console.log("Result of uploading img: \n" + JSON.stringify(result));
