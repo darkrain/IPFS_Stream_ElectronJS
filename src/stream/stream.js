@@ -27,7 +27,8 @@ class Stream {
 		this.keepPath = this.path+'/'+nameOfStreem+'/';
 		this.nameOfStreem = nameOfStreem;
 		this.keep = this.keepPath + 'master.m3u8';		
-		this.m3u8IPFS = this.keepPath + 'streamIPFS.m3u8';		
+		this.m3u8IPFS = this.keepPath + 'streamIPFS.m3u8';
+		this.isPlalistInitialized = false;		
 		
 		if (!fs.existsSync(this.path)){
 		    fs.mkdirSync(this.path);
@@ -184,7 +185,8 @@ class Stream {
 	start(onPlaylistReadyCallback) {
 		if(!this.camera) {
 			throw 'Camera is not set';
-		}		
+		}
+		this.isPlalistInitialized = false;		
 		this.getInstance().isReadyM3U8();
 		this.getInstance().ffmpeg(false);
 		this.getInstance().watcher(onPlaylistReadyCallback)
@@ -194,15 +196,17 @@ class Stream {
 
 
 	watcher(onPlaylistChangedCallback){
+		let isStreamInitialized = this.isPlalistInitialized;
 		const streamObj = this.getInstance();
 		streamObj.watcherPID = watch(this.keepPath, function(evt, name) {
 			const fileName = fsPath.basename(name);
 			const playlistName = fsPath.basename(streamObj.keep);
 			let isPlaylist = fileName === playlistName;
 
-			if(isPlaylist) {
+			if(isPlaylist && isStreamInitialized === false) {
 				console.log("Playlist updated!")
 				onPlaylistChangedCallback();
+				isStreamInitialized = true;
 			}				
 			console.log(streamObj.keep + ' -- '+name)
 			if( evt == 'update' && fileName == playlistName) {												
@@ -233,6 +237,7 @@ class Stream {
 	}
 
 	stop(){
+		this.isPlalistInitialized = false;
 		clearInterval(this.isReadyM3U8Interval);
 		this.ffmpegProc.kill()
 

@@ -97,8 +97,14 @@ ipc.on('update-requirements', (event, args) => {
 
 ipc.on('video-playlist-path-changed', (event, args) => {
 	const relativePath = args + '/master.m3u8';
-	const videoPlayerSource = document.getElementById("video-player-source");
-	videoPlayerSource.src = relativePath;
+	const videoPlayerElement = document.getElementById('video-player');
+	const videoPlayerSource = document.createElement('source');
+	videoPlayerSource.setAttribute('id', "video-player-source");
+	videoPlayerSource.setAttribute('src', relativePath);
+	videoPlayerSource.setAttribute('type', "application/x-mpegURL");
+	videoPlayerElement.appendChild(videoPlayerSource);
+	videoPlayerElement.play();	
+	alert("PLAYER START PLAYLIST: " + relativePath);	
 });
 
 // ### END Client event subscriber handlers ###

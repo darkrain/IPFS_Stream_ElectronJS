@@ -56,7 +56,8 @@ class StreamInitializer {
 
     startStream(playListReadyCallBack) {
         try {
-            this.stream.start(playListReadyCallBack);
+            this.isStreamStarted = true;
+            this.stream.start(playListReadyCallBack);        
         } catch(e) {
             console.log(`Unable to start stream! Coz \n ${e}`);
         }
@@ -64,6 +65,7 @@ class StreamInitializer {
     };
 
     stopStream() {
+        this.isStreamStarted = false;
         this.stream.stop();
     };
 
@@ -100,6 +102,10 @@ class StreamInitializer {
 
     getLastVideoRelativePath = () => {
         return this.relativeVideoPath;
+    }
+
+    isStreamStarted = () => {
+        return this.isStreamStarted;
     }
 }
 
