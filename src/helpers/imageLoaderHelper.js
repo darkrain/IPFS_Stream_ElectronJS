@@ -14,14 +14,21 @@ async function copyImageToApplicationFolerAsync(sourceImgPath) {
     const imgExtension = pathModule.extname(sourceImgPath);
     const avaImgNameWithExtension = AVA_FILE_NAME + imgExtension;
     const avaImgPathToCopy = pathModule.join(USER_PATH, avaImgNameWithExtension);
-    // destination.txt will be created or overwritten by default.
-    await fs.copyFile(sourceImgPath, avaImgPathToCopy, (err) => {
-      if (err) {
-        console.error("UNABLE TO COPY IMG.... \n" + err);
-        throw err;
-        }
-    }); 
-    return avaImgPathToCopy;
+
+    let avatarPath = await new Promise((resolve, rejected) => {
+        fs.copyFile(sourceImgPath, avaImgPathToCopy, (err) => {
+            if (err) {
+              console.error("UNABLE TO COPY IMG.... \n" + err);
+              rejected(null);
+            }
+            resolve(avaImgPathToCopy);
+          });
+    });
+
+    if(!avatarPath)
+        throw new Error("IMG_LOADER_HEPLER: Avatar path is null!");
+
+    return avatarPath;
 }
 
 function removeImagesIfFileExistsAsync() {
