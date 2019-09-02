@@ -125,6 +125,8 @@ function onStreamerNameChanged(name) {
 }
 
 function onStreamerDataUpdated() {
+    if(!ipfsNodeID)
+        ipfsNodeID = ipfs.id;
     console.log("Try update streamer data by values: " + JSON.stringify([streamerName, streamerImgPath, ipfsNodeID]));
     if(streamerName && streamerImgPath && ipfsNodeID) {
         streamInfoGenerator = new StreamInfoGenerator(ipfsNodeID, streamerName, streamerImgPath);
