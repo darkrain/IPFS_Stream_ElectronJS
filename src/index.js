@@ -142,7 +142,7 @@ function onMainPageLoaded() {
 
 //### Checking functions
 function checkAllData(){
-  dataReadyHelper.checkDataIsReadyAsync(win, streamInitializer, streamInfoGenerator).then((isReady) => {
+  dataReadyHelper.checkDataIsReadyAsync(ipfs, win, streamInitializer, streamInfoGenerator).then((isReady) => {
     console.log("Data checking... result: " + isReady);
     win.webContents.send('all-data-ready', isReady);
   });

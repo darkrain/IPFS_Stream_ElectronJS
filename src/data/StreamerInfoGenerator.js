@@ -7,7 +7,7 @@ class StreamerInfoGenerator {
         this.streamerImgPath = streamerImg;     
     }
 
-    getGeneratedStreamerInfo() {
+    getGeneratedStreamerInfo(ipfsInstance) {
         const nameData = this.nodeID + this.streamerName;
         this.streamDataHash = crypto.createHash('md5').update(nameData).digest("hex");
 
@@ -15,10 +15,10 @@ class StreamerInfoGenerator {
         const streamerImgPath = this.streamerImgPath;
         return new Promise((resolve, rejected) => {
             //upload image
-            ipfs.addFromFs(streamerImgPath, { }, (err, result) => {
+            ipfsInstance.addFromFs(streamerImgPath, { }, (err, result) => {
                 if (err) { 
                     console.error("CANNOT UPLOAD AVA TO IPFS!: \n" + err);
-                    rejected();
+                    rejected(null);
                 }
 
                 console.log("Result of uploading img: \n" + JSON.stringify(result));

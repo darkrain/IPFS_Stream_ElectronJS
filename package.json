@@ -11,7 +11,6 @@
   "dependencies": {
     "app-root-path": "^2.2.1",
     "ipfs": "0.37.0",
-    "ipfs-http-client": "^34.0.0",
     "ipfs-pubsub-room": "1.4.1",
     "ipld": "^0.24.1",
     "ipns": "^0.5.2",
