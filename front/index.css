@@ -24,6 +24,11 @@ button:hover {opacity: 1}
     font-family: Ubuntu;
 }
 
+#streamReadyStateContainer {
+    color: #fff;
+    font-family: Ubuntu;
+}
+
 div {
   margin-top: 20px;
   margin-bottom: 20px;

@@ -147,6 +147,15 @@ function checkAllData(){
   dataReadyHelper.checkDataIsReadyAsync(ipfs, win, streamInitializer, streamInfoGenerator).then((isReady) => {
     console.log("Data checking... result: " + isReady);
     win.webContents.send('all-data-ready', isReady);
+
+    //update front page by streamer info array
+    const streamInfoArray = {
+      StreamerName: streamerName,
+      AvatarHash: streamerImgPath,
+      IPFS_NodeID: ipfsNodeID
+    };
+    
+    win.webContents.send('update-requirements', streamInfoArray);
   });
 }
 //### End Checking functions

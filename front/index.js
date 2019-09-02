@@ -69,9 +69,20 @@ ipc.on('selected-file', (event, args) => {
 ipc.on('all-data-ready', (event, args) => {
 	const isReady = args;
 	//When data is ready activate control buttons
-	setActiveAllButtons(true, isReady);
-	
+	setActiveAllButtons(true, isReady);	
 });
+
+ipc.on('update-requirements', (event, args) => {
+	const listID = "#requirementList";
+	const reqList = args;
+	$(listID).empty();
+	for (let [key, value] of Object.entries(reqList)) {
+		$(listID).append(
+			$('<li>').append(`${key}: ${value}`)
+			);
+	  }	  
+})
+
 // ### END Client event subscriber handlers ###
 function setActiveAllButtons(isControl, isActive) {
 	for(let i = 0; i < docButtons.length; i++) {

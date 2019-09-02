@@ -6,7 +6,7 @@ const dataDependingFlags = {
 }
 
 let camData;
-let streamInfo;
+let streamInfo = [];
 async function checkDataIsReadyAsync(ipfsInstance, electronWindow, streamInitializer, streamInfoGenerator) {   
     //LoadCameras and update web-view list
     if(!camData && dataDependingFlags.isCameraReady === false) {
@@ -23,6 +23,8 @@ async function checkDataIsReadyAsync(ipfsInstance, electronWindow, streamInitial
     if(dataDependingFlags.isStreamerDataReady === false) {
         streamInfo = await streamInfoGenerator.getGeneratedStreamerInfoAsync(ipfsInstance);
         console.log("Streamer info now: \n" + JSON.stringify(streamInfo));
+
+        dataDependingFlags.isStreamerDataReady = streamInfo && streamInfo.length > 0;
     }
 
     //TODO: Complete data!   
@@ -37,6 +39,11 @@ function isAllDataReady() {
     return dataDependingFlags.isCameraReady && dataDependingFlags.isStreamerDataReady;
 }
 
+function getStreamerInfoArray() {
+    return streamInfo;
+}
+
 module.exports = {
-    checkDataIsReadyAsync
+    checkDataIsReadyAsync,
+    streamInfo
 }
