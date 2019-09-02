@@ -17,24 +17,34 @@
       <button id="startStream">Start stream</button>
       <button id="stopStream">Stop stream</button>
     </div>
-    <div id="streamReadyStateContainer">
-      <h1>Requirments to start stream:</h1>
-      <ul id="requirementList">
-        <li>HUI!</li>
-      </ul>
-    </div>
-    <div id="camSelectionContainer">
-      <select id="cameraSelection"> <!--Camera selection-->
-      </select>
-    </div>  
-    <div id="streamerAvaContainer">
-      <img id="streamerAvaImg" src="../user/unknown.jpg">
-    </div>
-    <div>
-      <button id="loadImgBtn">Upload image</button>
-    </div>
-    <div id="streamerNameContainer">
-        <input id="streamerNameInputText" type="text" placeholder="Streamer name" value="AR_Baby">
+
+    <div id="wrapper">
+      <div class="left">
+        <div id="streamReadyStateContainer">
+          <h1>Requirments to start stream:</h1>
+          <ul id="requirementList">
+            <li>HUI!</li>
+          </ul>
+        </div>
+        <div id="camSelectionContainer">
+          <select id="cameraSelection"> <!--Camera selection-->
+          </select>
+        </div>  
+        <div id="streamerAvaContainer">
+          <img id="streamerAvaImg" src="../user/unknown.jpg">
+        </div>
+        <div>
+          <button id="loadImgBtn">Upload image</button>
+        </div>
+        <div id="streamerNameContainer">
+            <input id="streamerNameInputText" type="text" placeholder="Streamer name" value="AR_Baby">
+        </div>
+      </div>
+      <div class="right">
+          <video id="video-player" width="352" height="198" controls>
+              <source id="video-player-source" src="master.m3u8" type="application/x-mpegURL">
+          </video>        
+      </div>
     </div>
   </body>
 </html>

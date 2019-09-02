@@ -64,7 +64,7 @@ let streamInfoGenerator;
 //### IPC calls ###
 ipc.on('update-stream-state', function (event, arg) {
   if( arg == 'start' ){  
-  	streamInitializer.startStream();
+  	streamInitializer.startStream(onPlaylistRelativePathUpdated);
   	win.webContents.send('streamState', 'started')
   }
 
@@ -108,7 +108,10 @@ ipc.on('streamerNameChanged', (event, args) => {
 });
 //### END IPC calls ###
 
-//### Callbacks for IPC's ###
+//### Anothers event calls
+//### END Anothers event calls
+
+//### Callbacks for Events's ###
 function onAvaImageUploaded(filePath) {
     streamerImgPath = filePath;
     onStreamerDataUpdated();
@@ -129,9 +132,9 @@ function onStreamerDataUpdated() {
         ipfsNodeID = ipfs.id;
     console.log("Try update streamer data by values: " + JSON.stringify([streamerName, streamerImgPath, ipfsNodeID]));
     if(streamerName && streamerImgPath && ipfsNodeID) {
-        streamInfoGenerator = new StreamInfoGenerator(ipfsNodeID, streamerName, streamerImgPath);
-        checkAllData();
+        streamInfoGenerator = new StreamInfoGenerator(ipfsNodeID, streamerName, streamerImgPath);       
     }
+    checkAllData();
 }
 
 function onMainPageLoaded() {
@@ -140,7 +143,14 @@ function onMainPageLoaded() {
   //checkData is ready first run
   checkAllData();
 }
-//### END Callbacks for IPC's ###
+
+function onPlaylistRelativePathUpdated() {
+    const videoRelativePath = streamInitializer.getLastVideoRelativePath();
+    console.log("Relative path for videos updated!: " + videoRelativePath);
+    win.webContents.send('video-playlist-path-changed', videoRelativePath);
+}
+
+//### END Callbacks for Event's ###
 
 //### Checking functions
 function checkAllData(){
@@ -149,12 +159,15 @@ function checkAllData(){
     win.webContents.send('all-data-ready', isReady);
 
     //update front page by streamer info array
+    const streamerNameInfo = streamerName ? streamerName : "empty";
+    const streamerImgPathInfo = streamerImgPath ? streamerImgPath : "empty";
+    const ipfsNodeIdInfo = ipfsNodeID ? ipfsNodeID : "empty";
     const streamInfoArray = {
-      StreamerName: streamerName,
-      AvatarHash: streamerImgPath,
-      IPFS_NodeID: ipfsNodeID
+      "StreamerName": streamerNameInfo,
+      "AvatarHash": streamerImgPathInfo,
+      "IPFS_NodeID": ipfsNodeIdInfo
     };
-    
+
     win.webContents.send('update-requirements', streamInfoArray);
   });
 }

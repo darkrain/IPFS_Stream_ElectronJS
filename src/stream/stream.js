@@ -2,7 +2,6 @@ const spawn = require('child_process').spawn;
  
 //let camera = '/dev/video0';
 //let fileName = 'master';
-
 const Room = require('ipfs-pubsub-room')
 const watch = require('node-watch');
 const fs = require('fs');	
@@ -11,12 +10,11 @@ const ls = require('ls');
 const fsPath = require('path');
 const cameraHelper = require('../helpers/ffmpegCameraHelper');
 
+
 class Stream {
 
 	constructor(ipfs, nameOfStreem, path = 'videos', binFolderPath) {
-		
 		console.log(`Try initialize sream with fields: \n ${ipfs} \n ${nameOfStreem} \n ${binFolderPath}`);
-
 		this.ipfs = ipfs;
 		this.ipfsready = false;
 		this.ffmpegBinPath = fsPath.join(binFolderPath, 'ffmpeg.exe');
@@ -163,8 +161,8 @@ class Stream {
 
 	isReadyM3U8() {
 		const thisStream = this.getInstance();
-		this.isReadyM3U8Interval =	setInterval(function() {
-				
+		let isReadyM3U8Interval = this.isReadyM3U8Interval;
+		isReadyM3U8Interval = setInterval(function() {				
 			if(thisStream.processUpload == 'executed'){
 				let i = Object.keys(thisStream.blocks).length;
 				let r = 0;
@@ -175,32 +173,41 @@ class Stream {
 						r++;
 				}
 
-
 				if( r == i ){
-					thisStream.uploadM3U8()
+					thisStream.uploadM3U8();
 				}
 			}			
 		},200)
+				
 	}
 
-	start() {
+	start(onPlaylistReadyCallback) {
 		if(!this.camera) {
 			throw 'Camera is not set';
 		}		
-		this.getInstance().isReadyM3U8()
+		this.getInstance().isReadyM3U8();
 		this.getInstance().ffmpeg(false);
-		this.getInstance().watcher()
+		this.getInstance().watcher(onPlaylistReadyCallback)
+		console.log("*** STREAM STARTED ****");
 	}
 
 
 
-	watcher(){
+	watcher(onPlaylistChangedCallback){
 		const streamObj = this.getInstance();
 		streamObj.watcherPID = watch(this.keepPath, function(evt, name) {
+			const fileName = fsPath.basename(name);
+			const playlistName = fsPath.basename(streamObj.keep);
+			let isPlaylist = fileName === playlistName;
+
+			if(isPlaylist) {
+				console.log("Playlist updated!")
+				onPlaylistChangedCallback();
+			}				
 			console.log(streamObj.keep + ' -- '+name)
-			if( evt == 'update' && name == streamObj.keep) {				
+			if( evt == 'update' && fileName == playlistName) {												
 				streamObj.processUpload = 'executed';
-				fs.readFile(this.streamObj.keep, 'utf8', function(err, contents) {				
+				fs.readFile(streamObj.keep, 'utf8', function(err, contents) {				
 					let blocks = contents.split('#');
 
 				    for (var i = 0; i < blocks.length; i++) {

@@ -1,19 +1,27 @@
 const pathModule = require('path');
 const appRootPath = require('app-root-path');
-
+const EventEmitter = require('events');
 const Stream = require('./stream.js');
+
+class OnStreamVideoRelativePathUpdatedEvent extends EventEmitter {};
 
 class StreamInitializer {
     constructor(IPFSinstance) {               
         this.ipfs = IPFSinstance;
-        this.resetStream();      
+        //events
+        this.onStreamVideoRelativePathUpdatedEvent =  new OnStreamVideoRelativePathUpdatedEvent(); 
+        
+        //reset at start
+        this.resetStream();     
     }
 
     generateRandomStreamName() {
         const date = new Date();
         const correctTime = `${date.getHours()}h${date.getMinutes()}m${date.getSeconds()}s`;
         const videoDataFolderName = "streamFrom_";
-        return videoDataFolderName + correctTime;
+
+        const videoFolder = videoDataFolderName + correctTime;       
+        return videoFolder;
     };
 
     getModuleFolderPath(folderName) {
@@ -31,6 +39,10 @@ class StreamInitializer {
         const binFolder = this.getBinFolder();
         const streamName = this.generateRandomStreamName(); 
         console.log("Create new stream instance inside initializer..");
+
+        this.relativeVideoPath = '../' + videoFolderName + '/' + streamName;
+        this.onStreamVideoRelativePathUpdatedEvent.emit('onVideoFolderUpdated', this.relativeVideoPath);
+
         this.stream = new Stream(this.ipfs, streamName, videoFolderName, binFolder);
         if(this.lastCameraName) {
             this.stream.setCameraByName(this.lastCameraName);
@@ -42,9 +54,9 @@ class StreamInitializer {
         this.stream.createRooms();
     };  
 
-    startStream() {
+    startStream(playListReadyCallBack) {
         try {
-            this.stream.start();
+            this.stream.start(playListReadyCallBack);
         } catch(e) {
             console.log(`Unable to start stream! Coz \n ${e}`);
         }
@@ -60,7 +72,7 @@ class StreamInitializer {
         const currentStream = this.stream;
         if(!currentStream) {
             console.error("Cannot initialize cameras becouse stream is NULL!")
-            return;
+            return [];
         }
         let dataOfCamers = [];
         await currentStream.loadCamerasAsync().then((data) => {
@@ -80,6 +92,14 @@ class StreamInitializer {
 
     setCameraByName(camName) {
         this.stream.setCameraByName(camName);
+    }
+
+    onVideoPathUpdatedWithRelativePath = (callback) => {
+        callback(path);
+    }
+
+    getLastVideoRelativePath = () => {
+        return this.relativeVideoPath;
     }
 }
 

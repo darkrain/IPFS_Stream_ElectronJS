@@ -22,6 +22,7 @@ async function checkDataIsReadyAsync(ipfsInstance, electronWindow, streamInitial
 
     if(dataDependingFlags.isStreamerDataReady === false) {
         streamInfo = await streamInfoGenerator.getGeneratedStreamerInfoAsync(ipfsInstance);
+        
         console.log("Streamer info now: \n" + JSON.stringify(streamInfo));
 
         dataDependingFlags.isStreamerDataReady = streamInfo && streamInfo.length > 0;

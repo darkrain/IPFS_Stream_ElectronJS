@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded',function(){
 	const avaSelectBtn = document.getElementById('loadImgBtn');
 	docButtons.push({btnID: avaSelectBtn.id, isControl: false});
 
+	//disable control buttons by default
+	startStreamBtn.disabled = true;
+	stopStreamBtn.disabled = true;
+
 	const cameraSelection = document.getElementById('cameraSelection');
 
 	startStreamBtn.addEventListener('click', function () {
@@ -35,6 +39,9 @@ document.addEventListener('DOMContentLoaded',function(){
 	streamerNameInputText.addEventListener('change', () => {
 		ipc.send('streamerNameChanged', streamerNameInputText.value);
 	});
+
+	//at start send default value from inputText
+	ipc.send('streamerNameChanged', streamerNameInputText.value);
 });
 
 // ### Client event subscriber handlers ###
@@ -76,12 +83,23 @@ ipc.on('update-requirements', (event, args) => {
 	const listID = "#requirementList";
 	const reqList = args;
 	$(listID).empty();
+	let allIsReady = true;
 	for (let [key, value] of Object.entries(reqList)) {
 		$(listID).append(
-			$('<li>').append(`${key}: ${value}`)
-			);
+			$('<li>').append(`${key}: ${value}`));
+		if(value.includes('empty'))
+			allIsReady = false;
 	  }	  
+	if(allIsReady) {
+		$(listID).append("*** Stream is ready to use!!! ***");
+	}
 })
+
+ipc.on('video-playlist-path-changed', (event, args) => {
+	const relativePath = args + '/master.m3u8';
+	const videoPlayerSource = document.getElementById("video-player-source");
+	videoPlayerSource.src = relativePath;
+});
 
 // ### END Client event subscriber handlers ###
 function setActiveAllButtons(isControl, isActive) {
