@@ -1,6 +1,4 @@
-
-let camera = '/dev/video0';
-let fileName = 'master';
+const STREAM_PAGE_LINK = 'front/streamerPage/index.html'
 
 const IPFS = require('ipfs')
 const { app, BrowserWindow } = require('electron');
@@ -186,7 +184,7 @@ function createWindow () {
   })
 
   // and load the index.html of the app.
-  win.loadFile('front/index.html').then(() => {
+  win.loadFile(STREAM_PAGE_LINK).then(() => {
       onMainPageLoaded();
   });
 

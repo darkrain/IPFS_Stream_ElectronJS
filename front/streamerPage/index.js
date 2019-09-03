@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 
 // ### Client event subscriber handlers ###
-ipc.on('streamState', function (event, arg) {
+ipc.on('streamState', (event, arg) => {
 	let streamState = document.getElementById('streamState');
 	streamState.innerHTML = 'Stream ' + arg;
 
@@ -75,7 +75,7 @@ ipc.on('camera-list-update', (event, args) => {
 //When user selected file for ava
 ipc.on('selected-file', (event, args) => {
 	const fileName = args;
-	const filePathForHTML = `../user/${fileName}` + '?v' + Date.now();
+	const filePathForHTML = `../../user/${fileName}` + '?v' + Date.now();
 	const imgAvaElement = document.getElementById('streamerAvaImg');
 	imgAvaElement.src = filePathForHTML;
 });
