@@ -2,6 +2,10 @@
 const { app, BrowserWindow } = require('electron');
 const ipfsLoaderHelper = require('./helpers/ipfsLoaderHelper.js');
 const ipc = require('electron').ipcMain;
+
+//pages scripts
+const StreamPage = require('./pages/streamPage.js');
+
 //*** End Imports ***
 
 //*** Page links ***
@@ -13,17 +17,12 @@ const VIEWER_INFO_PAGE_LINK = 'front/viewPage/index.html';
 const VIEWER_INFO_PAGE = 'viewerInfoPage';
 const STREAMING_PAGE = 'streamingPage';
 
-const DEFAULT_PAGE = VIEWER_INFO_PAGE;
+const DEFAULT_PAGE = STREAMING_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;
 let IpfsNodeID;
 let currentWindow;
-
-
-//*** Main initializing calls
-InitializeApp();
-//*** END intiializing calls
 
 function InitializeApp() {
     //firstable initialize IPFS instance
@@ -55,6 +54,9 @@ function loadDefaultPage() {
 }
 
 function loadPageByName(pageName)  {
+
+    console.log("Start loading page: " + pageName + "....");
+
     switch(pageName) {       
         case VIEWER_INFO_PAGE: {
             createWindowAsync(VIEWER_INFO_PAGE_LINK).then((win) => {
@@ -64,7 +66,7 @@ function loadPageByName(pageName)  {
         }
         case STREAMING_PAGE: {
             createWindowAsync(STREAM_PAGE_LINK).then((win) => {
-
+                let streamPage = new StreamPage(IpfsInstance, IpfsNodeID, ipc, win);        
             });
             break;
         }
@@ -85,6 +87,7 @@ function createWindowAsync(linkToPage) {
         
         // and load the index.html of the app.
         win.loadFile(linkToPage).then(() => {
+            console.log("INITIALIZE WINDOW BY PAGE: " + linkToPage);
             resolve(win);
         }).catch((err) => {
             rejected(err);
@@ -103,7 +106,7 @@ function createWindowAsync(linkToPage) {
     });
 }
   
-app.on('ready', loadDefaultPage);
+app.on('ready', InitializeApp);
   
 // Выходим, когда все окна будут закрыты.
 app.on('window-all-closed', () => {
@@ -117,9 +120,9 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
      // На MacOS обычно пересоздают окно в приложении,
      // после того, как на иконку в доке нажали и других открытых окон нету.
-    if (currentWindow === null) {
-        createWindowAsync()
-    }
+    //if (currentWindow === null) {
+        //createWindowAsync()
+    //}
   });
   
 //Handle uncaught exceptions
