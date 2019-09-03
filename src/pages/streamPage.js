@@ -4,13 +4,13 @@ const IPFS = require('ipfs')
 const { app, BrowserWindow } = require('electron');
 const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
-const StreamInitializer = require('./stream/streamInitializer.js');
+const StreamInitializer = require('../stream/streamInitializer.js');
 const pathModule = require('path');
 
 //External helpers
-const imgHelper = require('./helpers/imageLoaderHelper.js');
-const dataReadyHelper = require('./helpers/dataReadyCheckHelper.js');
-const StreamInfoGenerator = require('./data/StreamerInfoGenerator.js');
+const imgHelper = require('../helpers/imageLoaderHelper.js');
+const dataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
+const StreamInfoGenerator = require('../data/StreamerInfoGenerator.js');
 //Streamer data fields
 let streamerName;
 let ipfsNodeID;
