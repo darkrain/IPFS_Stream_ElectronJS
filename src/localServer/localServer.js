@@ -19,12 +19,6 @@ function startLocalServer(streamPath) {
             const date = new Date();
             const correctTime = `${date.getHours()}h:${date.getMinutes()}m:${date.getSeconds()}s`;
             console.log(`File ${fileName} was requested at ${correctTime}`);
-
-            if(extension == '.m3u8') {           
-                //const filePath = path.join(streamPath, fileName);
-                //console.log(`Try to read file at path ${filePath}`);
-                //showFileInfo(filePath);
-            }
         }   
         next();
     });

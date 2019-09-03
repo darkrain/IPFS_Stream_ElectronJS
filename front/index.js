@@ -47,7 +47,14 @@ document.addEventListener('DOMContentLoaded',function(){
 // ### Client event subscriber handlers ###
 ipc.on('streamState', function (event, arg) {
 	let streamState = document.getElementById('streamState');
-	streamState.innerHTML = 'Stream ' + arg
+	streamState.innerHTML = 'Stream ' + arg;
+
+	//to avoid errors disable stop btn when start
+	const isStarted = arg === 'started';
+	const stopStreamBtn = document.getElementById('stopStream');
+	const startStreamBtn = document.getElementById('startStream');
+	stopStreamBtn.disabled = !isStarted;
+	startStreamBtn.disabled = isStarted;
 })
 
 ipc.on('camera-list-update', (event, args) => {
@@ -103,9 +110,9 @@ ipc.on('video-playlist-path-changed', (event, args) => {
 		var hls = new Hls();
 		hls.loadSource(httpPath);
 		hls.attachMedia(video);
-		hls.on(Hls.Events.MANIFEST_PARSED,function() {
-		video.play();
-	});
+		hls.on(Hls.Events.MANIFEST_PARSED, () => {
+			video.play();
+		});
 	}
 });
 
@@ -113,7 +120,7 @@ ipc.on('video-playlist-path-changed', (event, args) => {
 function setActiveAllButtons(isControl, isActive) {
 	for(let i = 0; i < docButtons.length; i++) {
 		let docBtn = docButtons[i];
-		if(docBtn.isControl == isControl) {
+		if(docBtn.isControl === isControl) {
 			document.getElementById(docBtn.btnID).disabled = !isActive;
 		}		
 	}
