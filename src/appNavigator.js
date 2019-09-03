@@ -20,6 +20,11 @@ let IpfsInstance;
 let IpfsNodeID;
 let currentWindow;
 
+
+//*** Main initializing calls
+InitializeApp();
+//*** END intiializing calls
+
 function InitializeApp() {
     //firstable initialize IPFS instance
     ipfsLoaderHelper.initializeIPFS_Async()
@@ -107,7 +112,7 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
       app.quit()
     }
-  })
+  });
   
 app.on('activate', () => {
      // На MacOS обычно пересоздают окно в приложении,
@@ -115,7 +120,7 @@ app.on('activate', () => {
     if (currentWindow === null) {
         createWindowAsync()
     }
-  })
+  });
   
 //Handle uncaught exceptions
 process

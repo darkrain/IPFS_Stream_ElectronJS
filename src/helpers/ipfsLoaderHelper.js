@@ -17,13 +17,13 @@ function initializeIPFS_Async() {
         });
         
                   
-        ipfs.on('error', (err) => {
+        ipfsInstance.on('error', (err) => {
             console.log(err);
             rejected(err);
         });
         
         
-        ipfs.once('ready', () => ipfs.id((err, peerInfo) => {
+        ipfsInstance.once('ready', () => ipfsInstance.id((err, peerInfo) => {
             if (err) { throw err }
         
           console.log('IPFS node started and has ID ' + peerInfo.id)
