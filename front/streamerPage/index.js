@@ -2,7 +2,7 @@ const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
 let docButtons = [];
-
+let i = 0;
 document.addEventListener('DOMContentLoaded',function(){
 	const startStreamBtn = document.getElementById('startStream');
 	docButtons.push({btnID: startStreamBtn.id, isControl: true});

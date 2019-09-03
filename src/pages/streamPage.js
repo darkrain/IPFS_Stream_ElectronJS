@@ -1,8 +1,3 @@
-const STREAM_PAGE_LINK = 'front/streamerPage/index.html'
-
-const IPFS = require('ipfs')
-const { app, BrowserWindow } = require('electron');
-const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
 const StreamInitializer = require('../stream/streamInitializer.js');
 const pathModule = require('path');
@@ -11,220 +6,145 @@ const pathModule = require('path');
 const imgHelper = require('../helpers/imageLoaderHelper.js');
 const dataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
 const StreamInfoGenerator = require('../data/StreamerInfoGenerator.js');
-//Streamer data fields
-let streamerName;
-let ipfsNodeID;
-let streamerImgPath;
+const linkCheckingHelper = require('../helpers/linksCheckHelper.js');
 
-const ipfs = new IPFS({
-	repo: 'ipfs/pubsub-demo/borgStream',
-	EXPERIMENTAL: {
-	  pubsub: true
-	},
-	config: {
-	  Addresses: {
-		Swarm: [
-		  "/ip4/0.0.0.0/tcp/5001",
-		]
-	  }
-	},
-})
+class StreamPage {
+  constructor(ipfs, ipfsNodeID, electronIPC, pageWindow) {
+      linkCheckingHelper('Stream page', [ipfs, ipfsNodeID, electronIPC]);
+      //initialize class mebmers:
+      this.ipfs = ipfs;
+      this.ipfsNodeID = ipfsNodeID;
+      this.electronIPC = electronIPC;
+      this.pageWindow = pageWindow;
 
-ipfs.on('ready', () => {
-	ipfs.id((err, idInfo) => {	
-		if (err) {
-			return console.log(err)
-		} else {
-      console.log("YOUR NODE ID : \n" + idInfo.id);
-    }
-	})
-
-})
-	
-
-ipfs.on('error', (err) => {
-	return console.log(err)
-})
-
-
-ipfs.once('ready', () => ipfs.id((err, peerInfo) => {
-	if (err) { throw err }
-
-  console.log('IPFS node started and has ID ' + peerInfo.id)
-  onIpfsNodeIDGetted(peerInfo.id);
-}))
-
-
-//Initializers
-let streamInitializer = new StreamInitializer(ipfs);
-let streamInfoGenerator;
-
-//### IPC calls ###
-ipc.on('update-stream-state', function (event, arg) {
-  if( arg == 'start' ){  
-  	streamInitializer.startStream(onPlaylistRelativePathUpdated);
-  	win.webContents.send('streamState', 'started')
+      this.streamInitializer = new StreamInitializer(this.ipfs); 
+      this.subscribeToIpcEvents(this.electronIPC);      
+      
+      //refresh firstable
+      this.onStreamerDataUpdated();
   }
 
-  if( arg == 'stop' ){  
-    streamInitializer.stopStream();
-    streamInitializer.resetStream();
-  	win.webContents.send('streamState', 'stoped')
-  }
-})
+  subscribeToIpcEvents = (ipc) => {
+    let streamPageObj = this;
+    let win = this.pageWindow;
+    //### IPC calls ###
+    ipc.on('update-stream-state', function (event, arg) {
+      if( arg == 'start' ){  
+        streamPageObj.streamInitializer.startStream(streamPageObj.onPlaylistRelativePathUpdated);
+        win.webContents.send('streamState', 'started')
+      }
 
-ipc.on('camera-changed', (event, args) => {
-  const camText = args;
-  streamInitializer.setCameraByName(camText);
-});
-
-ipc.on('open-file-dialog', (event, args) => { 
-  dialog.showOpenDialog({
-    properties: ['openFile'],
-    filters: [
-      { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
-    ]
-  }).then(result => { 
-    console.log(result.canceled);
-    console.log(result.filePaths);
-    const file = result.filePaths[0];
-      if(file) {
-        console.log("Try to openFile: " + file.toString());
-        imgHelper.copyImageToApplicationFolerAsync(file).then((copiedImgPath) => {
-          const fileName = pathModule.basename(copiedImgPath); //to send in client script without path
-          event.sender.send('selected-file', fileName);
-          onAvaImageUploaded(copiedImgPath);
-      })};
+      if( arg == 'stop' ){  
+        streamPageObj.streamInitializer.stopStream();
+        streamPageObj.streamInitializer.resetStream();
+        win.webContents.send('streamState', 'stoped')
+      }
     })
-    .catch(err => {
-      console.err(err);
+
+    ipc.on('camera-changed', (event, args) => {
+      const camText = args;
+      streamPageObj.streamInitializer.setCameraByName(camText);
     });
-});
 
-ipc.on('streamerNameChanged', (event, args) => {
-    onStreamerNameChanged(args);
-});
-//### END IPC calls ###
+    ipc.on('open-file-dialog', (event, args) => { 
+      dialog.showOpenDialog({
+        properties: ['openFile'],
+        filters: [
+          { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+        ]
+      }).then(result => { 
+        console.log(result.canceled);
+        console.log(result.filePaths);
+        const file = result.filePaths[0];
+          if(file) {
+            console.log("Try to openFile: " + file.toString());
+            imgHelper.copyImageToApplicationFolerAsync(file).then((copiedImgPath) => {
+              const fileName = pathModule.basename(copiedImgPath); //to send in client script without path
+              event.sender.send('selected-file', fileName);
+              streamPageObj.onAvaImageUploaded(copiedImgPath);
+          })};
+        })
+        .catch(err => {
+          console.err(err);
+        });
+    });
 
-//### Anothers event calls
-//### END Anothers event calls
+    ipc.on('streamerNameChanged', (event, args) => {
+      streamPageObj.onStreamerNameChanged(args);
+    });   
+    //### END IPC calls ###
+  } 
 
-//### Callbacks for Events's ###
-function onAvaImageUploaded(filePath) {
-    streamerImgPath = filePath;
-    onStreamerDataUpdated();
-}
+  //### Callbacks for Events's ###
+  onAvaImageUploaded = (filePath) => {
+    this.streamerImgPath = filePath;
+    this.onStreamerDataUpdated();
+  }
 
-function onIpfsNodeIDGetted(nodeID) {
-    ipfsNodeID = nodeID;
-    onStreamerDataUpdated();
-}
+  onIpfsNodeIDGetted = (nodeID) => {
+    this.ipfsNodeID = nodeID;
+    this.onStreamerDataUpdated();
+  }
 
-function onStreamerNameChanged(name) {
-    streamerName = name;
-    onStreamerDataUpdated();
-}
+  onStreamerNameChanged = (name) => {
+    this.streamerName = name;
+    this.onStreamerDataUpdated();
+  }
 
-function onStreamerDataUpdated() {
-    if(!ipfsNodeID)
-        ipfsNodeID = ipfs.id;
-    console.log("Try update streamer data by values: " + JSON.stringify([streamerName, streamerImgPath, ipfsNodeID]));
-    if(streamerName && streamerImgPath && ipfsNodeID) {
-        streamInfoGenerator = new StreamInfoGenerator(ipfsNodeID, streamerName, streamerImgPath);       
-    }
-    checkAllData();
-}
+  onMainPageLoaded = () => {
+    console.log("MAIN PAGE LOADED!");
+    //checkData is ready first run
+    this.checkAllData();
+  }
 
-function onMainPageLoaded() {
-  console.log("MAIN PAGE LOADED!");
-
-  //checkData is ready first run
-  checkAllData();
-}
-
-function onPlaylistRelativePathUpdated() {
-    const videoPath = streamInitializer.getLastFullVideoPath(); 
+  onPlaylistRelativePathUpdated = () => {
+    const videoPath = this.streamInitializer.getLastFullVideoPath(); 
     console.log("Relative path for videos updated!: " + videoPath);
-    win.webContents.send('video-playlist-path-changed', videoPath);
-}
+    this.pageWindow.webContents.send('video-playlist-path-changed', videoPath);
+  }
+  //### END Callbacks for Event's ###
 
-//### END Callbacks for Event's ###
-
-//### Checking functions
-function checkAllData(){
-  dataReadyHelper.checkDataIsReadyAsync(ipfs, win, streamInitializer, streamInfoGenerator).then((isReady) => {
-    console.log("Data checking... result: " + isReady);
-    win.webContents.send('all-data-ready', isReady);
-
-    //update front page by streamer info array
-    const streamerNameInfo = streamerName ? streamerName : "empty";
-    const streamerImgPathInfo = streamerImgPath ? streamerImgPath : "empty";
-    const ipfsNodeIdInfo = ipfsNodeID ? ipfsNodeID : "empty";
-    const streamInfoArray = {
-      "StreamerName": streamerNameInfo,
-      "AvatarHash": streamerImgPathInfo,
-      "IPFS_NodeID": ipfsNodeIdInfo
-    };
-
-    win.webContents.send('update-requirements', streamInfoArray);
-  });
-}
-//### End Checking functions
-
-let win
-function createWindow () {
-  // Создаём окно браузера.
-  win = new BrowserWindow({
-    width: 1280,
-    height: 768,
-    frame: false,
-    webPreferences: {
-      nodeIntegration: true
+  //### Checking functions
+  onStreamerDataUpdated = () => {
+    if(!this.ipfsNodeID)
+      this.ipfsNodeID = this.ipfs.id;
+    console.log("Try update streamer data by values: " + JSON.stringify([
+      this.streamerName,
+      this.streamerImgPath, 
+      this.ipfsNodeID
+    ]));
+    if(this.streamerName && this.streamerImgPath && this.ipfsNodeID) {
+        this.streamInfoGenerator = new StreamInfoGenerator(this.ipfsNodeID,
+           this.streamerName,
+            this.streamerImgPath);       
     }
-  })
+    this.checkAllData();
+  }
 
-  // and load the index.html of the app.
-  win.loadFile(STREAM_PAGE_LINK).then(() => {
-      onMainPageLoaded();
-  });
+  checkAllData = () => {
+    let win = this.pageWindow;
+    dataReadyHelper.checkDataIsReadyAsync(
+      this.ipfs,
+       this.pageWindow,
+        this.streamInitializer,
+         this.streamInfoGenerator
+         ).then((isReady) => {
+            console.log("Data checking... result: " + isReady);
+            win.webContents.send('all-data-ready', isReady);
 
-  // Отображаем средства разработчика.
-  win.webContents.openDevTools()
-
-  // Будет вызвано, когда окно будет закрыто.
-  win.on('closed', () => {
-    // Разбирает объект окна, обычно вы можете хранить окна     
-    // в массиве, если ваше приложение поддерживает несколько окон в это время,
-    // тогда вы должны удалить соответствующий элемент.
-    win = null
-  }) 
+            //update front page by streamer info array
+            const streamerNameInfo = this.streamerName ? this.streamerName : "empty";
+            const streamerImgPathInfo = this.streamerImgPath ? this.streamerImgPath : "empty";
+            const ipfsNodeIdInfo = this.ipfsNodeID ? this.ipfsNodeID : "empty";
+            const streamInfoArray = {
+              "StreamerName": streamerNameInfo,
+              "AvatarHash": streamerImgPathInfo,
+              "IPFS_NodeID": ipfsNodeIdInfo
+            };
+            win.webContents.send('update-requirements', streamInfoArray);
+    });
+  }
+  //### End Checking functions
 }
 
-app.on('ready', createWindow)
-
-// Выходим, когда все окна будут закрыты.
-app.on('window-all-closed', () => {
-  // Для приложений и строки меню в macOS является обычным делом оставаться
-  // активными до тех пор, пока пользователь не выйдет окончательно используя Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
-
-app.on('activate', () => {
-   // На MacOS обычно пересоздают окно в приложении,
-   // после того, как на иконку в доке нажали и других открытых окон нету.
-  if (win === null) {
-    createWindow()
-  }
-})
-
-//Handle uncaught exceptions
-process
-  .on('unhandledRejection', (reason, p) => {
-    console.error(reason, 'Unhandled Rejection at Promise', p);
-  })
-  .on('uncaughtException', err => {
-    console.error(err, 'Uncaught Exception thrown');
-    process.exit(1);
-  });
+module.exports = StreamPage;

@@ -2,28 +2,27 @@
 const { app, BrowserWindow } = require('electron');
 const ipfsLoaderHelper = require('./helpers/ipfsLoaderHelper.js');
 const ipc = require('electron').ipcMain;
+
+//pages scripts
+const StreamPage = require('./pages/streamPage.js');
+const UserInfoPage = require('./pages/userInfoPage.js');
 //*** End Imports ***
 
 //*** Page links ***
+const USER_INFO_PAGE_LINK = 'front/userInfoPage/index.html';
 const STREAM_PAGE_LINK = 'front/streamerPage/index.html';
-const VIEWER_INFO_PAGE_LINK = 'front/viewPage/index.html';
 //*** End page links 
 
 //*** Named constants ***
-const VIEWER_INFO_PAGE = 'viewerInfoPage';
+const USER_INFO_PAGE = 'userInfoPage';
 const STREAMING_PAGE = 'streamingPage';
 
-const DEFAULT_PAGE = VIEWER_INFO_PAGE;
+const DEFAULT_PAGE = USER_INFO_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;
 let IpfsNodeID;
 let currentWindow;
-
-
-//*** Main initializing calls
-InitializeApp();
-//*** END intiializing calls
 
 function InitializeApp() {
     //firstable initialize IPFS instance
@@ -55,16 +54,19 @@ function loadDefaultPage() {
 }
 
 function loadPageByName(pageName)  {
-    switch(pageName) {       
-        case VIEWER_INFO_PAGE: {
-            createWindowAsync(VIEWER_INFO_PAGE_LINK).then((win) => {
 
+    console.log("Start loading page: " + pageName + "....");
+
+    switch(pageName) {       
+        case USER_INFO_PAGE: {
+            createWindowAsync(USER_INFO_PAGE_LINK).then((win) => {
+                let userInfoPage = new UserInfoPage();
             });
             break;
         }
         case STREAMING_PAGE: {
             createWindowAsync(STREAM_PAGE_LINK).then((win) => {
-
+                let streamPage = new StreamPage(IpfsInstance, IpfsNodeID, ipc, win);        
             });
             break;
         }
@@ -74,36 +76,39 @@ function loadPageByName(pageName)  {
 function createWindowAsync(linkToPage) {
     return new Promise((resolve, rejected) => {
         // Создаём окно браузера.
-        let win = new BrowserWindow({
-            width: 1280,
-            height: 768,
-            frame: false,
-            webPreferences: {
-            nodeIntegration: true
-            }
-        })
-        
+        if(!currentWindow) {
+            currentWindow = new BrowserWindow({
+                width: 1280,
+                height: 768,
+                frame: false,
+                webPreferences: {
+                nodeIntegration: true
+                }
+            });
+        }
+               
         // and load the index.html of the app.
-        win.loadFile(linkToPage).then(() => {
-            resolve(win);
+        currentWindow.loadFile(linkToPage).then(() => {
+            console.log("INITIALIZE WINDOW BY PAGE: " + linkToPage);
+            resolve(currentWindow);
         }).catch((err) => {
             rejected(err);
         });
         
         // Отображаем средства разработчика.
-        win.webContents.openDevTools()
+        currentWindow.webContents.openDevTools()
         
         // Будет вызвано, когда окно будет закрыто.
-        win.on('closed', () => {
+        currentWindow.on('closed', () => {
             // Разбирает объект окна, обычно вы можете хранить окна     
             // в массиве, если ваше приложение поддерживает несколько окон в это время,
             // тогда вы должны удалить соответствующий элемент.
-            win = null
-        })
+            currentWindow = null
+        })        
     });
 }
   
-app.on('ready', loadDefaultPage);
+app.on('ready', InitializeApp);
   
 // Выходим, когда все окна будут закрыты.
 app.on('window-all-closed', () => {
@@ -117,10 +122,16 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
      // На MacOS обычно пересоздают окно в приложении,
      // после того, как на иконку в доке нажали и других открытых окон нету.
-    if (currentWindow === null) {
-        createWindowAsync()
-    }
+    //if (currentWindow === null) {
+        //createWindowAsync()
+    //}
   });
+
+
+//nav functions
+ipc.on('goto-page', (event, args) => {
+    loadPageByName(args);
+});
   
 //Handle uncaught exceptions
 process

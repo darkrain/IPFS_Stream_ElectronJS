@@ -124,14 +124,11 @@ class Stream {
 	createRooms(){
 		const streamObj = this.getInstance();
 		let rooms = ['borgStream',this.nameOfStreem];
-
-		streamObj.ipfs.once('ready', () => this.ipfs.id((err, peerInfo) => {
-			for (var i = 0; i < rooms.length; i++) {
-				let nameRoom = rooms[i];
-				streamObj.rooms[nameRoom] = Room(streamObj.ipfs, nameRoom);
-			}
-		}))
-
+		
+		for (var i = 0; i < rooms.length; i++) {
+			let nameRoom = rooms[i];
+			streamObj.rooms[nameRoom] = Room(streamObj.ipfs, nameRoom);
+		}	
 	}
 
 

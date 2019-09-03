@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>BorgStream</title>
+        <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> <!--HLS-->
+        <script src="../lib/jquery-3.4.1.js"> </script>
+        <script src="index.js"> </script> 
+        <script>if (window.module) module = window.module;</script>
+        <link rel="stylesheet" type="text/css" href="index.css" />
+    </head>
+    <body>
+        <div>
+            <h1>STREAMER INFO PAGE!</h1>
+        </div>
+        <div>
+            <p>Your ava</p>
+            <div>
+                <img src="defaultUserAva.jpg" width="200px" height="275px">
+            </div>
+            <button id="chooiseUserAvaBtn">Open file</button>
+        </div>
+        <div>
+            <p>Your name</p>
+            <input id="userName" type="text" placeholder="Pass your name" value="Volodya">
+        </div>
+        <div>
+            <p>Your nickname</p>
+            <input id="userNickName" type="text" placeholder="Pass your nick" value="AR_BABY">
+        </div>
+        <div>
+            <button id="createAccountBtn">Create Account!</button>
+        </div>
+    </body>
+</html>
