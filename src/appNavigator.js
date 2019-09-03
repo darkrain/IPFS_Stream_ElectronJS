@@ -60,7 +60,7 @@ function loadPageByName(pageName)  {
     switch(pageName) {       
         case USER_INFO_PAGE: {
             createWindowAsync(USER_INFO_PAGE_LINK).then((win) => {
-
+                let userInfoPage = new UserInfoPage();
             });
             break;
         }
