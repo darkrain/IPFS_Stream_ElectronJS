@@ -5,19 +5,19 @@ const ipc = require('electron').ipcMain;
 
 //pages scripts
 const StreamPage = require('./pages/streamPage.js');
-
+const UserInfoPage = require('./pages/userInfoPage.js');
 //*** End Imports ***
 
 //*** Page links ***
+const USER_INFO_PAGE_LINK = 'front/userInfoPage/index.html';
 const STREAM_PAGE_LINK = 'front/streamerPage/index.html';
-const VIEWER_INFO_PAGE_LINK = 'front/viewPage/index.html';
 //*** End page links 
 
 //*** Named constants ***
-const VIEWER_INFO_PAGE = 'viewerInfoPage';
+const USER_INFO_PAGE = 'userInfoPage';
 const STREAMING_PAGE = 'streamingPage';
 
-const DEFAULT_PAGE = STREAMING_PAGE;
+const DEFAULT_PAGE = USER_INFO_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;
@@ -58,8 +58,8 @@ function loadPageByName(pageName)  {
     console.log("Start loading page: " + pageName + "....");
 
     switch(pageName) {       
-        case VIEWER_INFO_PAGE: {
-            createWindowAsync(VIEWER_INFO_PAGE_LINK).then((win) => {
+        case USER_INFO_PAGE: {
+            createWindowAsync(USER_INFO_PAGE_LINK).then((win) => {
 
             });
             break;
@@ -76,33 +76,35 @@ function loadPageByName(pageName)  {
 function createWindowAsync(linkToPage) {
     return new Promise((resolve, rejected) => {
         // Создаём окно браузера.
-        let win = new BrowserWindow({
-            width: 1280,
-            height: 768,
-            frame: false,
-            webPreferences: {
-            nodeIntegration: true
-            }
-        })
-        
+        if(!currentWindow) {
+            currentWindow = new BrowserWindow({
+                width: 1280,
+                height: 768,
+                frame: false,
+                webPreferences: {
+                nodeIntegration: true
+                }
+            });
+        }
+               
         // and load the index.html of the app.
-        win.loadFile(linkToPage).then(() => {
+        currentWindow.loadFile(linkToPage).then(() => {
             console.log("INITIALIZE WINDOW BY PAGE: " + linkToPage);
-            resolve(win);
+            resolve(currentWindow);
         }).catch((err) => {
             rejected(err);
         });
         
         // Отображаем средства разработчика.
-        win.webContents.openDevTools()
+        currentWindow.webContents.openDevTools()
         
         // Будет вызвано, когда окно будет закрыто.
-        win.on('closed', () => {
+        currentWindow.on('closed', () => {
             // Разбирает объект окна, обычно вы можете хранить окна     
             // в массиве, если ваше приложение поддерживает несколько окон в это время,
             // тогда вы должны удалить соответствующий элемент.
-            win = null
-        })
+            currentWindow = null
+        })        
     });
 }
   
@@ -124,6 +126,12 @@ app.on('activate', () => {
         //createWindowAsync()
     //}
   });
+
+
+//nav functions
+ipc.on('goto-page', (event, args) => {
+    loadPageByName(args);
+});
   
 //Handle uncaught exceptions
 process

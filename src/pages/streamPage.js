@@ -102,7 +102,6 @@ class StreamPage {
     console.log("Relative path for videos updated!: " + videoPath);
     this.pageWindow.webContents.send('video-playlist-path-changed', videoPath);
   }
-
   //### END Callbacks for Event's ###
 
   //### Checking functions
