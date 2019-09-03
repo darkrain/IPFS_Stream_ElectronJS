@@ -31,11 +31,11 @@ const ipfs = new IPFS({
 })
 
 ipfs.on('ready', () => {
-	ipfs.id((err, id) => {	
+	ipfs.id((err, idInfo) => {	
 		if (err) {
 			return console.log(err)
 		} else {
-      console.log("YOUR NODE ID : " + id);
+      console.log("YOUR NODE ID : \n" + idInfo.id);
     }
 	})
 

@@ -2,7 +2,7 @@
   "name": "vstreameripfs",
   "version": "1.0.0",
   "description": "",
-  "main": "src/pages/streamPage.js", 
+  "main": "src/appNavigator.js", 
   "scripts": {
     "start": "electron ."
   },
