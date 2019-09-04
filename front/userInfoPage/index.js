@@ -1,11 +1,15 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
-const STREAMING_PAGE = 'streamingPage';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const goToPageBtn = document.getElementById('goToPageBtn');
-    goToPageBtn.addEventListener('click', () => {
-        ipc.send('goto-page', STREAMING_PAGE);
+    const chooiseAvaBTN = document.getElementById('chooiseUserAvaBtn');
+    chooiseAvaBTN.addEventListener('click', () => {
+        ipc.send('open-user-ava');
     });
+});
+
+ipc.on('selected-userava-file', (event, args) => {
+    const avaImg = document.getElementById('userAvaImg');
+    avaImg.src = './img/' + args + '?v' + Date.now();;
 });

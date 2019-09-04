@@ -3,11 +3,16 @@ const fs = require('fs');
 const appRootPath = require('app-root-path');
 
 const USER_FOLDER = 'user';
-const AVA_FILE_NAME = 'streamerAva';
-const USER_PATH = pathModule.join(appRootPath.toString(), USER_FOLDER); 
+let AVA_FILE_NAME = 'streamerAva';
+let USER_PATH = pathModule.join(appRootPath.toString(), USER_FOLDER); 
 
-async function copyImageToApplicationFolerAsync(sourceImgPath) {
+async function copyImageToApplicationFolerAsync(sourceImgPath, avaFileName, userPath) {
 
+    if(avaFileName)
+        AVA_FILE_NAME = avaFileName;
+    if(userPath)
+        USER_PATH = userPath;
+        
     //firstable clear another avaImages if it exists..
     await removeImagesIfFileExistsAsync();
 
