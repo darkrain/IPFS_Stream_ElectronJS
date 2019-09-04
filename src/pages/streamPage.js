@@ -8,6 +8,8 @@ const dataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
 const StreamInfoGenerator = require('../data/StreamerInfoGenerator.js');
 const linkCheckingHelper = require('../helpers/linksCheckHelper.js');
 
+let streamerInfo = [];
+
 class StreamPage {
   constructor(ipfs, ipfsNodeID, electronIPC, pageWindow) {
       linkCheckingHelper('Stream page', [ipfs, ipfsNodeID, electronIPC]);
@@ -30,7 +32,7 @@ class StreamPage {
     //### IPC calls ###
     ipc.on('update-stream-state', function (event, arg) {
       if( arg == 'start' ){  
-        streamPageObj.streamInitializer.startStream(streamPageObj.onPlaylistRelativePathUpdated);
+        streamPageObj.streamInitializer.startStream(streamPageObj.onPlaylistRelativePathUpdated, streamerInfo);
         win.webContents.send('streamState', 'started')
       }
 
@@ -123,25 +125,31 @@ class StreamPage {
 
   checkAllData = () => {
     let win = this.pageWindow;
+
+    //update front page by streamer info array
+    const streamerNameInfo = this.streamerName ? this.streamerName : "empty";
+    const streamerImgPathInfo = this.streamerImgPath ? this.streamerImgPath : "empty";
+    const ipfsNodeIdInfo = this.ipfsNodeID ? this.ipfsNodeID : "empty";
+
     dataReadyHelper.checkDataIsReadyAsync(
       this.ipfs,
        this.pageWindow,
         this.streamInitializer,
          this.streamInfoGenerator
-         ).then((isReady) => {
-            console.log("Data checking... result: " + isReady);
-            win.webContents.send('all-data-ready', isReady);
-
-            //update front page by streamer info array
-            const streamerNameInfo = this.streamerName ? this.streamerName : "empty";
-            const streamerImgPathInfo = this.streamerImgPath ? this.streamerImgPath : "empty";
-            const ipfsNodeIdInfo = this.ipfsNodeID ? this.ipfsNodeID : "empty";
+         ).then((readyData) => {
+            console.log("Data checking... result: " + readyData.isDataReady);
+            win.webContents.send('all-data-ready', readyData.isDataReady);        
             const streamInfoArray = {
               "StreamerName": streamerNameInfo,
               "AvatarHash": streamerImgPathInfo,
               "IPFS_NodeID": ipfsNodeIdInfo
             };
             win.webContents.send('update-requirements', streamInfoArray);
+
+            if(readyData.isDataReady) {
+                streamerInfo = readyData.streamInfo;    
+                console.log("Streamer info updated! : \n" + JSON.stringify(streamerInfo));
+            }
     });
   }
   //### End Checking functions

@@ -1,5 +1,3 @@
-const streamerInfoGenerator = require('../data/StreamerInfoGenerator.js');
-
 const dataDependingFlags = {
     isCameraReady: false,
     isStreamerDataReady: false   
@@ -25,11 +23,14 @@ async function checkDataIsReadyAsync(ipfsInstance, electronWindow, streamInitial
         
         console.log("Streamer info now: \n" + JSON.stringify(streamInfo));
 
-        dataDependingFlags.isStreamerDataReady = streamInfo && streamInfo.length > 0;
+        dataDependingFlags.isStreamerDataReady = streamInfo != null;
     }
 
     //TODO: Complete data!   
-    return isAllDataReady();
+    return {
+        "isDataReady" : isAllDataReady(),
+        "streamInfo" : streamInfo
+    }
 }
 
 function isAllDataReady() {

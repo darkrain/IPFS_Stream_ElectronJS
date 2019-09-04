@@ -11,7 +11,7 @@ class StreamerInfoGenerator {
         const nameData = this.nodeID + this.streamerName;
         this.streamDataHash = crypto.createHash('md5').update(nameData).digest("hex");
         const streamerImgPath = this.streamerImgPath;
-        let streamerInfo = [];
+        let streamerInfo = {};
         const AVA_IMG_NOHASH_ERR_KEY = "NOTHING";
         let avaHashInfo = await new Promise((resolve, rejected) => {
             //upload image
@@ -27,12 +27,13 @@ class StreamerInfoGenerator {
         }); 
         if(!avaHashInfo || avaHashInfo === AVA_IMG_NOHASH_ERR_KEY) {
             console.error("AVA HASH INFO IS " + AVA_IMG_NOHASH_ERR_KEY + "! Try again.");
-            return streamerInfo;
+            return null;
         }
         const uploadedAvaHash = avaHashInfo[0].hash;
-        streamerInfo.push({nameOfStream: this.streamerName});
-        streamerInfo.push({hashOfStreamer: this.streamDataHash});
-        streamerInfo.push({imgAvaHash: uploadedAvaHash});
+
+        streamerInfo.nameOfStream = this.streamerName;
+        streamerInfo.hashOfStreamer = this.streamDataHash;
+        streamerInfo.imgAvaHash = uploadedAvaHash;
 
         return streamerInfo;
     }

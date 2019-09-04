@@ -10,6 +10,7 @@ const ls = require('ls');
 const fsPath = require('path');
 const cameraHelper = require('../helpers/ffmpegCameraHelper');
 const IpfsStreamUploader = require('../helpers/ipfsStreamUploader.js');
+const StreamRoomBroadcaster = require('../stream/streamRoomBroadcaster.js');
 
 class Stream {
 
@@ -22,7 +23,6 @@ class Stream {
 		this.headers = '#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:8\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:EVENT\n';
 		this.blocks = [];
 		this.rooms = {};
-
 		this.path = path;
 		this.keepPath = this.path+'/'+nameOfStreem+'/';
 		this.nameOfStreem = nameOfStreem;
@@ -40,7 +40,7 @@ class Stream {
 			fs.mkdirSync(this.keepPath);
 		    
 		
-		this.createRooms();
+		this.createRooms();	
 	}
 
 	getInstance = () => { 
@@ -156,13 +156,16 @@ class Stream {
 	}
 
 
-	start(onPlaylistReadyCallback) {
+	start(onPlaylistReadyCallback, streamerInfo) {
 		if(!this.camera) {
 			throw 'Camera is not set';
 		}
 		this.isPlalistInitialized = false;		
 		this.getInstance().ffmpeg(false);
-		this.getInstance().streamWatcher(onPlaylistReadyCallback)
+		this.getInstance().streamWatcher(onPlaylistReadyCallback);
+
+		this.roomBroadcaster = new StreamRoomBroadcaster(this.ipfs, streamerInfo);
+		this.roomBroadcaster.startBroadcastAboutStream();
 		console.log("*** STREAM STARTED ****");
 	}
 
@@ -211,12 +214,12 @@ class Stream {
 									//create block in DAG
 									streamObj.ipfsStreamUploader.addChunkToIpfsDAGAsync(chunkFileName,chunkExtInf,chunkHash)
 										.then((data) => {
-											console.log("DATA RETURNED! " + JSON.stringify(data));
+
 										})	
 										.catch((err) => {
 											console.error("ERROR! In upload stream blocks!" + err)
 										});
-								})
+								});
 							}
 						}		
 							

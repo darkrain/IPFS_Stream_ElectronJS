@@ -55,10 +55,10 @@ class StreamInitializer {
         this.stream.createRooms();      
     };  
 
-    startStream(playListReadyCallBack) {
+    startStream(playListReadyCallBack, streamerInfo) {
         try {
             this.isStreamStarted = true;
-            this.stream.start(playListReadyCallBack); 
+            this.stream.start(playListReadyCallBack, streamerInfo); 
             localServer.startLocalServer(this.fullVideoPath);       
         } catch(e) {
             console.log(`Unable to start stream! Coz \n ${e}`);
