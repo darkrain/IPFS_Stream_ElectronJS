@@ -13,6 +13,14 @@ class UserInfoPage {
     }
 
     subscribeToIpcEvents(ipc) {
+        const userInfoPageObj = this;
+
+        ipc.on('update-info', (event, args) => {
+            userInfoPageObj.setNickName(args.nickName);
+            userInfoPageObj.setUserName(args.userName);
+            userInfoPageObj.updateUserInfoJSON();
+        });
+
         ipc.on('open-user-ava', (event, args) => { 
             dialog.showOpenDialog({
               properties: ['openFile'],
@@ -35,12 +43,23 @@ class UserInfoPage {
                 console.err(err);
               });
           });
+              
+        ipc.on('userNameChanged', (event, args) => {
+            userInfoPageObj.setUserName(args);
+            userInfoPageObj.updateUserInfoJSON();
+        });
+
+        ipc.on('userNicknameChanged', (event, args) => {
+            userInfoPageObj.setNickName(args);
+            userInfoPageObj.updateUserInfoJSON();
+        });
     }
 
-    setData(data) {
-        this.userName = data.userName;
-        this.nickName = data.nickName;
-        this.updateUserInfoJSON();
+    setUserName(userName) {
+        this.userName = userName;
+    }
+    setNickName(nickName) {
+        this.nickName = nickName;
     }
 
     updateUserInfoJSON = () => {
