@@ -209,7 +209,13 @@ class Stream {
 									const chunkHash = result[0].hash;
 									console.log(`Chunk ${streamObj.keep + chunkData.FILE_NAME} is uploaded to ipfs! \n hash: ${chunkHash}`);
 									//create block in DAG
-									streamObj.ipfsStreamUploader.addChunkToIpfsDAG(chunkFileName,chunkExtInf,chunkHash );		
+									streamObj.ipfsStreamUploader.addChunkToIpfsDAGAsync(chunkFileName,chunkExtInf,chunkHash)
+										.then((data) => {
+											console.log("DATA RETURNED! " + JSON.stringify(data));
+										})	
+										.catch((err) => {
+											console.error("ERROR! In upload stream blocks!" + err)
+										});
 								})
 							}
 						}		

@@ -14,7 +14,7 @@ class IpfsStreamUploader {
         return this.previousBlockHash;
     }
 
-    addChunkToIpfsDAG(chunkName, extInf, chunkHash) {
+    addChunkToIpfsDAGAsync(chunkName, extInf, chunkHash) {
         const streamUpdater = this;
 
         let blockData = {};
@@ -29,18 +29,21 @@ class IpfsStreamUploader {
                 "/" : prevBlockHash
             };
         }
-
-        this.ipfs.dag.put(blockJsonData, { format: 'dag-cbor', hashAlg: 'sha2-256' }, (err, cid) => {
-            if(err) {
-                console.error(`Cannot upload block data: \n ${JSON.stringify(blockJsonData)} to ipfs! \n ${err}`);
-                return;
-            }
-            const cidEcnoded = cid.toBaseEncodedString();
-            console.log("Stream block uploaded to DAG with data \n " + JSON.stringify(blockJsonData));
-            console.log("Hash of this block: " + cidEcnoded);
-
-            streamUpdater.setPreviousBlockHash(cidEcnoded);
-          });
+        return new Promise((resolve, reject) => {
+            this.ipfs.dag.put(blockJsonData, { format: 'dag-cbor', hashAlg: 'sha2-256' }, (err, cid) => {
+                if(err) {
+                    console.error(`Cannot upload block data: \n ${JSON.stringify(blockJsonData)} to ipfs! \n ${err}`);
+                    reject(err);
+                }
+                const cidEcnoded = cid.toBaseEncodedString();
+                console.log("Stream block uploaded to DAG with data \n " + JSON.stringify(blockJsonData));
+                console.log("Hash of this block: " + cidEcnoded);
+    
+                streamUpdater.setPreviousBlockHash(cidEcnoded);
+                resolve(blockJsonData);
+              });
+        });
+        
     }
 }
 
