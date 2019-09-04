@@ -22,7 +22,6 @@ class Stream {
 		this.headers = '#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:8\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:EVENT\n';
 		this.blocks = [];
 		this.rooms = {};
-		this.processUpload = 'wait';
 
 		this.path = path;
 		this.keepPath = this.path+'/'+nameOfStreem+'/';
@@ -124,7 +123,9 @@ class Stream {
 
 	createRooms(){
 		const streamObj = this.getInstance();
-		let rooms = ['borgStream',this.nameOfStreem];
+		const globalRoomName = 'borgStream';
+
+		let rooms = [globalRoomName, this.nameOfStreem];
 		
 		for (var i = 0; i < rooms.length; i++) {
 			let nameRoom = rooms[i];
@@ -152,88 +153,17 @@ class Stream {
 			  	streamObj.rooms[streamObj.nameOfStreem].broadcast(JSON.stringify(result));
 			})	
 	    }); 		
-
-		this.processUpload = 'wait';
 	}
 
-
-	isReadyM3U8() {
-		const thisStream = this.getInstance();
-		let isReadyM3U8Interval = this.isReadyM3U8Interval;
-		isReadyM3U8Interval = setInterval(function() {				
-			if(thisStream.processUpload == 'executed'){
-				let i = Object.keys(thisStream.blocks).length;
-				let r = 0;
-
-				for( const [key, value] of Object.entries(thisStream.blocks) ){
-
-					if( value.includes('EXTINF') ) 
-						r++;
-				}
-
-				if( r == i ){
-					thisStream.uploadM3U8();
-				}
-			}			
-		},200)
-				
-	}
 
 	start(onPlaylistReadyCallback) {
 		if(!this.camera) {
 			throw 'Camera is not set';
 		}
 		this.isPlalistInitialized = false;		
-		//this.getInstance().isReadyM3U8();
 		this.getInstance().ffmpeg(false);
 		this.getInstance().streamWatcher(onPlaylistReadyCallback)
 		console.log("*** STREAM STARTED ****");
-	}
-
-
-
-	watcher(onPlaylistChangedCallback){
-		let isStreamInitialized = this.isPlalistInitialized;
-		const streamObj = this.getInstance();
-		streamObj.watcherPID = watch(this.keepPath, function(evt, name) {
-			const fileName = fsPath.basename(name);
-			const playlistName = fsPath.basename(streamObj.keep);
-			let isPlaylist = fileName === playlistName;
-
-			if(isPlaylist && isStreamInitialized === false) {
-				console.log("Playlist updated!")
-				onPlaylistChangedCallback();
-				isStreamInitialized = true;
-			}				
-			console.log(streamObj.keep + ' -- '+name)
-			if( evt == 'update' && fileName == playlistName) {												
-				streamObj.processUpload = 'executed';
-				fs.readFile(streamObj.keep, 'utf8', function(err, contents) {				
-					let playListContents = contents.split('#');
-
-				    for (var i = 0; i < playListContents.length; i++) {
-				    	let element = playListContents[i];
-
-				    	if( element.includes('EXTINF') )  		
-							streamObj.blocks[md5(element)] = element.split(',');
-				    }
-
-					for( const [key, value] of Object.entries(streamObj.blocks)) {
-						const extInfo = value[0];
-						const chunkName = value[1].trim();
-						streamObj.ipfs.addFromFs(streamObj.keepPath+chunkName.trim(), (err, result) => {
-							if (err) { throw err }
-							const chunkHash = result[0].hash;
-							//create block in DAG
-						    streamObj.ipfsStreamUploader.addChunkToIpfsDAG(chunkName,extInfo,chunkHash );		
-							let data = '#IPFSHASH-'+ chunkHash +","+chunkName.trim()+"\n"+"#"+value[0]+","+value[1];
-							streamObj.blocks[key] = data; 
-						})		  						
-
-					}
-				})
-			}
-		});
 	}
 
 	streamWatcher(onPlaylistChangedCallback) {
@@ -292,13 +222,11 @@ class Stream {
 
 	stop() {
 		this.isPlalistInitialized = false;
-		clearInterval(this.isReadyM3U8Interval);
 		this.ffmpegProc.kill()
 
 		if( this.watcherPID )
 			this.watcherPID.close()
 		this.blocks = [];
-		this.processUpload = 'wait';
 	}
 }
 
