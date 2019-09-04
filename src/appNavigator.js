@@ -17,7 +17,7 @@ const STREAM_PAGE_LINK = 'front/streamerPage/index.html';
 const USER_INFO_PAGE = 'userInfoPage';
 const STREAMING_PAGE = 'streamingPage';
 
-const DEFAULT_PAGE = USER_INFO_PAGE;
+const DEFAULT_PAGE = STREAMING_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;

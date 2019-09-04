@@ -9,17 +9,18 @@ const md5 = require('md5');
 const ls = require('ls');
 const fsPath = require('path');
 const cameraHelper = require('../helpers/ffmpegCameraHelper');
-
+const IpfsStreamUploader = require('../helpers/ipfsStreamUploader.js');
 
 class Stream {
 
 	constructor(ipfs, nameOfStreem, path = 'videos', binFolderPath) {
 		console.log(`Try initialize sream with fields: \n ${ipfs} \n ${nameOfStreem} \n ${binFolderPath}`);
 		this.ipfs = ipfs;
+		this.ipfsStreamUploader = new IpfsStreamUploader(this.ipfs);
 		this.ipfsready = false;
 		this.ffmpegBinPath = fsPath.join(binFolderPath, 'ffmpeg.exe');
 		this.headers = '#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:8\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:EVENT\n';
-		this.blocks = {};
+		this.blocks = [];
 		this.rooms = {};
 		this.processUpload = 'wait';
 
@@ -147,7 +148,6 @@ class Stream {
 			  	let data = {
 			  		live : streamObj.ipfsID+"/"+streamObj.nameOfStreem
 			  	};
-
 			  	streamObj.rooms.borgStream.broadcast(JSON.stringify(data));
 			  	streamObj.rooms[streamObj.nameOfStreem].broadcast(JSON.stringify(result));
 			})	
@@ -184,9 +184,9 @@ class Stream {
 			throw 'Camera is not set';
 		}
 		this.isPlalistInitialized = false;		
-		this.getInstance().isReadyM3U8();
+		//this.getInstance().isReadyM3U8();
 		this.getInstance().ffmpeg(false);
-		this.getInstance().watcher(onPlaylistReadyCallback)
+		this.getInstance().streamWatcher(onPlaylistReadyCallback)
 		console.log("*** STREAM STARTED ****");
 	}
 
@@ -209,20 +209,24 @@ class Stream {
 			if( evt == 'update' && fileName == playlistName) {												
 				streamObj.processUpload = 'executed';
 				fs.readFile(streamObj.keep, 'utf8', function(err, contents) {				
-					let blocks = contents.split('#');
+					let playListContents = contents.split('#');
 
-				    for (var i = 0; i < blocks.length; i++) {
-				    	let element = blocks[i];
+				    for (var i = 0; i < playListContents.length; i++) {
+				    	let element = playListContents[i];
 
 				    	if( element.includes('EXTINF') )  		
-						streamObj.blocks[md5(element)] = element.split(',');
+							streamObj.blocks[md5(element)] = element.split(',');
 				    }
 
-					for( const [key, value] of Object.entries(streamObj.blocks) ){
-						streamObj.ipfs.addFromFs(streamObj.keepPath+value[1].trim(), (err, result) => {
-						  if (err) { throw err }
-						  console.log('add new chunk with hash '+ result[0].hash)
-							let data = '#IPFSHASH-'+result[0].hash+","+value[1].trim()+"\n"+"#"+value[0]+","+value[1];
+					for( const [key, value] of Object.entries(streamObj.blocks)) {
+						const extInfo = value[0];
+						const chunkName = value[1].trim();
+						streamObj.ipfs.addFromFs(streamObj.keepPath+chunkName.trim(), (err, result) => {
+							if (err) { throw err }
+							const chunkHash = result[0].hash;
+							//create block in DAG
+						    streamObj.ipfsStreamUploader.addChunkToIpfsDAG(chunkName,extInfo,chunkHash );		
+							let data = '#IPFSHASH-'+ chunkHash +","+chunkName.trim()+"\n"+"#"+value[0]+","+value[1];
 							streamObj.blocks[key] = data; 
 						})		  						
 
@@ -230,17 +234,70 @@ class Stream {
 				})
 			}
 		});
-
 	}
 
-	stop(){
+	streamWatcher(onPlaylistChangedCallback) {
+		let isStreamInitialized = this.isPlalistInitialized;
+		const streamObj = this.getInstance();
+		streamObj.watcherPID = watch(this.keepPath, function(evt, name) {
+			const fileName = fsPath.basename(name);
+			const playlistName = fsPath.basename(streamObj.keep);
+			let isPlaylist = fileName === playlistName;
+
+			if(isPlaylist && isStreamInitialized === false) {
+				console.log("Playlist updated!")
+				onPlaylistChangedCallback();
+				isStreamInitialized = true;
+			}	
+
+			if(evt == 'update' && fileName == playlistName) {
+				fs.readFile(streamObj.keep, 'utf8', (err, contents) => {
+					let playListContents = contents.split('#');
+
+				    for (var i = 0; i < playListContents.length; i++) {
+				    	let element = playListContents[i];
+
+						//cheks if is the chunk
+				    	if( element.includes('EXTINF') ) { 
+							const chunkValuesArray = element.split(',');
+							const chunkExtInf = chunkValuesArray[0];
+							const chunkFileName = chunkValuesArray[1].trim();							
+
+							//if chunk with filename not already exist
+							var exists = streamObj.blocks.find(x => x.FILE_NAME === chunkFileName) != null;
+							if(exists === false) {
+								console.log(`CHunk ${chunkFileName} is not exits, try to upload its...`);
+								const chunkData = {
+									"EXTINF" : chunkExtInf,
+									"FILE_NAME": chunkFileName
+								}
+
+								streamObj.blocks.push(chunkData);
+								const filePath = streamObj.keepPath+chunkFileName;
+								streamObj.ipfs.addFromFs((filePath), (err, result) => {
+									if (err) { throw err }
+									const chunkHash = result[0].hash;
+									console.log(`Chunk ${streamObj.keep + chunkData.FILE_NAME} is uploaded to ipfs! \n hash: ${chunkHash}`);
+									//create block in DAG
+									streamObj.ipfsStreamUploader.addChunkToIpfsDAG(chunkFileName,chunkExtInf,chunkHash );		
+								})
+							}
+						}		
+							
+				    }
+				});
+			}
+		});
+	}
+
+	stop() {
 		this.isPlalistInitialized = false;
 		clearInterval(this.isReadyM3U8Interval);
 		this.ffmpegProc.kill()
 
 		if( this.watcherPID )
 			this.watcherPID.close()
-		this.blocks = {};
+		this.blocks = [];
 		this.processUpload = 'wait';
 	}
 }
