@@ -27,8 +27,10 @@ class GlobalRoomPage {
             console.log(`Subscribed to ${GLOBAL_ROOM_NAME}!`);
         });
         this.globalRoom.on('message', (msg) => {
+            const messageStr = msg.data.toString();
             console.log(`Message getted: \n from: ${msg.from} \n data: ${msg.data}`);
-            globalRoomPageObj.onStreamerInfoMessageGetted(msg)
+            console.log(`Data type: ${typeof(messageStr)}`)
+            globalRoomPageObj.onStreamerInfoMessageGetted(messageStr)
                 .then(() => {
                     //Do something with streamer when it saved.
                 })
@@ -57,8 +59,12 @@ class GlobalRoomPage {
 
     tryParseStreamerInfo(infoMsg) {
         try {
-            const streamerInfo = JSON.parse(infoMsg);
-            return streamerInfo;
+            console.log(`Try pars str: ${infoMsg}`);
+            const parsed = JSON.parse(infoMsg);
+            console.log("Parsed!: \n" + parsed);
+            console.log("Name: \n" + parsed.nameOfStream);
+
+            return parsed;
 
         } catch(err) {
             console.error(`Unable to parse string from room!! \n${err.name} \n${err.message} \n${err.stack} `);
@@ -68,48 +74,53 @@ class GlobalRoomPage {
 
     async saveStreamerInfoInLocalFileIfItNotExistsAsync(streamerInfoJson) {
         const globalRoomPageObj = this;
-        //find if file already exists
         await new Promise((resolve, rejected) => {
-            if(fs.existsSync(STREAMERS_DATA_PATH)) {
-                //read file
-                fs.readFile(STREAMERS_DATA_PATH,'utf8', (err, data) => {
-                    let fileData = data;
-                    if(err) {
-                        console.log(`Unable to read file! ` + err);
-                        throw err;
-                    }
-
-                    let isStreamerExists = 
-                        globalRoomPageObj.isStreamerInfoAlreadyExistsInfo(fileData,streamerInfoJson);
-
-                    if(isStreamerExists) {
-                        resolve();
-                    } else {                       
-                        //if streamer not exist write info about him in file
-                        fileData += JSON.stringify(streamerInfoJson);
-                        fs.writeFile(STREAMERS_DATA_PATH, fileData, (err) => {
-                            if(err) {
-                                console.error("Unable to save streamer in existsing file! \n" + err);
-                                rejected(err);
-                            }
-                            console.log("Streamer saved in file!");
-                            resolve();
-                        });
-                    }
-                });
-            } else {
-                //create file and write data
-                globalRoomPageObj.currentStreamers.push(streamerInfoJson);
-                const streamersArrayJson = JSON.stringify(globalRoomPageObj.currentStreamers);
-                fs.writeFile(STREAMERS_DATA_PATH, streamersArrayJson, (err) => {
-                    if(err) {
-                        console.err("Unable to create json streamers data file ! \n " + err.toString());
+            //create jsonArray if its not exists
+            if(!fs.existsSync(STREAMERS_DATA_PATH)) {
+                fs.writeFile(STREAMERS_DATA_PATH, "[]", (err) => {
+                    if(err) {                      
                         rejected(err);
                     }
-                    console.log("new data file created! Streamer saved!");
                     resolve();
                 });
             }
+            else {
+                resolve(); //if dataJSON file already exists just skip.
+            }
+        }).catch((err) => { 
+            console.err("Unable to create json streamers data file ! \n " + err.toString()); 
+        });
+        //find if file already exists
+        await new Promise((resolve, rejected) => {
+            fs.readFile(STREAMERS_DATA_PATH,'utf8', (err, data) => {
+                let fileData = data;
+                if(err) {
+                    console.log(`Unable to read file! ` + err);
+                    throw err;
+                }
+
+                let isStreamerExists = 
+                    globalRoomPageObj.isStreamerInfoAlreadyExistsInfo(fileData,streamerInfoJson);
+
+                if(isStreamerExists) {
+                    resolve();
+                } else {       
+                    let fileDataInJsonArray = JSON.parse(fileData);                
+                    //if streamer not exist write info about him in file
+                    console.log("streamer info object: " + streamerInfoJson);
+                    fileDataInJsonArray.push(streamerInfoJson);
+                    console.log("Data info array now: \n " + JSON.stringify(fileDataInJsonArray));
+                    console.log("File data length: " + fileDataInJsonArray.length);
+                    fs.writeFile(STREAMERS_DATA_PATH, JSON.stringify(fileDataInJsonArray), (err) => {
+                        if(err) {
+                            console.error("Unable to save streamer in existsing file! \n" + err);
+                            rejected(err);
+                        }
+                        console.log("Streamer saved in file!");
+                        resolve();
+                    });
+                }
+            });
         }).catch((err) => {
             console.error("cannot save streamer... coz: \n" + err.toString());
         });
@@ -125,7 +136,7 @@ class GlobalRoomPage {
                 let streamer = streamersArr[i];
                 const streamName = streamer.nameOfStream;
                 const streamHash = streamer.hashOfStreamer;
-
+                console.log(`Checking if ${JSON.stringify(streamer)} exists in data...`);
                 if(searchedStreamName === streamName && searchedStreamHash === streamHash) {
                     console.log(`Streamer with name: ${streamName} already exists in data!`);
                     return true;
