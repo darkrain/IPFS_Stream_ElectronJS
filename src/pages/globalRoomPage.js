@@ -22,24 +22,51 @@ class GlobalRoomPage {
     }
 
     initializeListenersForRooms() {
+        const globalRoomPageObj = this;
         this.globalRoom.on('subscribed', () => {
             console.log(`Subscribed to ${GLOBAL_ROOM_NAME}!`);
         });
         this.globalRoom.on('message', (msg) => {
             console.log(`Message getted: \n from: ${msg.from} \n data: ${msg.data}`);
+            globalRoomPageObj.onStreamerInfoMessageGetted(msg)
+                .then(() => {
+                    //Do something with streamer when it saved.
+                })
+                .catch((err) => {
+                    console.error("Unable read streamer message! \n" + err.toString());
+                });
         })
+    }
+
+    onStreamerInfoMessageGetted(streamerMessage) {
+        const globalRoomPageObj = this;
+        return new Promise((resolve, rejected) => {
+            const streamerInfoObj = globalRoomPageObj.tryParseStreamerInfo(streamerMessage);
+            if(streamerInfoObj != null) {
+                globalRoomPageObj.saveStreamerInfoInLocalFileIfItNotExistsAsync(streamerInfoObj)
+                    .then(() => {
+                        resolve();
+                    }).catch((err) => {
+                        rejected(err);
+                    });
+            } else {
+                rejected(new Error("unable to handle streamer with message " + streamerMessage + " is null..."));
+            }
+        });
     }
 
     tryParseStreamerInfo(infoMsg) {
         try {
             const streamerInfo = JSON.parse(infoMsg);
+            return streamerInfo;
 
         } catch(err) {
             console.error(`Unable to parse string from room!! \n${err.name} \n${err.message} \n${err.stack} `);
+            return null;
         }
     }
 
-    async saveStreamerInfoInLocalFileIfItNotExists(streamerInfoJson) {
+    async saveStreamerInfoInLocalFileIfItNotExistsAsync(streamerInfoJson) {
         const globalRoomPageObj = this;
         //find if file already exists
         await new Promise((resolve, rejected) => {
@@ -83,6 +110,8 @@ class GlobalRoomPage {
                     resolve();
                 });
             }
+        }).catch((err) => {
+            console.error("cannot save streamer... coz: \n" + err.toString());
         });
     }
 
