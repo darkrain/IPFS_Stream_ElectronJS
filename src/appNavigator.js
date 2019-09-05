@@ -57,9 +57,7 @@ function loadDefaultPage() {
 }
 
 function loadPageByName(pageName)  {
-
     console.log("Start loading page: " + pageName + "....");
-
     switch(pageName) {       
         case USER_INFO_PAGE: {
             createWindowAsync(USER_INFO_PAGE_LINK).then((win) => {
@@ -91,7 +89,7 @@ function createWindowAsync(linkToPage) {
                 height: 768,
                 frame: false,
                 webPreferences: {
-                nodeIntegration: true
+                    nodeIntegration: true
                 }
             });
         }
@@ -124,7 +122,7 @@ app.on('window-all-closed', () => {
     // Для приложений и строки меню в macOS является обычным делом оставаться
     // активными до тех пор, пока пользователь не выйдет окончательно используя Cmd + Q
     if (process.platform !== 'darwin') {
-      app.quit()
+      app.quit();
     }
   });
   
