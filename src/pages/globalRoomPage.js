@@ -4,6 +4,7 @@ const pathModule = require('path');
 const appRootPath = require('app-root-path');
 const fs = require('fs');
 const dataConverter = require('../helpers/dataConverters.js');
+const StreamerDataSaver = require('../data/streamerDataSaver.js');
 
 //constants
 const GLOBAL_ROOM_NAME = 'borgStream';
@@ -15,7 +16,7 @@ class GlobalRoomPage {
         this.ipfs = ipfs;
         this.ipc = ipc;
         this.win = win;
-
+        this.dataSaver = new StreamerDataSaver(this.ipfs);
         this.globalRoom = Room(this.ipfs, GLOBAL_ROOM_NAME);
         this.initializeListenersForRooms();
 
@@ -31,8 +32,9 @@ class GlobalRoomPage {
             const messageStr = msg.data.toString();
             console.log(`Message getted: \n from: ${msg.from} \n data: ${msg.data}`);
             globalRoomPageObj.onStreamerInfoMessageGetted(messageStr)
-                .then(() => {
+                .then((streamerInfoObj) => {
                     //Do something with streamer when it saved.
+                    globalRoomPageObj.dataSaver.saveStreamerData(streamerInfoObj);
                 })
                 .catch((err) => {
                     console.error("Unable read streamer message! \n" + err.toString());
@@ -47,7 +49,7 @@ class GlobalRoomPage {
             if(streamerInfoObj != null) {
                 globalRoomPageObj.saveStreamerInfoInLocalFileIfItNotExistsAsync(streamerInfoObj)
                     .then(() => {
-                        resolve();
+                        resolve(streamerInfoObj);
                     }).catch((err) => {
                         rejected(err);
                     });
