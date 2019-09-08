@@ -158,10 +158,11 @@ class GlobalRoomPage {
     }
 
     updatePageAboutStreamers() {
+        const globalRoomObj = this;
         streamersMonitor.getStreamersDataAsync().then((streamersArray) => {
             console.log("Streamers array updated! \n " + JSON.stringify(streamersArray));
-        })
-
+            globalRoomObj.win.webContents.send('listOfStreamersUpdated', streamersArray);
+        });
     }
 }
 

@@ -73,7 +73,7 @@ function loadPageByName(pageName)  {
         }
         case GLOBAL_ROOM_PAGE: {
             createWindowAsync(GLOBAL_ROOM_PAGE_LINK).then((win) => {
-                let globalRoomPage = new GlobalRoomPage(IpfsInstance, ipc);
+                let globalRoomPage = new GlobalRoomPage(IpfsInstance, ipc, win);
             });
             break;
         }
