@@ -6,18 +6,21 @@ const ipc = require('electron').ipcMain;
 //pages scripts
 const StreamPage = require('./pages/streamPage.js');
 const UserInfoPage = require('./pages/userInfoPage.js');
+const GlobalRoomPage = require('./pages/globalRoomPage.js');
 //*** End Imports ***
 
 //*** Page links ***
 const USER_INFO_PAGE_LINK = 'front/userInfoPage/index.html';
+const GLOBAL_ROOM_PAGE_LINK = 'front/globalRoomPage/index.html';
 const STREAM_PAGE_LINK = 'front/streamerPage/index.html';
 //*** End page links 
 
 //*** Named constants ***
 const USER_INFO_PAGE = 'userInfoPage';
 const STREAMING_PAGE = 'streamingPage';
+const GLOBAL_ROOM_PAGE = 'globalRoomPage';
 
-const DEFAULT_PAGE = STREAMING_PAGE;
+const DEFAULT_PAGE = GLOBAL_ROOM_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;
@@ -54,9 +57,7 @@ function loadDefaultPage() {
 }
 
 function loadPageByName(pageName)  {
-
     console.log("Start loading page: " + pageName + "....");
-
     switch(pageName) {       
         case USER_INFO_PAGE: {
             createWindowAsync(USER_INFO_PAGE_LINK).then((win) => {
@@ -67,6 +68,12 @@ function loadPageByName(pageName)  {
         case STREAMING_PAGE: {
             createWindowAsync(STREAM_PAGE_LINK).then((win) => {
                 let streamPage = new StreamPage(IpfsInstance, IpfsNodeID, ipc, win);        
+            });
+            break;
+        }
+        case GLOBAL_ROOM_PAGE: {
+            createWindowAsync(GLOBAL_ROOM_PAGE_LINK).then((win) => {
+                let globalRoomPage = new GlobalRoomPage(IpfsInstance, ipc, win);
             });
             break;
         }
@@ -82,7 +89,7 @@ function createWindowAsync(linkToPage) {
                 height: 768,
                 frame: false,
                 webPreferences: {
-                nodeIntegration: true
+                    nodeIntegration: true
                 }
             });
         }
@@ -115,7 +122,7 @@ app.on('window-all-closed', () => {
     // Для приложений и строки меню в macOS является обычным делом оставаться
     // активными до тех пор, пока пользователь не выйдет окончательно используя Cmd + Q
     if (process.platform !== 'darwin') {
-      app.quit()
+      app.quit();
     }
   });
   

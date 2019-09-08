@@ -2,9 +2,10 @@
   "name": "vstreameripfs",
   "version": "1.0.0",
   "description": "",
-  "main": "src/appNavigator.js", 
+  "main": "src/appNavigator.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
@@ -22,6 +23,7 @@
     "node-watch": "0.6.3"
   },
   "devDependencies": {
-    "electron": "^6.0.0"
+    "electron": "^6.0.0",
+    "mocha": "^6.2.0"
   }
 }

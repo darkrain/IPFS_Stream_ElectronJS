@@ -27,8 +27,12 @@ class StreamRoomBroadcaster {
         let globalRoomBroadcaster = this.globalRoom;
         let streamerInfo = this.currentStreamerInfo;
         this.broadcastLoopInformator = setInterval(() => {
+            const jsonSTR = JSON.stringify(streamerInfo);
+            const bufferedData = new Buffer(jsonSTR);
+            const encoded64Data = bufferedData.toString('base64');
+
             console.log(`Broadcast about stream in ${GLOBAL_ROOM_NAME} with data: \n` + JSON.stringify(streamerInfo));
-            globalRoomBroadcaster.broadcast(`${JSON.stringify(streamerInfo)} \n`);
+            globalRoomBroadcaster.broadcast(encoded64Data);
         }, BROADCAST_INTERVAL);
     }
 
