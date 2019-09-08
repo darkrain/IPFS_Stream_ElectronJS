@@ -3,6 +3,7 @@ const Room = require('ipfs-pubsub-room');
 const pathModule = require('path');
 const appRootPath = require('app-root-path');
 const fs = require('fs');
+const dataConverter = require('../helpers/dataConverters.js');
 
 //constants
 const GLOBAL_ROOM_NAME = 'borgStream';
@@ -29,7 +30,6 @@ class GlobalRoomPage {
         this.globalRoom.on('message', (msg) => {
             const messageStr = msg.data.toString();
             console.log(`Message getted: \n from: ${msg.from} \n data: ${msg.data}`);
-            console.log(`Data type: ${typeof(messageStr)}`)
             globalRoomPageObj.onStreamerInfoMessageGetted(messageStr)
                 .then(() => {
                     //Do something with streamer when it saved.
@@ -57,10 +57,10 @@ class GlobalRoomPage {
         });
     }
 
-    tryParseStreamerInfo(infoMsg) {
+    tryParseStreamerInfo(infoMsgEncoded) {
         try {
-            console.log(`Try pars str: ${infoMsg}`);
-            const parsed = JSON.parse(infoMsg);
+            console.log(`Try pars str: ${infoMsgEncoded}`);
+            const parsed = dataConverter.convertBase64DataToObject(infoMsgEncoded);          
             console.log("Parsed!: \n" + parsed);
             console.log("Name: \n" + parsed.nameOfStream);
 
