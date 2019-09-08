@@ -8,15 +8,13 @@ class StreamerDataSaver {
     constructor(ipfs) {
         this.ipfs = ipfs;
     }
-    saveStreamerData(streamerInfoObj) {
+    async saveStreamerDataAsync(streamerInfoObj) {
         const streamerFolderPath = pathModule.join(STREAMERS_PATH, streamerInfoObj.hashOfStreamer);
         this.createFolderForStreamIfNotExists(STREAMERS_PATH);
         this.createFolderForStreamIfNotExists(streamerFolderPath);
-        this.saveStreamerAva(streamerInfoObj.imgAvaHash, streamerFolderPath).then((savedPath) => {
-            console.log("Streamer ava saved! At path: " + savedPath.toString());
-        }).catch((err) => {
-
-        });
+        const savedPath = await this.saveStreamerAvaAsync(streamerInfoObj.imgAvaHash, streamerFolderPath);
+        console.log("Streamer ava saved! At path: " + savedPath.toString());
+        return savedPath;
 
     }
     createFolderForStreamIfNotExists(folderPath) {
@@ -24,10 +22,10 @@ class StreamerDataSaver {
             fs.mkdirSync(folderPath);
         }     
     }
-    async saveStreamerAva(avaIpfsHash, streamerPath) {
+    async saveStreamerAvaAsync(avaIpfsHash, streamerPath) {
         const streamerSaverObj = this;
         try {
-            await new Promise((resolve, rejected) => {
+            const avaPath = await new Promise((resolve, rejected) => {
                 streamerSaverObj.ipfs.get(avaIpfsHash, (err, files) => {
                     if(err) {
                         rejected(err);
@@ -45,9 +43,12 @@ class StreamerDataSaver {
                     });
                 });
             });
+
+            return avaPath;
         }
         catch(err) {
             console.error("Cannot save streamer img to file! Coz: \n" + err.toString());
+            return '';
         }
     } 
 }

@@ -5,6 +5,7 @@ const appRootPath = require('app-root-path');
 const fs = require('fs');
 const dataConverter = require('../helpers/dataConverters.js');
 const StreamerDataSaver = require('../data/streamerDataSaver.js');
+const streamersMonitor = require('../data/streamersMonitor.js');
 
 //constants
 const GLOBAL_ROOM_NAME = 'borgStream';
@@ -21,6 +22,8 @@ class GlobalRoomPage {
         this.initializeListenersForRooms();
 
         this.currentStreamers = [];
+
+        this.updatePageAboutStreamers();
     }
 
     initializeListenersForRooms() {
@@ -34,7 +37,9 @@ class GlobalRoomPage {
             globalRoomPageObj.onStreamerInfoMessageGetted(messageStr)
                 .then((streamerInfoObj) => {
                     //Do something with streamer when it saved.
-                    globalRoomPageObj.dataSaver.saveStreamerData(streamerInfoObj);
+                    globalRoomPageObj.dataSaver.saveStreamerDataAsync(streamerInfoObj).then((avaPath) => {
+                        globalRoomPageObj.updatePageAboutStreamers();
+                    });          
                 })
                 .catch((err) => {
                     console.error("Unable read streamer message! \n" + err.toString());
@@ -150,6 +155,13 @@ class GlobalRoomPage {
             console.error("Unable to parse streamers info array! \n" + err.toString());
             return false;
         }
+    }
+
+    updatePageAboutStreamers() {
+        streamersMonitor.getStreamersDataAsync().then((streamersArray) => {
+            console.log("Streamers array updated! \n " + JSON.stringify(streamersArray));
+        })
+
     }
 }
 
