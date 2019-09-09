@@ -164,6 +164,10 @@ class GlobalRoomPage {
             globalRoomObj.win.webContents.send('listOfStreamersUpdated', streamersArray);
         });
     }
+
+    clearStreamersData() {
+        //TODO: Realize cleaning streamers data before work
+    }
 }
 
 module.exports = GlobalRoomPage;
