@@ -33,7 +33,7 @@ class GlobalRoomPage {
             fs.mkdirSync(STREAMERS_INFO_DATA_PATH);
         }
         if(!fs.existsSync(STREAMERS_DATA_PATH)) {
-            fs.writeSync(STREAMERS_DATA_PATH, '[]');
+            fs.writeFileSync(STREAMERS_DATA_PATH, '[]');
         }
     }
 
