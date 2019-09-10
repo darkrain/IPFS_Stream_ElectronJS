@@ -8,7 +8,7 @@ const localServer = require('../localServer/localServer.js');
 const STREAMERS_DATA_PATH = pathModule.join(appRootPath.toString(), 'user','userData','streamers');
 
 class StreamWatchPage {
-    constructor(ipfs, ipc, win, streamerInfo){
+    constructor(ipfs, ipc, win, streamerInfo){       
         this.ipfs = ipfs;
         this.ipc = ipc;
         this.win = win;
@@ -21,6 +21,7 @@ class StreamWatchPage {
             streamWatchPageObj.win.webContents.send('streamerDataGetted', this.streamerInfo);
             streamWatchPageObj.createTranslationFolder(path);
             streamWatchPageObj.subscribeToStreamerRoom(streamWatchPageObj.streamerInfo);
+            localServer.startLocalServer(streamWatchPageObj.streamerVideoVideoFolder);
         }).catch((err) => {
             throw err;
         })
