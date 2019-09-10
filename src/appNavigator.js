@@ -7,20 +7,23 @@ const ipc = require('electron').ipcMain;
 const StreamPage = require('./pages/streamPage.js');
 const UserInfoPage = require('./pages/userInfoPage.js');
 const GlobalRoomPage = require('./pages/globalRoomPage.js');
+const StreamWatchPage = require('./pages/streamWatchPage.js');
 //*** End Imports ***
 
 //*** Page links ***
 const USER_INFO_PAGE_LINK = 'front/userInfoPage/index.html';
 const GLOBAL_ROOM_PAGE_LINK = 'front/globalRoomPage/index.html';
 const STREAM_PAGE_LINK = 'front/streamerPage/index.html';
+const STREAMWATCH_PAGE_LINK = 'front/streamWatchPage/index.html';
 //*** End page links 
 
 //*** Named constants ***
 const USER_INFO_PAGE = 'userInfoPage';
 const STREAMING_PAGE = 'streamingPage';
 const GLOBAL_ROOM_PAGE = 'globalRoomPage';
+const STREAM_WATCH_PAGE = 'streamWatchPage';
 
-const DEFAULT_PAGE = GLOBAL_ROOM_PAGE;
+const DEFAULT_PAGE = STREAM_WATCH_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;
@@ -76,6 +79,11 @@ function loadPageByName(pageName)  {
                 let globalRoomPage = new GlobalRoomPage(IpfsInstance, ipc, win);
             });
             break;
+        }
+        case STREAM_WATCH_PAGE: {
+            createWindowAsync(STREAMWATCH_PAGE_LINK).then((win => {
+                let streamWatchPage = new StreamWatchPage(IpfsInstance, ipc, win);
+            }));
         }
     }
 }
