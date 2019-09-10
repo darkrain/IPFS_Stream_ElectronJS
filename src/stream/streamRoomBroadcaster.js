@@ -15,6 +15,7 @@ class StreamRoomBroadcaster {
         this.currentStreamerInfo = streamerInfo;
         const streamerHash = this.currentStreamerInfo.hashOfStreamer;
         this.globalRoom = Room(ipfs,GLOBAL_ROOM_NAME);
+        console.log("Room broadcaster of streamer with name: " + streamerHash);
         this.streamerRoom = Room(ipfs,streamerHash);
 
         //subscribe to handle errors

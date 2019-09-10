@@ -15,12 +15,12 @@ class StreamWatchPage {
         this.streamerInfo = streamerInfo;
         this.lastBlockIndex = 0;
         
-        const streamWatchPageObj = this;           
-        this.subscribeToStreamerRoom(this.streamerInfo);      
+        const streamWatchPageObj = this;            
         this.initializeStreamerPath(this.streamerInfo).then((path) => {
             //DO something when path exists
             streamWatchPageObj.win.webContents.send('streamerDataGetted', this.streamerInfo);
             streamWatchPageObj.createTranslationFolder(path);
+            streamWatchPageObj.subscribeToStreamerRoom(streamWatchPageObj.streamerInfo);
         }).catch((err) => {
             throw err;
         })
@@ -49,7 +49,7 @@ class StreamWatchPage {
         const streamHash = streamerInfo.hashOfStreamer;
         console.log("Subscribe to streamer room name: " + streamHash);
         this.streamerRoom = Room(this.ipfs, streamHash);
-
+        console.log("**** Try to subscribe room with hash: " + streamHash);
         this.streamerRoom.on('subscribed', () => {
             console.log(`Subscribed to ${streamHash} room!`);
         });
