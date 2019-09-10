@@ -1,10 +1,8 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
+$(document).ready(function() {
 
-document.addEventListener('DOMContentLoaded', () => {
-
-    
 });
 
 ipc.on('streamerDataGetted', (event, args) => {
