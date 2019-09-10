@@ -40,7 +40,7 @@ class StreamWatchPage {
     }
 
     createTranslationFolder(streamerPath) {
-        this.streamerVideoFolder = pathModule.join(streamerPath, 'streamChunks');
+        this.streamerVideoVideoFolder = pathModule.join(streamerPath, 'streamChunks');
         fs.mkdirSync(this.streamerVideoFolder);
     }
 
@@ -72,7 +72,7 @@ class StreamWatchPage {
                         rejected(err);
                     }
                     const chunkName = 'master' + streamWatchPageObj.lastBlockIndex + '.ts';
-                    const chunkPath = pathModule.join(streamWatchPageObj.currentStreamerPath, chunkName);
+                    const chunkPath = pathModule.join(streamWatchPageObj.streamerVideoVideoFolder, chunkName);
                     const file = files[0];
                     const buffer = file.content;
                     fs.writeFile(chunkPath,buffer, (err) => {
@@ -98,7 +98,7 @@ class StreamWatchPage {
 
     async updateM3UFile(chunkData) {
         const streamWatchPageObj = this;
-        const m3uPath = pathModule.join(streamWatchPageObj.currentStreamerPath, 'master.m3u8');
+        const m3uPath = pathModule.join(streamWatchPageObj.streamerVideoVideoFolder, 'master.m3u8');
         try {
             await new Promise((resolve, rejected) => {                            
                 if(!fs.exists(m3uPath)) {
@@ -107,12 +107,12 @@ class StreamWatchPage {
                         #EXT-X-TARGETDURATION:8
                         #EXT-X-MEDIA-SEQUENCE:0
                         #EXT-X-PLAYLIST-TYPE:EVENT`;
-                    fs.writeFile(m3uPath, baseContent, (err) => {
-                        if(err) {
+                        try{
+                            fs.writeSync(m3uPath, baseContent);
+                            resolve();
+                        }catch(err) {
                             rejected(err);
-                        }
-                        resolve();
-                    }); 
+                        }                                          
                 } else {
                     resolve();
                 }
