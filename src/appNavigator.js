@@ -23,7 +23,7 @@ const STREAMING_PAGE = 'streamingPage';
 const GLOBAL_ROOM_PAGE = 'globalRoomPage';
 const STREAM_WATCH_PAGE = 'streamWatchPage';
 
-const DEFAULT_PAGE = STREAM_WATCH_PAGE;
+const DEFAULT_PAGE = GLOBAL_ROOM_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;
@@ -59,7 +59,7 @@ function loadDefaultPage() {
     loadPageByName(DEFAULT_PAGE);
 }
 
-function loadPageByName(pageName)  {
+function loadPageByName(pageName, args)  {
     console.log("Start loading page: " + pageName + "....");
     switch(pageName) {       
         case USER_INFO_PAGE: {
@@ -82,7 +82,8 @@ function loadPageByName(pageName)  {
         }
         case STREAM_WATCH_PAGE: {
             createWindowAsync(STREAMWATCH_PAGE_LINK).then((win => {
-                let streamWatchPage = new StreamWatchPage(IpfsInstance, ipc, win);
+                const streamerInfo = args;
+                let streamWatchPage = new StreamWatchPage(IpfsInstance, ipc, win, streamerInfo);
             }));
         }
     }
@@ -145,7 +146,9 @@ app.on('activate', () => {
 
 //nav functions
 ipc.on('goto-page', (event, args) => {
-    loadPageByName(args);
+    const pageName = args.pageName;
+    const pageArgs = args.pageArgs;
+    loadPageByName(pageName, pageArgs);
 });
   
 //Handle uncaught exceptions

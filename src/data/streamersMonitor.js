@@ -41,11 +41,13 @@ async function generateDataForStreamerAsync(streamerObj) {
     if(!fs.existsSync(streamerImgPath)) {
         throw new Error(`Avatar image for stremaer ${streamerImgPath} not exists !`);
     } 
+    
     const relativePath = '../../user/userData/streamers/' + streamerHash + '/streamerIMG.jpg';
     const streamData = {
         streamerName: streamerObj.nameOfStream,
         streamerImage: streamerImgPath,
-        relativePath: relativePath
+        relativePath: relativePath,
+        hashOfStreamer: streamerHash
     };
     
     return streamData;
