@@ -106,7 +106,7 @@ class GlobalRoomPage {
                 resolve(); //if dataJSON file already exists just skip.
             }
         }).catch((err) => { 
-            console.err("Unable to create json streamers data file ! \n " + err.toString()); 
+            console.error("Unable to create json streamers data file ! \n " + err.toString()); 
         });
         //find if file already exists
         await new Promise((resolve, rejected) => {

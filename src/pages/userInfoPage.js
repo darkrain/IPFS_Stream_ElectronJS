@@ -40,7 +40,7 @@ class UserInfoPage {
                 })};
               })
               .catch(err => {
-                console.err(err);
+                console.error(err);
               });
           });
               
