@@ -7,6 +7,7 @@ class StreamWatchPage {
         this.win = win;
         this.streamerInfo = streamerInfo;
         
+        win.webContents.send('streamerDataGetted', this.streamerInfo);
     }
 }
 

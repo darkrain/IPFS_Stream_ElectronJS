@@ -18,7 +18,8 @@ ipc.on('listOfStreamersUpdated', (event, args) => {
         $(listID).append(`<li>${htmlData}</li>`);     
         const streamerButton = document.getElementById(buttonID);
         streamerButton.addEventListener('click', function() {
-            alert("Watch streamer with hash: " + streamerHash);
+            const streamWatchPage = 'streamWatchPage';
+            ipc.send('goto-page', {pageName: streamWatchPage, pageArgs: streamerInfo});
         });
     }   
 });
