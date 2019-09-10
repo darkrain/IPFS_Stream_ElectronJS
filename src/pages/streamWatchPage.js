@@ -18,12 +18,12 @@ class StreamWatchPage {
         const streamWatchPageObj = this;            
         this.initializeStreamerPath(this.streamerInfo).then((path) => {
             //DO something when path exists
-            streamWatchPageObj.win.webContents.send('streamerDataGetted', this.streamerInfo);
+            streamWatchPageObj.win.webContents.send('streamerDataGetted', streamWatchPageObj.streamerInfo);
             streamWatchPageObj.createTranslationFolder(path);
             streamWatchPageObj.subscribeToStreamerRoom(streamWatchPageObj.streamerInfo);
             localServer.startLocalServer(streamWatchPageObj.streamerVideoVideoFolder);
         }).catch((err) => {
-            throw err;
+            console.error("Cannot initialize streamer path: \n" + err.toString())
         });
 
         this.ipc.on('exit-watch', (event, args) => {
@@ -32,15 +32,18 @@ class StreamWatchPage {
     }
 
     initializeStreamerPath(streamerInfo) {
-        const streamWatchObj = this;
         const streamerHash = streamerInfo.hashOfStreamer;
-        this.currentStreamerPath = pathModule.join(STREAMERS_DATA_PATH, streamerHash);
+        const streamPath = pathModule.join(STREAMERS_DATA_PATH, streamerHash);
         return new Promise((resolve, rejected) => {
-            if(fs.existsSync(streamWatchObj.currentStreamerPath)) {
-                resolve(streamWatchObj.currentStreamerPath);
-            } else {
-                rejected(new Error("Path not exists: ") + streamWatchObj.currentStreamerPath);
-            }
+            try{
+                if(fs.existsSync(streamPath)) {
+                    resolve(streamPath);
+                } else {
+                    rejected(new Error("Path not exists: ") + streamPath);
+                }
+            } catch(err) {
+                rejected(err);
+            }           
         });
     }
 
