@@ -17,6 +17,7 @@ class StreamWatchPage {
         
         const streamWatchPageObj = this;            
         this.initializeStreamerPath(this.streamerInfo).then((path) => {
+            console.log("Stream path initialized!: " + path.toString());
             //DO something when path exists
             streamWatchPageObj.win.webContents.send('streamerDataGetted', streamWatchPageObj.streamerInfo);
             streamWatchPageObj.createTranslationFolder(path);
@@ -31,20 +32,24 @@ class StreamWatchPage {
         });
     }
 
-    initializeStreamerPath(streamerInfo) {
+    async initializeStreamerPath(streamerInfo) {
         const streamerHash = streamerInfo.hashOfStreamer;
         const streamPath = pathModule.join(STREAMERS_DATA_PATH, streamerHash);
-        return new Promise((resolve, rejected) => {
+        const path = await new Promise((resolve, rejected) => {
             try{
                 if(fs.existsSync(streamPath)) {
                     resolve(streamPath);
                 } else {
-                    rejected(new Error("Path not exists: ") + streamPath);
+                    console.error(`Path ${path} not exists!`);
+                    resolve(streamPath);
                 }
             } catch(err) {
-                rejected(err);
+                console.error(`Some error in initialize streamer path: ` + err.toString());
+                resolve(streamPath);
             }           
         });
+
+        return path;
     }
 
     createTranslationFolder(streamerPath) {
