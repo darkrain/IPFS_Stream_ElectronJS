@@ -108,7 +108,7 @@ class StreamWatchPage {
                         #EXT-X-MEDIA-SEQUENCE:0
                         #EXT-X-PLAYLIST-TYPE:EVENT`;
                         try{
-                            fs.writeSync(m3uPath, baseContent);
+                            fs.writeFileSync(m3uPath, baseContent);
                             resolve();
                         }catch(err) {
                             rejected(err);
