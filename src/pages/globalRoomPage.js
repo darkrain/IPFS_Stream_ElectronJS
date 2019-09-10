@@ -18,10 +18,23 @@ const STREAMERS_INFO_DATA_PATH = pathModule.join(USER_DATA_PATH.toString(), 'str
 class GlobalRoomPage {
     constructor(ipfs, ipc, win) {
         const globalRoomObj = this;
+        this.createUserFilesIfNotExists();
         this.clearStreamersData().then(() => {
             globalRoomObj.initialize(ipfs, ipc, win);
         }); //firstable clean data
         
+    }
+
+    createUserFilesIfNotExists() {
+        if(!fs.existsSync(USER_DATA_PATH)) {
+            fs.mkdirSync(USER_DATA_PATH);
+        }
+        if(!fs.existsSync(STREAMERS_INFO_DATA_PATH)) {
+            fs.mkdirSync(STREAMERS_INFO_DATA_PATH);
+        }
+        if(!fs.existsSync(STREAMERS_DATA_PATH)) {
+            fs.writeFileSync(STREAMERS_DATA_PATH, '[]');
+        }
     }
 
     initialize(ipfs, ipc, win) {
@@ -106,7 +119,7 @@ class GlobalRoomPage {
                 resolve(); //if dataJSON file already exists just skip.
             }
         }).catch((err) => { 
-            console.err("Unable to create json streamers data file ! \n " + err.toString()); 
+            console.error("Unable to create json streamers data file ! \n " + err.toString()); 
         });
         //find if file already exists
         await new Promise((resolve, rejected) => {

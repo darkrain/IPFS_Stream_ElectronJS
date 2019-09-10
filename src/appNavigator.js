@@ -23,7 +23,7 @@ const STREAMING_PAGE = 'streamingPage';
 const GLOBAL_ROOM_PAGE = 'globalRoomPage';
 const STREAM_WATCH_PAGE = 'streamWatchPage';
 
-const DEFAULT_PAGE = STREAM_WATCH_PAGE;
+const DEFAULT_PAGE = GLOBAL_ROOM_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;
@@ -58,31 +58,32 @@ function onAppInitialized() {
 function loadDefaultPage() {
     loadPageByName(DEFAULT_PAGE);
 }
-
-function loadPageByName(pageName)  {
+let _currentPage;
+function loadPageByName(pageName, args)  {
     console.log("Start loading page: " + pageName + "....");
     switch(pageName) {       
         case USER_INFO_PAGE: {
             createWindowAsync(USER_INFO_PAGE_LINK).then((win) => {
-                let userInfoPage = new UserInfoPage(ipc);
+                _currentPage = new UserInfoPage(ipc);
             });
             break;
         }
         case STREAMING_PAGE: {
             createWindowAsync(STREAM_PAGE_LINK).then((win) => {
-                let streamPage = new StreamPage(IpfsInstance, IpfsNodeID, ipc, win);        
+                _currentPage = new StreamPage(IpfsInstance, IpfsNodeID, ipc, win);        
             });
             break;
         }
         case GLOBAL_ROOM_PAGE: {
             createWindowAsync(GLOBAL_ROOM_PAGE_LINK).then((win) => {
-                let globalRoomPage = new GlobalRoomPage(IpfsInstance, ipc, win);
+                _currentPage = new GlobalRoomPage(IpfsInstance, ipc, win);
             });
             break;
         }
         case STREAM_WATCH_PAGE: {
             createWindowAsync(STREAMWATCH_PAGE_LINK).then((win => {
-                let streamWatchPage = new StreamWatchPage(IpfsInstance, ipc, win);
+                const streamerInfo = args;
+                let streamWatchPage = new StreamWatchPage(IpfsInstance, ipc, win, streamerInfo);
             }));
         }
     }
@@ -145,7 +146,9 @@ app.on('activate', () => {
 
 //nav functions
 ipc.on('goto-page', (event, args) => {
-    loadPageByName(args);
+    const pageName = args.pageName;
+    const pageArgs = args.pageArgs;
+    loadPageByName(pageName, pageArgs);
 });
   
 //Handle uncaught exceptions
