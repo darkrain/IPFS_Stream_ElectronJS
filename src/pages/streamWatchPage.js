@@ -124,9 +124,9 @@ class StreamWatchPage {
         try {
             await new Promise((resolve, rejected) => {                            
                 if(!fs.existsSync(m3uPath)) {
-                    const baseContent = `#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:8\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:EVENT\n`;
+                    const baseContent = `#EXTM3U\r\n#EXT-X-VERSION:3\r\n#EXT-X-TARGETDURATION:8\r\n#EXT-X-MEDIA-SEQUENCE:0\r\n#EXT-X-PLAYLIST-TYPE:EVENT\r\n`;
                         try{
-                            fs.writeFileSync(m3uPath, baseContent);
+                            fs.appendFileSync(m3uPath, baseContent);
                             resolve();
                         }catch(err) {
                             rejected(err);
@@ -135,12 +135,12 @@ class StreamWatchPage {
                     resolve();
                 }
             });
-            await new Promise((resolve, rejected) => {
-                const chunkName = chunkData.fileName + '\n';
-                const extInf = chunkData.extInf + '\n';
+            await new Promise((resolve, rejected) => {              
+                const extInf = `#${chunkData.extInf},\r\n`;
+                const chunkName = chunkData.fileName + '\r\n';
                 try {
-                    fs.appendFileSync(m3uPath, chunkName);
                     fs.appendFileSync(m3uPath, extInf);
+                    fs.appendFileSync(m3uPath, chunkName);                  
                     resolve();
                 } catch(err) {
                     rejected(err);
