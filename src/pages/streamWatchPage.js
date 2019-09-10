@@ -74,7 +74,11 @@ class StreamWatchPage {
         this.streamerRoom.on('message', (msg) => {
             const messageStr = msg.data.toString();
             console.log("Getted message from streamer: " + messageStr);
-            streamWatchPageObj.onStreamDataGetted(messageStr);
+            streamWatchPageObj.onStreamDataGetted(messageStr).then(() => {
+                console.log("Chunk created!");
+            }).catch((err) => {
+                console.error("Chunk cannot be created! ERROR!" + err.toString());
+            })
         });
     }
 
@@ -120,11 +124,7 @@ class StreamWatchPage {
         try {
             await new Promise((resolve, rejected) => {                            
                 if(!fs.existsSync(m3uPath)) {
-                    const baseContent = `#EXTM3U
-                        #EXT-X-VERSION:3
-                        #EXT-X-TARGETDURATION:8
-                        #EXT-X-MEDIA-SEQUENCE:0
-                        #EXT-X-PLAYLIST-TYPE:EVENT`;
+                    const baseContent = `#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:8\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:EVENT\n`;
                         try{
                             fs.writeFileSync(m3uPath, baseContent);
                             resolve();
@@ -136,8 +136,8 @@ class StreamWatchPage {
                 }
             });
             await new Promise((resolve, rejected) => {
-                const chunkName = chunkData.fileName;
-                const extInf = chunkData.extInf;
+                const chunkName = chunkData.fileName + '\n';
+                const extInf = chunkData.extInf + '\n';
                 try {
                     fs.appendFileSync(m3uPath, chunkName);
                     fs.appendFileSync(m3uPath, extInf);
@@ -148,6 +148,7 @@ class StreamWatchPage {
             });
         } catch(err) {
             console.error("Unable handle creation of m3ufile: \n" + err.toString());
+            throw err;
         }            
     }
 }
