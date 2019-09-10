@@ -119,7 +119,7 @@ class StreamWatchPage {
         const m3uPath = pathModule.join(streamWatchPageObj.streamerVideoFolder, 'master.m3u8');
         try {
             await new Promise((resolve, rejected) => {                            
-                if(!fs.exists(m3uPath)) {
+                if(!fs.existsSync(m3uPath)) {
                     const baseContent = `#EXTM3U
                         #EXT-X-VERSION:3
                         #EXT-X-TARGETDURATION:8
