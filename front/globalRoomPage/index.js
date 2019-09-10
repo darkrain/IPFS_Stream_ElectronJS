@@ -1,6 +1,18 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
+$( document ).ready(function() {
+    console.log( "ready!" );
+
+    $('#CreateStreamButton').click(function(){
+        const args = {
+            pageName: 'streamingPage',
+            pageArgs: 'none'
+        }
+        ipc.send('goto-page', args);
+    });
+});
+
 ipc.on('listOfStreamersUpdated', (event, args) => {
     const streamersArray = args;
     const listID = '#listOfStreamers';

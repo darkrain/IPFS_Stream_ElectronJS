@@ -213,8 +213,8 @@ class Stream {
 									console.log(`Chunk ${streamObj.keep + chunkData.FILE_NAME} is uploaded to ipfs! \n hash: ${chunkHash}`);
 									//create block in DAG
 									streamObj.ipfsStreamUploader.addChunkToIpfsDAGAsync(chunkFileName,chunkExtInf,chunkHash)
-										.then((data) => {
-
+										.then((streamBlock) => {
+											streamObj.roomBroadcaster.startBroadcastAboutSteramBlock(streamBlock);
 										})	
 										.catch((err) => {
 											console.error("ERROR! In upload stream blocks!" + err)

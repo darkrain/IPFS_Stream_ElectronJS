@@ -13,9 +13,9 @@ class StreamRoomBroadcaster {
         const broadcasterObj = this;
         let ipfs = this.ipfs;      
         this.currentStreamerInfo = streamerInfo;
-        const streamerName = this.currentStreamerInfo.nameOfStream;
+        const streamerHash = this.currentStreamerInfo.hashOfStreamer;
         this.globalRoom = Room(ipfs,GLOBAL_ROOM_NAME);
-        this.streamerRoom = Room(ipfs,streamerName);
+        this.streamerRoom = Room(ipfs,streamerHash);
 
         //subscribe to handle errors
         this.globalRoom.on('error', (err) => {
@@ -24,24 +24,29 @@ class StreamRoomBroadcaster {
     }
 
     startBroadcastAboutStream() {
+        const roomBroadcasterObj = this;
         let globalRoomBroadcaster = this.globalRoom;
         let streamerInfo = this.currentStreamerInfo;
         this.broadcastLoopInformator = setInterval(() => {
             const jsonSTR = JSON.stringify(streamerInfo);
-            const bufferedData = new Buffer(jsonSTR);
-            const encoded64Data = bufferedData.toString('base64');
+            const encoded64Data = roomBroadcasterObj.getEncodedData(jsonSTR);
 
             console.log(`Broadcast about stream in ${GLOBAL_ROOM_NAME} with data: \n` + JSON.stringify(streamerInfo));
             globalRoomBroadcaster.broadcast(encoded64Data);
         }, BROADCAST_INTERVAL);
     }
 
-    sendStreamerInfoInGlobalRoom() {
-        this.globalRoom.broadcast;
+
+    startBroadcastAboutSteramBlock(streamBlock) {
+        const streamBlockStr = JSON.stringify(streamBlock);
+        const encodedBlock = this.getEncodedData(streamBlockStr);
+        this.streamerRoom.broadcast(encodedBlock);
+        console.log(`Broadcasted about block! \n data: ${streamBlockStr} \n encoded: ${encodedBlock}`);
     }
 
-    startBroadcastAboutChunks() {
-
+    getEncodedData(data) {
+        const buffer = new Buffer(data);
+        return buffer.toString('base64');
     }
 }
 
