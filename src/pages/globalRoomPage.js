@@ -3,17 +3,28 @@ const Room = require('ipfs-pubsub-room');
 const pathModule = require('path');
 const appRootPath = require('app-root-path');
 const fs = require('fs');
+const fsExtra = require('fs-extra');
 const dataConverter = require('../helpers/dataConverters.js');
 const StreamerDataSaver = require('../data/streamerDataSaver.js');
 const streamersMonitor = require('../data/streamersMonitor.js');
 
 //constants
+const USER_DATA_PATH = pathModule.join(appRootPath.toString(), 'user', 'userData');
 const GLOBAL_ROOM_NAME = 'borgStream';
 const STREAMERS_JSON_FILE = 'streamers.json';
-const STREAMERS_DATA_PATH = pathModule.join(appRootPath.toString(), 'user', 'userData', STREAMERS_JSON_FILE);
+const STREAMERS_DATA_PATH = pathModule.join(USER_DATA_PATH.toString(), STREAMERS_JSON_FILE);
+const STREAMERS_INFO_DATA_PATH = pathModule.join(USER_DATA_PATH.toString(), 'streamers');
 
 class GlobalRoomPage {
     constructor(ipfs, ipc, win) {
+        const globalRoomObj = this;
+        this.clearStreamersData().then(() => {
+            globalRoomObj.initialize(ipfs, ipc, win);
+        }); //firstable clean data
+        
+    }
+
+    initialize(ipfs, ipc, win) {
         this.ipfs = ipfs;
         this.ipc = ipc;
         this.win = win;
@@ -165,8 +176,30 @@ class GlobalRoomPage {
         });
     }
 
-    clearStreamersData() {
+    async clearStreamersData() {
         //TODO: Realize cleaning streamers data before work
+        try {
+            //cleanDataJson
+            await new Promise((resolve, rejected) => {
+                const emptyData = '[]';
+                fs.writeFile(STREAMERS_DATA_PATH, emptyData, (err) => {
+                    if(err) {
+                        rejected(err);
+                    }
+                    resolve();
+                });
+            });
+
+            await new Promise((resolve, rejected) => {
+                    fsExtra.emptyDir(STREAMERS_INFO_DATA_PATH)
+                        .then(() => resolve())
+                        .catch((err) => rejected(err));
+                });
+
+        } catch(err) {
+            console.error("Cannot clean streaming data: \n" + err.toString());
+        }
+        
     }
 }
 
