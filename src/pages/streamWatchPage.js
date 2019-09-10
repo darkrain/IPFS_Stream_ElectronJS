@@ -22,7 +22,7 @@ class StreamWatchPage {
             streamWatchPageObj.win.webContents.send('streamerDataGetted', streamWatchPageObj.streamerInfo);
             streamWatchPageObj.createTranslationFolder(path);
             streamWatchPageObj.subscribeToStreamerRoom(streamWatchPageObj.streamerInfo);
-            localServer.startLocalServer(streamWatchPageObj.streamerVideoVideoFolder);
+            localServer.startLocalServer(streamWatchPageObj.streamerVideoFolder);
         }).catch((err) => {
             console.error("Cannot initialize streamer path: \n" + err.toString())
         });
@@ -53,8 +53,13 @@ class StreamWatchPage {
     }
 
     createTranslationFolder(streamerPath) {
-        this.streamerVideoVideoFolder = pathModule.join(streamerPath, 'streamChunks');
-        fs.mkdirSync(this.streamerVideoFolder);
+        this.streamerVideoFolder = pathModule.join(streamerPath, 'streamChunks');
+        try{
+            fs.mkdirSync(this.streamerVideoFolder);
+        } catch(err) {
+            console.error("Cannot create translation folder ! Coz: \n" + err.toString());
+            throw err;
+        }       
     }
 
     subscribeToStreamerRoom(streamerInfo) {
@@ -85,7 +90,7 @@ class StreamWatchPage {
                         rejected(err);
                     }
                     const chunkName = 'master' + streamWatchPageObj.lastBlockIndex + '.ts';
-                    const chunkPath = pathModule.join(streamWatchPageObj.streamerVideoVideoFolder, chunkName);
+                    const chunkPath = pathModule.join(streamWatchPageObj.streamerVideoFolder, chunkName);
                     const file = files[0];
                     const buffer = file.content;
                     fs.writeFile(chunkPath,buffer, (err) => {
@@ -111,7 +116,7 @@ class StreamWatchPage {
 
     async updateM3UFile(chunkData) {
         const streamWatchPageObj = this;
-        const m3uPath = pathModule.join(streamWatchPageObj.streamerVideoVideoFolder, 'master.m3u8');
+        const m3uPath = pathModule.join(streamWatchPageObj.streamerVideoFolder, 'master.m3u8');
         try {
             await new Promise((resolve, rejected) => {                            
                 if(!fs.exists(m3uPath)) {
