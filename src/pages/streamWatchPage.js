@@ -24,7 +24,11 @@ class StreamWatchPage {
             localServer.startLocalServer(streamWatchPageObj.streamerVideoVideoFolder);
         }).catch((err) => {
             throw err;
-        })
+        });
+
+        this.ipc.on('exit-watch', (event, args) => {
+            localServer.stopLocalServer();
+        });
     }
 
     initializeStreamerPath(streamerInfo) {

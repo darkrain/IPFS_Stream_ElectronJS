@@ -58,25 +58,25 @@ function onAppInitialized() {
 function loadDefaultPage() {
     loadPageByName(DEFAULT_PAGE);
 }
-
+let _currentPage;
 function loadPageByName(pageName, args)  {
     console.log("Start loading page: " + pageName + "....");
     switch(pageName) {       
         case USER_INFO_PAGE: {
             createWindowAsync(USER_INFO_PAGE_LINK).then((win) => {
-                let userInfoPage = new UserInfoPage(ipc);
+                _currentPage = new UserInfoPage(ipc);
             });
             break;
         }
         case STREAMING_PAGE: {
             createWindowAsync(STREAM_PAGE_LINK).then((win) => {
-                let streamPage = new StreamPage(IpfsInstance, IpfsNodeID, ipc, win);        
+                _currentPage = new StreamPage(IpfsInstance, IpfsNodeID, ipc, win);        
             });
             break;
         }
         case GLOBAL_ROOM_PAGE: {
             createWindowAsync(GLOBAL_ROOM_PAGE_LINK).then((win) => {
-                let globalRoomPage = new GlobalRoomPage(IpfsInstance, ipc, win);
+                _currentPage = new GlobalRoomPage(IpfsInstance, ipc, win);
             });
             break;
         }
