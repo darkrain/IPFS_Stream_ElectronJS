@@ -1,7 +1,7 @@
 const dialog = require('electron').dialog;
 const StreamInitializer = require('../stream/streamInitializer.js');
 const pathModule = require('path');
-
+const PageBase = require('./pageBase');
 //External helpers
 const imgHelper = require('../helpers/imageLoaderHelper.js');
 const dataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
@@ -10,8 +10,9 @@ const linkCheckingHelper = require('../helpers/linksCheckHelper.js');
 
 let streamerInfo = [];
 
-class StreamPage {
+class StreamPage extends PageBase{
   constructor(ipfs, ipfsNodeID, electronIPC, pageWindow) {
+      super();
       linkCheckingHelper('Stream page', [ipfs, ipfsNodeID, electronIPC]);
       //initialize class mebmers:
       this.ipfs = ipfs;
@@ -37,7 +38,7 @@ class StreamPage {
       }
 
       if( arg == 'stop' ){  
-        streamPageObj.streamInitializer.stopStream();
+        streamPageObj.streamInnitializer.stopStream();
         streamPageObj.streamInitializer.resetStream();
         win.webContents.send('streamState', 'stoped')
       }
@@ -151,6 +152,12 @@ class StreamPage {
                 console.log("Streamer info updated! : \n" + JSON.stringify(streamerInfo));
             }
     });
+  }
+
+  stop() {
+    super.stop();
+    streamPageObj.streamInnitializer.stopStream();
+    streamPageObj.streamInitializer.resetStream();
   }
   //### End Checking functions
 }

@@ -3,11 +3,13 @@ const pathModule = require('path');
 const appRootPath = require('app-root-path');
 const imgHelper = require('../helpers/imageLoaderHelper.js');
 const dialog = require('electron').dialog;
+const PageBase = require('./pageBase');
 const USERINFO_JSON_PATH = pathModule.join(appRootPath.toString(), 'user', 'userInfoJSON.json');
 const frontPagePath = pathModule.join(appRootPath.toString(), 'front', 'userInfoPage', 'img');
 
-class UserInfoPage {
+class UserInfoPage extends PageBase{
     constructor(ipc) {
+        super();
         this.ipc = ipc;
         this.subscribeToIpcEvents(ipc);
     }

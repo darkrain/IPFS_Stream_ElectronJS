@@ -7,6 +7,7 @@ const fsExtra = require('fs-extra');
 const dataConverter = require('../helpers/dataConverters.js');
 const StreamerDataSaver = require('../data/streamerDataSaver.js');
 const streamersMonitor = require('../data/streamersMonitor.js');
+const PageBase = require('./pageBase');
 
 //constants
 const USER_DATA_PATH = pathModule.join(appRootPath.toString(), 'user', 'userData');
@@ -15,9 +16,11 @@ const STREAMERS_JSON_FILE = 'streamers.json';
 const STREAMERS_DATA_PATH = pathModule.join(USER_DATA_PATH.toString(), STREAMERS_JSON_FILE);
 const STREAMERS_INFO_DATA_PATH = pathModule.join(USER_DATA_PATH.toString(), 'streamers');
 
-class GlobalRoomPage {
+class GlobalRoomPage extends PageBase {
     constructor(ipfs, ipc, win) {
+        super();
         const globalRoomObj = this;
+        
         this.createUserFilesIfNotExists();
         this.clearStreamersData().then(() => {
             globalRoomObj.initialize(ipfs, ipc, win);
@@ -56,6 +59,9 @@ class GlobalRoomPage {
             console.log(`Subscribed to ${GLOBAL_ROOM_NAME}!`);
         });
         this.globalRoom.on('message', (msg) => {
+            if(!super.isEnabled()) {
+                return;
+            }
             const messageStr = msg.data.toString();
             console.log(`Message getted: \n from: ${msg.from} \n data: ${msg.data}`);
             globalRoomPageObj.onStreamerInfoMessageGetted(messageStr)

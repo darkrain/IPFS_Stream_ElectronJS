@@ -60,6 +60,12 @@ function loadDefaultPage() {
 }
 let _currentPage;
 function loadPageByName(pageName, args)  {
+
+    //disable currentPage, if its open
+    if(_currentPage) {
+        _currentPage.stop();
+    }
+
     console.log("Start loading page: " + pageName + "....");
     switch(pageName) {       
         case USER_INFO_PAGE: {
@@ -83,7 +89,7 @@ function loadPageByName(pageName, args)  {
         case STREAM_WATCH_PAGE: {
             createWindowAsync(STREAMWATCH_PAGE_LINK).then((win => {
                 const streamerInfo = args;
-                let streamWatchPage = new StreamWatchPage(IpfsInstance, ipc, win, streamerInfo);
+                _currentPage = new StreamWatchPage(IpfsInstance, ipc, win, streamerInfo);
             }));
         }
     }

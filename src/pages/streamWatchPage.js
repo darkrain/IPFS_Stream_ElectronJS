@@ -4,11 +4,13 @@ const pathModule = require('path');
 const appRootPath = require('app-root-path');
 const fs = require('fs');
 const localServer = require('../localServer/localServer.js');
+const PageBase = require('./pageBase');
 
 const STREAMERS_DATA_PATH = pathModule.join(appRootPath.toString(), 'user','userData','streamers');
 
-class StreamWatchPage {
-    constructor(ipfs, ipc, win, streamerInfo){       
+class StreamWatchPage extends PageBase{
+    constructor(ipfs, ipc, win, streamerInfo){  
+        super();     
         this.ipfs = ipfs;
         this.ipc = ipc;
         this.win = win;
@@ -72,6 +74,9 @@ class StreamWatchPage {
             console.log(`Subscribed to ${streamHash} room!`);
         });
         this.streamerRoom.on('message', (msg) => {
+            if(!super.isEnabled()) {
+                return;
+            }
             const messageStr = msg.data.toString();
             console.log("Getted message from streamer: " + messageStr);
             streamWatchPageObj.onStreamDataGetted(messageStr).then(() => {
