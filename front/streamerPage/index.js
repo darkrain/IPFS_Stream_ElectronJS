@@ -67,7 +67,7 @@ ipc.on('camera-list-update', (event, args) => {
 
 	camData.push({name: 'HUEC-OGUREC'}); //test
 	console.log(camData)
-
+	$('#cameraSelection').empty();
 	$.each(camData, function(key, value) {   
 		console.log(value);
 		$('#cameraSelection')
