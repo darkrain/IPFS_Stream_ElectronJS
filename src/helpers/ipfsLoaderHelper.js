@@ -16,7 +16,8 @@ function initializeIPFS_Async() {
             },
         });
         
-                  
+        ipfsInstance.setMaxListeners(0); //to avoid listeners limit
+
         ipfsInstance.on('error', (err) => {
             console.log(err);
             rejected(err);
