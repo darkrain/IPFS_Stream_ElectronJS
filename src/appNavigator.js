@@ -64,8 +64,9 @@ function loadPageByName(pageName, args)  {
     //disable currentPage, if its open
     if(_currentPage) {
         _currentPage.stop();
+        _currentPage = null;
     }
-
+   
     console.log("Start loading page: " + pageName + "....");
     switch(pageName) {       
         case USER_INFO_PAGE: {
