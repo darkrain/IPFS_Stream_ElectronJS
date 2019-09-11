@@ -5,9 +5,11 @@ const appRootPath = require('app-root-path');
 const USER_FOLDER = 'user';
 let AVA_FILE_NAME = 'streamerAva';
 let USER_PATH = pathModule.join(appRootPath.toString(), USER_FOLDER); 
-
 async function copyImageToApplicationFolerAsync(sourceImgPath, avaFileName, userPath) {
 
+    //default values:
+    AVA_FILE_NAME = 'streamerAva';
+    USER_PATH = pathModule.join(appRootPath.toString(), USER_FOLDER);
     if(avaFileName)
         AVA_FILE_NAME = avaFileName;
     if(userPath)
