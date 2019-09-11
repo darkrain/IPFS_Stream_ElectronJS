@@ -1,7 +1,6 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
-
 document.addEventListener('DOMContentLoaded', () => {
 
     const chooiseAvaBTN = document.getElementById('chooiseUserAvaBtn');
@@ -26,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "userName":userNameInputText.value
         }
         ipc.send('update-info', userValues);
+        ipc.send('openGlobalRoomPage');
     });
     
 });

@@ -3,7 +3,7 @@ const pathModule = require('path');
 const appRootPath = require('app-root-path');
 const imgHelper = require('../helpers/imageLoaderHelper.js');
 const dialog = require('electron').dialog;
-const PageBase = require('./pageBase');
+const PageBase = require('./pageBase.js');
 const USERINFO_JSON_PATH = pathModule.join(appRootPath.toString(), 'user', 'userInfoJSON.json');
 const frontPagePath = pathModule.join(appRootPath.toString(), 'front', 'userInfoPage', 'img');
 
@@ -22,6 +22,10 @@ class UserInfoPage extends PageBase{
             userInfoPageObj.setUserName(args.userName);
             userInfoPageObj.updateUserInfoJSON();
         });
+
+        ipc.on('openGlobalRoomPage', (event, args) => {
+          super.goToPage('globalRoomPage', null);
+        })
 
         ipc.on('open-user-ava', (event, args) => { 
             dialog.showOpenDialog({

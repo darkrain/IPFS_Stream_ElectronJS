@@ -23,7 +23,7 @@ const STREAMING_PAGE = 'streamingPage';
 const GLOBAL_ROOM_PAGE = 'globalRoomPage';
 const STREAM_WATCH_PAGE = 'streamWatchPage';
 
-const DEFAULT_PAGE = GLOBAL_ROOM_PAGE;
+const DEFAULT_PAGE = USER_INFO_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;
@@ -52,7 +52,7 @@ function InitializeApp() {
 
 //Calls when the app and dependencies already initialized
 function onAppInitialized() {
-    loadDefaultPage();
+    loadDefaultPage();   
 }
 
 function loadDefaultPage() {
@@ -66,7 +66,7 @@ function loadPageByName(pageName, args)  {
         _currentPage.stop();
         _currentPage = null;
     }
-    resetAppData();
+    resetAppData(); //this function reset all data listeners from another objects, so memory leak is decreasing...
 
     console.log("Start loading page: " + pageName + "....");
     switch(pageName) {       
@@ -153,6 +153,7 @@ app.on('activate', () => {
 
 function resetAppData() {
     clearAllIPCListeners();
+    clearIPFSListeners();
     updateNavIpcFunctions(); 
 }
 
@@ -174,6 +175,7 @@ function clearIPFSListeners() {
 function clearAllIPCListeners() {
     ipc.removeAllListeners();
 }
+
   
 //Handle uncaught exceptions
 process
@@ -184,3 +186,6 @@ process
         console.error(err, 'Uncaught Exception thrown');
         process.exit(1);
     });
+
+module.exports.loadPageByName = loadPageByName;
+module.exports.loadDefaultPage = loadDefaultPage;

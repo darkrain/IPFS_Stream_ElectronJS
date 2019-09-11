@@ -1,3 +1,5 @@
+const appNavigatorMediator = require('../mediators/appNavigatorMediator.js');
+
 class PageBase {
     constructor() {
         this.isEnabled = true;
@@ -10,6 +12,9 @@ class PageBase {
     }
     isEnabled() {
         return this.isEnabled;
+    }
+    goToPage(pageName, args) {
+        appNavigatorMediator.loadPageByName(pageName, args);
     }
 }
 
