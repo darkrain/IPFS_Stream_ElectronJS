@@ -85,6 +85,7 @@ jspm_packages/
 ipfs/
 videos/
 user/
+front/userInfoPage/img/defaultUserAva.*
 
 # TypeScript v1 declaration files
 
