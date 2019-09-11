@@ -17,7 +17,8 @@ class StreamWatchPage extends PageBase{
         this.streamerInfo = streamerInfo;
         this.lastBlockIndex = 0;
         this.isStreamInitialized = false;
-        const streamWatchPageObj = this;            
+        const streamWatchPageObj = this;   
+        localServer.stopLocalServer();       
         this.initializeStreamerPath(this.streamerInfo).then((path) => {
             console.log("Stream path initialized!: " + path.toString());
             //DO something when path exists

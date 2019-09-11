@@ -50,13 +50,14 @@ function startLocalServer(streamPath) {
         server.close();
         closed = true;
         return;
-    })
+    });
 }
 
 function stopLocalServer() 
 {
-    if(app)
+    if(app & app != null)
         app.emit('close', ()=> {});
+    app = null;
 }
 
 module.exports = {
