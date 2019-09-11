@@ -4,19 +4,20 @@ const ipc = electron.ipcRenderer;
 let docButtons = [];
 let i = 0;
 document.addEventListener('DOMContentLoaded',function(){
+	//the property 'isControl' means that button cannot be pushed more than once...
 	const startStreamBtn = document.getElementById('startStream');
 	docButtons.push({btnID: startStreamBtn.id, isControl: true});
 	const stopStreamBtn = document.getElementById('stopStream');
 	docButtons.push({btnID: stopStreamBtn.id, isControl: true});	
 	const avaSelectBtn = document.getElementById('loadImgBtn');
 	docButtons.push({btnID: avaSelectBtn.id, isControl: false});
-
+	
 	//disable control buttons by default
 	startStreamBtn.disabled = true;
 	stopStreamBtn.disabled = true;
 
 	const cameraSelection = document.getElementById('cameraSelection');
-
+	
 	startStreamBtn.addEventListener('click', function () {
 		ipc.send('update-stream-state', 'start')
 	});
@@ -40,8 +41,12 @@ document.addEventListener('DOMContentLoaded',function(){
 		ipc.send('streamerNameChanged', streamerNameInputText.value);
 	});
 
+	$('#backBtn').click(function(){
+		ipc.send('backBtnClicked');
+	});
+
 	//at start send default value from inputText
-	ipc.send('streamerNameChanged', streamerNameInputText.value);
+	ipc.send('streamerNameChanged', streamerNameInputText.value);	
 });
 
 // ### Client event subscriber handlers ###

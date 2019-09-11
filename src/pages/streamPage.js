@@ -74,7 +74,11 @@ class StreamPage extends PageBase{
 
     ipc.on('streamerNameChanged', (event, args) => {
       streamPageObj.onStreamerNameChanged(args);
-    });   
+    });  
+    
+    ipc.on('backBtnClicked', (event, args) => {
+        super.goToGlobalPage();
+    });
     //### END IPC calls ###
   } 
 
@@ -156,8 +160,8 @@ class StreamPage extends PageBase{
 
   stop() {
     super.stop();
-    streamPageObj.streamInitializer.stopStream();
-    streamPageObj.streamInitializer.resetStream();
+    this.streamInitializer.stopStream();
+    this.streamInitializer.resetStream();
   }
   //### End Checking functions
 }

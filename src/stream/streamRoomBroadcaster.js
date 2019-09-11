@@ -17,7 +17,8 @@ class StreamRoomBroadcaster {
         this.globalRoom = Room(ipfs,GLOBAL_ROOM_NAME);
         console.log("Room broadcaster of streamer with name: " + streamerHash);
         this.streamerRoom = Room(ipfs,streamerHash);
-
+        this.streamerRoom.removeAllListeners();
+        this.globalRoom.removeAllListeners();
         //subscribe to handle errors
         this.globalRoom.on('error', (err) => {
             console.log("UNABLE TO SEND message! \n" + err);

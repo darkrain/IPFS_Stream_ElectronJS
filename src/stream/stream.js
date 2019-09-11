@@ -231,8 +231,8 @@ class Stream {
 
 	stop() {
 		this.isPlalistInitialized = false;
-		this.ffmpegProc.kill()
-
+		if(this.ffmpegProc)
+			this.ffmpegProc.kill()
 		if( this.watcherPID )
 			this.watcherPID.close()
 		this.blocks = [];

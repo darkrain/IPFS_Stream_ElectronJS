@@ -7,11 +7,11 @@ let camData;
 let streamInfo = [];
 async function checkDataIsReadyAsync(ipfsInstance, electronWindow, streamInitializer, streamInfoGenerator) {   
     //LoadCameras and update web-view list
-    if(!camData && dataDependingFlags.isCameraReady === false) {
-        camData = await streamInitializer.initializeCameras();
-        electronWindow.webContents.send('camera-list-update', camData);  
-        dataDependingFlags.isCameraReady = camData.length > 0;    
-    }
+    
+    camData = await streamInitializer.initializeCameras();
+    electronWindow.webContents.send('camera-list-update', camData);  
+    dataDependingFlags.isCameraReady = camData.length > 0;    
+    
 
     if(!streamInfoGenerator) {
         console.log("Streamer info generator not ready.");

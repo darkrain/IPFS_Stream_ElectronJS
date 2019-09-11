@@ -24,7 +24,7 @@ class UserInfoPage extends PageBase{
         });
 
         ipc.on('openGlobalRoomPage', (event, args) => {
-          super.goToPage('globalRoomPage', null);
+          super.goToGlobalPage();
         })
 
         ipc.on('open-user-ava', (event, args) => { 

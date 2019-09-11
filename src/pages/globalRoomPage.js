@@ -46,6 +46,8 @@ class GlobalRoomPage extends PageBase {
         this.win = win;
         this.dataSaver = new StreamerDataSaver(this.ipfs);
         this.globalRoom = Room(this.ipfs, GLOBAL_ROOM_NAME);
+        this.globalRoom.removeAllListeners();
+        this.globalRoom.setMaxListeners(0);
         this.initializeListenersForRooms();
 
         this.currentStreamers = [];

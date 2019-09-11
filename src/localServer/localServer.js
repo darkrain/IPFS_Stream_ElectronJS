@@ -55,7 +55,8 @@ function startLocalServer(streamPath) {
 
 function stopLocalServer() 
 {
-    app.emit('close', ()=> {});
+    if(app)
+        app.emit('close', ()=> {});
 }
 
 module.exports = {
