@@ -25,7 +25,8 @@ class StreamWatchPage extends PageBase{
             streamWatchPageObj.win.webContents.send('streamerDataGetted', streamWatchPageObj.streamerInfo);
             streamWatchPageObj.createTranslationFolder(path);
             streamWatchPageObj.subscribeToStreamerRoom(streamWatchPageObj.streamerInfo);
-            localServer.startLocalServer(streamWatchPageObj.streamerVideoFolder);
+            localServer.setStaticPath(streamWatchPageObj.streamerVideoFolder);
+            localServer.startLocalServer();
         }).catch((err) => {
             console.error("Cannot initialize streamer path: \n" + err.toString())
         });

@@ -59,7 +59,8 @@ class StreamInitializer {
         try {
             this.isStreamStarted = true;
             this.stream.start(playListReadyCallBack, streamerInfo); 
-            localServer.startLocalServer(this.fullVideoPath);       
+            localServer.setStaticPath(this.fullVideoPath);
+            localServer.startLocalServer();       
         } catch(e) {
             console.log(`Unable to start stream! Coz \n ${e}`);
         }

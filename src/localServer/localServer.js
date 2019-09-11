@@ -3,7 +3,14 @@ const path = require('path');
 const fs = require('fs');
 let app;
 let closed = false;
-function startLocalServer(streamPath) { 
+let _streamPath;
+function setStaticPath(streamPath) {
+    _streamPath = streamPath;
+}
+
+function startLocalServer() { 
+    if(app)
+        return;
     closed = false;
     app = express();   
     //check which file being requested
@@ -23,9 +30,9 @@ function startLocalServer(streamPath) {
         next();
     });
 
-    app.use(express.static(streamPath));
+    app.use(express.static(_streamPath));
     app.get('/', (req, res) => {
-        res.send(`HELLO MAN! Your path: ${streamPath}`);
+        res.send(`HELLO MAN! Your path: ${_streamPath}`);
     });
 
     function showFileInfo(filePath) {
@@ -42,7 +49,7 @@ function startLocalServer(streamPath) {
 
     const server = app.listen(PORT, () => {
         console.log("SERVER RUNNING!");
-        console.log(`Your static path is: ${streamPath}`);
+        console.log(`Your static path is: ${_streamPath}`);
     });
 
     app.on('close', () => {
@@ -62,6 +69,7 @@ function stopLocalServer()
 
 module.exports = {
     startLocalServer,
-    stopLocalServer
+    stopLocalServer,
+    setStaticPath
 }
 
