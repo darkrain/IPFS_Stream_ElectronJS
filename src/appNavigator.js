@@ -66,7 +66,8 @@ function loadPageByName(pageName, args)  {
         _currentPage.stop();
         _currentPage = null;
     }
-   
+    resetAppData();
+
     console.log("Start loading page: " + pageName + "....");
     switch(pageName) {       
         case USER_INFO_PAGE: {
@@ -150,13 +151,29 @@ app.on('activate', () => {
     //}
   });
 
+function resetAppData() {
+    clearAllIPCListeners();
+    updateNavIpcFunctions(); 
+}
 
 //nav functions
-ipc.on('goto-page', (event, args) => {
-    const pageName = args.pageName;
-    const pageArgs = args.pageArgs;
-    loadPageByName(pageName, pageArgs);
-});
+function updateNavIpcFunctions() {
+    ipc.on('goto-page', (event, args) => {
+        const pageName = args.pageName;
+        const pageArgs = args.pageArgs;
+        loadPageByName(pageName, pageArgs);
+    });
+}
+
+function clearIPFSListeners() {
+    if(IpfsInstance) {
+        IpfsInstance.removeAllListeners();
+    }
+}
+
+function clearAllIPCListeners() {
+    ipc.removeAllListeners();
+}
   
 //Handle uncaught exceptions
 process
