@@ -85,7 +85,7 @@ jspm_packages/
 ipfs/
 videos/
 user/
-front/userInfoPage/img
+front/userInfoPage/img/*
 
 # TypeScript v1 declaration files
 
