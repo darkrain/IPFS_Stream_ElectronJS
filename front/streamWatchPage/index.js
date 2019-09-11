@@ -6,6 +6,9 @@ $(document).ready(function() {
 		const streamData = args;
 		$('#streamerNameBlock').text(streamData.streamerName);
 	});
+	$('#backBtn').click(function(){
+		ipc.send('gotoGlobalPage');
+	});
 });  
 
 ipc.on('stream-loaded', (event, args) => {

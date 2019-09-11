@@ -32,6 +32,9 @@ class StreamWatchPage extends PageBase{
         this.ipc.on('exit-watch', (event, args) => {
             localServer.stopLocalServer();
         });
+        this.ipc.on('gotoGlobalPage', (event, args) => {
+            super.goToGlobalPage();
+        });
     }
 
     async initializeStreamerPath(streamerInfo) {
