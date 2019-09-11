@@ -13,7 +13,7 @@ async function copyImageToApplicationFolerAsync(sourceImgPath, avaFileName, user
     if(avaFileName)
         AVA_FILE_NAME = avaFileName;
     if(userPath)
-        USER_PATH = userPath;
+        USER_PATH = userPath;  
         
     //firstable clear another avaImages if it exists..
     await removeImagesIfFileExistsAsync();
@@ -40,6 +40,9 @@ async function copyImageToApplicationFolerAsync(sourceImgPath, avaFileName, user
 
 function removeImagesIfFileExistsAsync() {
     return new Promise((resolve, reject) => {
+        if(!fs.existsSync(USER_PATH))
+            fs.mkdirSync(USER_PATH);
+
         fs.readdir(USER_PATH, (err, files) => {
             if(err) {
                 console.error("Cannot read path: " + USER_PATH + "\n" + err.name);

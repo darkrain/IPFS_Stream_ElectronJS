@@ -31,5 +31,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ipc.on('selected-userava-file', (event, args) => {
     const avaImg = document.getElementById('userAvaImg');
-    avaImg.src = './img/' + args + '?v' + Date.now();;
+    avaImg.src = './img/photo/' + args + '?v' + Date.now();;
 });
