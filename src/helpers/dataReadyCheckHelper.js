@@ -17,15 +17,10 @@ async function checkDataIsReadyAsync(ipfsInstance, electronWindow, streamInitial
         console.log("Streamer info generator not ready.");
         return false;
     }
-
-    if(dataDependingFlags.isStreamerDataReady === false) {
-        streamInfo = await streamInfoGenerator.getGeneratedStreamerInfoAsync(ipfsInstance);
-        
-        console.log("Streamer info now: \n" + JSON.stringify(streamInfo));
-
-        dataDependingFlags.isStreamerDataReady = streamInfo != null;
-    }
-
+  
+    streamInfo = await streamInfoGenerator.getGeneratedStreamerInfoAsync(ipfsInstance);  
+    dataDependingFlags.isStreamerDataReady = streamInfo != null;
+    
     //TODO: Complete data!   
     return {
         "isDataReady" : isAllDataReady(),

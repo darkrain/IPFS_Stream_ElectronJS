@@ -16,7 +16,7 @@ class StreamWatchPage extends PageBase{
         this.win = win;
         this.streamerInfo = streamerInfo;
         this.lastBlockIndex = 0;
-        
+        this.isStreamInitialized = false;
         const streamWatchPageObj = this;            
         this.initializeStreamerPath(this.streamerInfo).then((path) => {
             console.log("Stream path initialized!: " + path.toString());
@@ -116,11 +116,22 @@ class StreamWatchPage extends PageBase{
             });
 
             await this.updateM3UFile(lastChunkData);
-
+            this.initializeStartingStreamIfNotYet();
             streamWatchPageObj.lastBlockIndex++;
         } catch(err) {
             console.error("Unable handle stream data: \n" + err.toString());
         }
+    }
+
+    initializeStartingStreamIfNotYet() {
+        if(this.isStreamInitialized === false) {
+            this.onStreamInitialized();
+            this.isStreamInitialized = true;
+        }
+    }
+
+    onStreamInitialized() {
+        this.win.webContents.send('stream-loaded');
     }
 
     async updateM3UFile(chunkData) {
