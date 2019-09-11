@@ -70,7 +70,6 @@ class StreamInitializer {
     stopStream() {
         this.isStreamStarted = false;
         this.stream.stop();
-        localServer.stopLocalServer();
     };
 
     initializeCameras = async () => {

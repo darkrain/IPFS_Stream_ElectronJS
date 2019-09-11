@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require('path');
 const fs = require('fs');
-let app;
+let app = null;
 let closed = false;
 let _streamPath;
 function setStaticPath(streamPath) {
@@ -9,7 +9,7 @@ function setStaticPath(streamPath) {
 }
 
 function startLocalServer() { 
-    if(app)
+    if(app != null)
         return;
     closed = false;
     app = express();   

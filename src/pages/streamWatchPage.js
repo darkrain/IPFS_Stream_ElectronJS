@@ -17,8 +17,7 @@ class StreamWatchPage extends PageBase{
         this.streamerInfo = streamerInfo;
         this.lastBlockIndex = 0;
         this.isStreamInitialized = false;
-        const streamWatchPageObj = this;   
-        localServer.stopLocalServer();       
+        const streamWatchPageObj = this;    
         this.initializeStreamerPath(this.streamerInfo).then((path) => {
             console.log("Stream path initialized!: " + path.toString());
             //DO something when path exists
@@ -32,7 +31,7 @@ class StreamWatchPage extends PageBase{
         });
 
         this.ipc.on('exit-watch', (event, args) => {
-            localServer.stopLocalServer();
+            //Some actions on exit watch page...
         });
         this.ipc.on('gotoGlobalPage', (event, args) => {
             super.goToGlobalPage();
