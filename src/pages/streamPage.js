@@ -38,7 +38,7 @@ class StreamPage extends PageBase{
       }
 
       if( arg == 'stop' ){  
-        streamPageObj.streamInnitializer.stopStream();
+        streamPageObj.streamInitializer.stopStream();
         streamPageObj.streamInitializer.resetStream();
         win.webContents.send('streamState', 'stoped')
       }
@@ -156,7 +156,7 @@ class StreamPage extends PageBase{
 
   stop() {
     super.stop();
-    streamPageObj.streamInnitializer.stopStream();
+    streamPageObj.streamInitializer.stopStream();
     streamPageObj.streamInitializer.resetStream();
   }
   //### End Checking functions
