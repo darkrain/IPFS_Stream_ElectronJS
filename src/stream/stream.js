@@ -101,7 +101,7 @@ class Stream {
 
 		const ffmpegProcess = this.ffmpegProc;
 
-		if(debug == true) {
+		if(debug === true) {
 			console.log("FFMPEG Input debug process...");			
 			//handle process
 			ffmpegProcess
@@ -162,7 +162,7 @@ class Stream {
 			throw 'Camera is not set';
 		}
 		this.isPlalistInitialized = false;		
-		this.getInstance().ffmpeg(true);
+		this.getInstance().ffmpeg(false);
 		this.getInstance().streamWatcher(onPlaylistReadyCallback);
 
 		this.roomBroadcaster = new StreamRoomBroadcaster(this.ipfs, streamerInfo);
