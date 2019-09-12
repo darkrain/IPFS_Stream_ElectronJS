@@ -24,9 +24,8 @@ ipc.on('listOfStreamersUpdated', (event, args) => {
         const streamerName = streamerInfo.streamerName;
         const imgRelativePath = streamerInfo.relativePath;
         const buttonID = 'streamer' + i.toString();
-        const htmlData = `<div><p>${streamerName}<p><img src="${imgRelativePath}">
-        <button id="${buttonID}" type="button">Watch ${streamerName}</button>
-        </div>`;
+        const htmlData = `<div><p>${streamerName}<p><img src="${imgRelativePath}" width="200" height="75">   
+        </div> <div><button id="${buttonID}" type="button">Watch ${streamerName}</button></div>`;
         $(listID).append(`<li>${htmlData}</li>`);     
         const streamerButton = document.getElementById(buttonID);
         streamerButton.addEventListener('click', function() {
