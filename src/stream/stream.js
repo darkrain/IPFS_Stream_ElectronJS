@@ -84,16 +84,16 @@ class Stream {
 		[
 			'-f' , 'dshow',
 			'-i',cameraDetectCommand, 
-			'-profile:v', 'baseline',
+			'-profile:v', 'high',
 			'-level', '3.0',
 			'-c:v', 'libx264',
-			'-crf','21',
+			'-crf','35', //crf is video qualiti from 1(best) to 51 (worst)
 			'-preset','veryfast',
 			'-c:a', 'aac', 
 			'-b:a', '128k', 
 			'-ac','2',
 			'-f', 'hls', 
-			'-hls_time', '6', 
+			'-hls_time', '4', 
 			'-hls_playlist_type', 'event', 
 			`${ this.keep }`
 		], spawnOpts);
