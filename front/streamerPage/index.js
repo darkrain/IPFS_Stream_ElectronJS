@@ -44,9 +44,11 @@ document.addEventListener('DOMContentLoaded',function(){
 	$('#backBtn').click(function(){
 		ipc.send('backBtnClicked');
 	});
-
 	//at start send default value from inputText
-	ipc.send('streamerNameChanged', streamerNameInputText.value);	
+	const delayToUpdateDefaultValue = 1000;
+	setTimeout(() => {	
+		ipc.send('streamerNameChanged', streamerNameInputText.value);	
+	}, delayToUpdateDefaultValue)
 });
 
 // ### Client event subscriber handlers ###

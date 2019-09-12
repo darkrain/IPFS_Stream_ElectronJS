@@ -102,6 +102,7 @@ class StreamPage extends PageBase{
     console.log("MAIN PAGE LOADED!");
     //checkData is ready first run
     this.checkAllData();
+    this.onStreamerDataUpdated();
   }
 
   onPlaylistRelativePathUpdated = () => {
