@@ -161,7 +161,7 @@ class Stream {
 			throw 'Camera is not set';
 		}
 		this.isPlalistInitialized = false;		
-		this.getInstance().ffmpeg(false);
+		this.getInstance().ffmpeg(true);
 		this.getInstance().streamWatcher(onPlaylistReadyCallback);
 
 		this.roomBroadcaster = new StreamRoomBroadcaster(this.ipfs, streamerInfo);
