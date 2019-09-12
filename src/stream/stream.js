@@ -84,7 +84,7 @@ class Stream {
 		[
 			'-f' , 'dshow',
 			'-i',cameraDetectCommand, 
-			'-profile:v', 'high',
+			'-profile:v', 'high422', //set profile to support 4:2:2 resolution
 			'-level', '3.0',
 			'-c:v', 'libx264',
 			'-crf','35', //crf is video qualiti from 1(best) to 51 (worst)
@@ -93,6 +93,7 @@ class Stream {
 			'-b:a', '128k', 
 			'-ac','2',
 			'-f', 'hls', 
+			'-pix_fmt', 'yuv420p', //to support 4:2:2 resoultion
 			'-hls_time', '4', 
 			'-hls_playlist_type', 'event', 
 			`${ this.keep }`
