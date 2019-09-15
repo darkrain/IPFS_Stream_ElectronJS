@@ -11,40 +11,9 @@
     <link rel="stylesheet" type="text/css" href="index.css" />
   </head>
   <body>
-  	<div id="bar">
-  		<span id="streamState">Stream stoped</span>
-    </div>
-    <div id="controlButtonsContainer">
-      <button id="startStream">Start stream</button>
-      <button id="stopStream">Stop stream</button>
-    </div>
-
-    <div id="wrapper">
-      <div class="left">
-        <div id="streamReadyStateContainer">
-          <h1>Requirments to start stream:</h1>
-          <ul id="requirementList">
-            <li>HUI!</li>
-          </ul>
-        </div>
-        <div id="camSelectionContainer">
-          <select id="cameraSelection"> <!--Camera selection-->
-          </select>
-        </div>  
-        <div id="streamerAvaContainer">
-          <img id="streamerAvaImg" src='../../user/unknown.jpg' width="200px" height="275px">
-        </div>
-        <div>
-          <button id="loadImgBtn">Upload image</button>
-        </div>
-        <div id="streamerNameContainer">
-            <input id="streamerNameInputText" type="text" placeholder="Streamer name" value="AR_Baby">
-        </div>
-      </div>
-      <div class="right">
-          <video id="video-player" width="352" height="198" controls>
-          </video>        
-      </div>
+    <div class="videoBlock">
+        <video id="video-player" width="800" height="400" controls>
+        </video>   
     </div>
     <div class="back">
       <button id="backBtn" type="button">Back to streams</button>
