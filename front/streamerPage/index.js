@@ -67,7 +67,6 @@ ipc.on('streamState', (event, arg) => {
 ipc.on('camera-list-update', (event, args) => {
 	const camData = args;	
 
-	camData.push({name: 'HUEC-OGUREC'}); //test
 	console.log(camData)
 	$('#cameraSelection').empty();
 	$.each(camData, function(key, value) {   

@@ -66,6 +66,10 @@ class StreamInfoPage extends PageBase{
     ipc.on('backBtnClicked', (event, args) => {
         super.goToGlobalPage();
     });
+    ipc.on('goToStream', (event, args) => {
+        //незабываем передавать в аргументах необходимые ссылки, для работы StreamerPage.
+        super.goToPage('streamingPage');
+    });
     //### END IPC calls ###
   } 
 
@@ -131,7 +135,6 @@ class StreamInfoPage extends PageBase{
          this.streamInfoGenerator
          ).then((readyData) => {
             console.log("Data checking... result: " + readyData.isDataReady);
-            win.webContents.send('all-data-ready', readyData.isDataReady);        
             const streamInfoArray = {
               "StreamerName": streamerNameInfo,
               "AvatarHash": streamerImgPathInfo,
