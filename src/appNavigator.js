@@ -8,13 +8,21 @@ const StreamPage = require('./pages/streamPage.js');
 const UserInfoPage = require('./pages/userInfoPage.js');
 const GlobalRoomPage = require('./pages/globalRoomPage.js');
 const StreamWatchPage = require('./pages/streamWatchPage.js');
+const StreamerInfoPage = require('./pages/streamInfoPage.js');
 //*** End Imports ***
 
 //*** Page links ***
-const USER_INFO_PAGE_LINK = 'front/userInfoPage/index.html';
-const GLOBAL_ROOM_PAGE_LINK = 'front/globalRoomPage/index.html';
-const STREAM_PAGE_LINK = 'front/streamerPage/index.html';
-const STREAMWATCH_PAGE_LINK = 'front/streamWatchPage/index.html';
+const FRONT_LAYOUT_FILE_NAME = 'index.html';
+const FRONTEND_FOLDER_NAME = 'front';
+function getPageLinkByName(pageFolderName) {
+    return `${FRONTEND_FOLDER_NAME}/${pageFolderName}/${FRONT_LAYOUT_FILE_NAME}`;
+}
+
+const USER_INFO_PAGE_LINK = getPageLinkByName('userInfoPage');
+const GLOBAL_ROOM_PAGE_LINK = getPageLinkByName('globalRoomPage');
+const STREAM_PAGE_LINK = getPageLinkByName('streamerPage');
+const STREAMWATCH_PAGE_LINK = getPageLinkByName('streamWatchPage');
+const STREAMERINFO_PAGE_LINK = getPageLinkByName('streamInfoPage');
 //*** End page links 
 
 //*** Named constants ***
@@ -22,8 +30,9 @@ const USER_INFO_PAGE = 'userInfoPage';
 const STREAMING_PAGE = 'streamingPage';
 const GLOBAL_ROOM_PAGE = 'globalRoomPage';
 const STREAM_WATCH_PAGE = 'streamWatchPage';
+const STREAMER_INFO_PAGE = 'streamerInfoPage';
 
-const DEFAULT_PAGE = USER_INFO_PAGE;
+const DEFAULT_PAGE = STREAMER_INFO_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;
@@ -93,6 +102,16 @@ function loadPageByName(pageName, args)  {
                 const streamerInfo = args;
                 _currentPage = new StreamWatchPage(IpfsInstance, ipc, win, streamerInfo);
             }));
+            break;
+        }
+        case STREAMER_INFO_PAGE: {
+            createWindowAsync(STREAMERINFO_PAGE_LINK).then((win) => {
+                _currentPage = new StreamerInfoPage(IpfsInstance, IpfsNodeID, ipc, win);
+            });
+            break;
+        }
+        default: {
+            throw new Error(`FATAL_ERROR! \n Page ${pageName} in not EXISTS!`);
         }
     }
 }

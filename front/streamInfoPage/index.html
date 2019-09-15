@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>BorgStream</title>
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> <!--HLS-->
+    <script src="../lib/jquery-3.4.1.js"> </script>
+    <script src="index.js"> </script> 
+    <script>if (window.module) module = window.module;</script>
+    <link rel="stylesheet" type="text/css" href="index.css" />
+  </head>
+  <body> 
+    <div class="centerBlock">
+        <div id="streamReadyStateContainer">
+            <h1>Requirments to start stream:</h1>
+            <ul id="requirementList">
+              <li>HUI!</li>
+            </ul>
+          </div>  
+          <div id="streamerAvaContainer">
+            <img id="streamerAvaImg" src='../../user/unknown.jpg' width="200px" height="275px">
+          </div>
+          <div>
+            <button id="loadImgBtn">Upload image</button>
+          </div>
+          <div id="streamerNameContainer">
+              <input id="streamerNameInputText" type="text" placeholder="Streamer name" value="AR_Baby">
+          </div>
+          <div id="camSelectionContainer">
+            <p>Choose camera</p>
+            <select id="cameraSelection"> <!--Camera selection-->
+            </select>
+          </div>
+          <div class="startStream">
+            <button id="openStreamBtn" type="button">Start stream</button>
+          </div>
+          <div class="back">
+            <button id="backBtn" type="button">Back to streams</button>
+          </div>
+    </div>  
+  </body>
+</html>
