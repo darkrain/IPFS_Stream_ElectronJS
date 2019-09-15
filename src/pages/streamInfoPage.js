@@ -68,7 +68,11 @@ class StreamInfoPage extends PageBase{
     });
     ipc.on('goToStream', (event, args) => {
         //незабываем передавать в аргументах необходимые ссылки, для работы StreamerPage.
-        super.goToPage('streamingPage');
+        const argsForStream = {
+            streamerInfo: streamerInfo,
+            streamInitializer: streamPageObj.streamInitializer 
+        }
+        super.goToPage('streamingPage', argsForStream);
     });
     //### END IPC calls ###
   } 

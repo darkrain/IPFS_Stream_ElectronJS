@@ -32,7 +32,7 @@ const GLOBAL_ROOM_PAGE = 'globalRoomPage';
 const STREAM_WATCH_PAGE = 'streamWatchPage';
 const STREAMER_INFO_PAGE = 'streamerInfoPage';
 
-const DEFAULT_PAGE = STREAMER_INFO_PAGE;
+const DEFAULT_PAGE = USER_INFO_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;
@@ -86,8 +86,17 @@ function loadPageByName(pageName, args)  {
             break;
         }
         case STREAMING_PAGE: {
+            const streamArgs = args;
+            const streamerInfo = args.streamerInfo;
+            const streamInitializer = args.streamInitializer;
+            if(!streamerInfo) {
+                throw new Error(`Unable to start stream page, streamer info is NULL!!!`);
+            }
+            if(!streamInitializer) {
+                throw new Error(`Unable to start stream page, streamInitializer is NULL!!!`);
+            }
             createWindowAsync(STREAM_PAGE_LINK).then((win) => {
-                _currentPage = new StreamPage(IpfsInstance, IpfsNodeID, ipc, win);        
+                _currentPage = new StreamPage(streamInitializer, win, ipc, streamerInfo);        
             });
             break;
         }
