@@ -6,7 +6,7 @@ $( document ).ready(function() {
 
     $('#CreateStreamButton').click(function(){
         const args = {
-            pageName: 'streamingPage',
+            pageName: 'streamerInfoPage',
             pageArgs: 'none'
         }
         ipc.send('goto-page', args);
