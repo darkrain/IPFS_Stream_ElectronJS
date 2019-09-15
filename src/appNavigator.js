@@ -171,6 +171,7 @@ app.on('activate', () => {
   });
 
 function resetAppData() {
+    console.log("APP_NAVIGATOR: Reseting all app data...");
     clearAllIPCListeners();
     clearIPFSListeners();
     updateNavIpcFunctions(); 
