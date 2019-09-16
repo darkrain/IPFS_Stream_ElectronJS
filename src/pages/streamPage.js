@@ -30,9 +30,11 @@ class StreamPage extends PageBase{
   //### END Callbacks for Event's ###
 
   stop() {
-    super.stop();
-    this.streamInitializer.stopStream();
-    this.streamInitializer.resetStream();
+    return new Promise((resolve, reject) => {
+      super.stop();
+      this.streamInitializer.stopStream();
+      resolve();
+    }); 
   }
 }
 

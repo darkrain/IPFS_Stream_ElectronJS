@@ -76,13 +76,14 @@ class StreamWatchPage extends PageBase{
         //setup streamer room
         this.streamerRoom.setMaxListeners(0);
         this.streamerRoom.removeAllListeners();
-
+    
         console.log("**** Try to subscribe room with hash: " + streamHash);
         this.streamerRoom.on('subscribed', () => {
             console.log(`Subscribed to ${streamHash} room!`);
         });
         this.streamerRoom.on('message', (msg) => {
             if(!super.isEnabled()) {
+                streamWatchPageObj.streamerRoom.removeAllListeners();
                 return;
             }
             const messageStr = msg.data.toString();
@@ -175,6 +176,7 @@ class StreamWatchPage extends PageBase{
             throw err;
         }            
     }
+    
 }
 
 module.exports = StreamWatchPage;

@@ -70,13 +70,12 @@ function loadDefaultPage() {
     loadPageByName(DEFAULT_PAGE);
 }
 let _currentPage;
-function loadPageByName(pageName, args)  {
+async function loadPageByName(pageName, args)  {
 
     //disable currentPage, if its open
     if(_currentPage) {
         console.log("Stop last page: " + _currentPage.constructor.name);
-        _currentPage.stop();
-        _currentPage = null;
+        await Promise.resolve(_currentPage.stop());
     }
     resetAppData(); //this function reset all data listeners from another objects, so memory leak is decreasing...
 
@@ -139,7 +138,7 @@ function createWindowAsync(linkToPage) {
                 webPreferences: {
                     nodeIntegration: true
                 }
-            });
+            });           
         }
                
         // and load the index.html of the app.
@@ -208,7 +207,15 @@ function clearAllIPCListeners() {
     ipc.removeAllListeners();
 }
 
-  
+
+function isPromise(object){
+    if(Promise && Promise.resolve){ 
+      return Promise.resolve(object) == object;  
+    }else{
+      throw "Promise not supported in your environment"
+    } 
+  }
+
 //Handle uncaught exceptions
 process
     .on('unhandledRejection', (reason, p) => {

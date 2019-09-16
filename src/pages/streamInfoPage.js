@@ -154,9 +154,12 @@ class StreamInfoPage extends PageBase{
   }
 
   stop() {
-    super.stop();
-    this.streamInitializer.stopStream();
-    this.streamInitializer.resetStream();
+    const streamInfoPageObj = this;
+    return new Promise((resolve, rejected) => {
+      super.stop();
+      streamInfoPageObj.streamInitializer.stopStream();
+      resolve();
+    });  
   }
   //### End Checking functions
 }
