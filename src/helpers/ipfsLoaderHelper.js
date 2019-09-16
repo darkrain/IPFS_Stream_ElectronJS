@@ -10,7 +10,7 @@ function initializeIPFS_Async() {
             config: {
               Addresses: {
                 Swarm: [
-                  "/ip4/0.0.0.0/tcp/5001",
+                  "/ip4/0.0.0.0/tcp/5001"
                 ]
               }
             },
@@ -26,9 +26,14 @@ function initializeIPFS_Async() {
         
         ipfsInstance.once('ready', () => ipfsInstance.id((err, peerInfo) => {
             if (err) { throw err }
-        
-          console.log('IPFS node started and has ID ' + peerInfo.id)
-          resolve(ipfsInstance, peerInfo.id);
+          //add external peer
+          const peerAddr = '/ip4/46.101.114.73/tcp/4001/ipfs/QmXjuSKjf7eKENw9ZURWnm2J1kUTJHzAFMNJotx5RwL5gf';
+          ipfsInstance.bootstrap.add(peerAddr, [], (err, res) => {
+            if(err) rejected(err);
+            console.log('Connected peers: \n' + JSON.stringify(res.Peers));
+            console.log('IPFS node started and has ID ' + peerInfo.id)
+            resolve(ipfsInstance, peerInfo.id);
+          });         
         }));
     })
     
