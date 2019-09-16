@@ -10,6 +10,7 @@ class StreamInitializer {
         this.ipfs = IPFSinstance;
         //events
         this.onStreamVideoRelativePathUpdatedEvent =  new OnStreamVideoRelativePathUpdatedEvent(); 
+        this.onStreamVideoRelativePathUpdatedEvent.removeAllListeners();
         this.onStreamVideoRelativePathUpdatedEvent.setMaxListeners(0); //to avoid warnings    
         //reset at start
         this.resetStream();     
