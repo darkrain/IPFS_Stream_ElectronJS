@@ -12,7 +12,9 @@ function startLocalServer() {
     if(app != null)
         return;
     closed = false;
-    app = express();   
+    app = express(); 
+    app.removeAllListeners();
+    app.setMaxListeners(0);  
     //check which file being requested
     app.use((req, res, next) => 
     {

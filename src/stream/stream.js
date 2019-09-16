@@ -100,7 +100,8 @@ class Stream {
 		], spawnOpts);
 
 		const ffmpegProcess = this.ffmpegProc;
-
+		ffmpegProcess.removeAllListeners();
+		ffmpegProcess.setMaxListeners(0);
 		if(debug === true) {
 			console.log("FFMPEG Input debug process...");			
 			//handle process
@@ -133,7 +134,6 @@ class Stream {
 			streamObj.rooms[nameRoom] = Room(streamObj.ipfs, nameRoom);
 			streamObj.rooms[nameRoom].setMaxListeners(0);
 			streamObj.rooms[nameRoom].removeAllListeners();
-
 		}	
 	}
 
@@ -231,16 +231,25 @@ class Stream {
 				});
 			}
 		});
+		streamObj.watcherPID.setMaxListeners(0);
 	}
 
 	stop() {
 		this.isPlalistInitialized = false;
-		if(this.ffmpegProc)
-			this.ffmpegProc.kill()
-		if( this.watcherPID )
-			this.watcherPID.close()
+		if(this.ffmpegProc) {
+			this.ffmpegProc.kill();
+			this.ffmpegProc.removeAllListeners();
+			this.ffmpegProc = null;
+		}
+						
+		if( this.watcherPID ) {
+			this.watcherPID.close();
+			this.watcherPID = null;
+		}
+			
 		if(this.roomBroadcaster) {
 			this.roomBroadcaster.stopBroadcastAboutStream();
+			this.roomBroadcaster = null;
 		}
 		this.blocks = [];
 	}

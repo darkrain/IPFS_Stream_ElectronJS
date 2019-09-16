@@ -74,6 +74,7 @@ function loadPageByName(pageName, args)  {
 
     //disable currentPage, if its open
     if(_currentPage) {
+        console.log("Stop last page: " + _currentPage.constructor.name);
         _currentPage.stop();
         _currentPage = null;
     }
@@ -217,6 +218,7 @@ process
         console.error(err, 'Uncaught Exception thrown');
         process.exit(1);
     });
+process.setMaxListeners(0);
 
 module.exports.loadPageByName = loadPageByName;
 module.exports.loadDefaultPage = loadDefaultPage;
