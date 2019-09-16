@@ -73,6 +73,10 @@ class StreamWatchPage extends PageBase{
         const streamHash = streamerInfo.hashOfStreamer;
         console.log("Subscribe to streamer room name: " + streamHash);
         this.streamerRoom = Room(this.ipfs, streamHash);
+        //setup streamer room
+        this.streamerRoom.setMaxListeners(0);
+        this.streamerRoom.removeAllListeners();
+
         console.log("**** Try to subscribe room with hash: " + streamHash);
         this.streamerRoom.on('subscribed', () => {
             console.log(`Subscribed to ${streamHash} room!`);

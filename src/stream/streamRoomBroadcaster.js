@@ -14,11 +14,15 @@ class StreamRoomBroadcaster {
         let ipfs = this.ipfs;      
         this.currentStreamerInfo = streamerInfo;
         const streamerHash = this.currentStreamerInfo.hashOfStreamer;
-        this.globalRoom = Room(ipfs,GLOBAL_ROOM_NAME);
         console.log("Room broadcaster of streamer with name: " + streamerHash);
+
+        //setup rooms
+        this.globalRoom = Room(ipfs,GLOBAL_ROOM_NAME);
         this.streamerRoom = Room(ipfs,streamerHash);
         this.streamerRoom.removeAllListeners();
         this.globalRoom.removeAllListeners();
+        this.streamerRoom.setMaxListeners(0);
+        this.globalRoom.setMaxListeners(0);
         //subscribe to handle errors
         this.globalRoom.on('error', (err) => {
             console.log("UNABLE TO SEND message! \n" + err);

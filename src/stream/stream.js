@@ -131,6 +131,9 @@ class Stream {
 		for (var i = 0; i < rooms.length; i++) {
 			let nameRoom = rooms[i];
 			streamObj.rooms[nameRoom] = Room(streamObj.ipfs, nameRoom);
+			streamObj.rooms[nameRoom].setMaxListeners(0);
+			streamObj.rooms[nameRoom].removeAllListeners();
+
 		}	
 	}
 
