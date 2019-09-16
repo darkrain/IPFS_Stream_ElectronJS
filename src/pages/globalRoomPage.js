@@ -17,13 +17,13 @@ const STREAMERS_DATA_PATH = pathModule.join(USER_DATA_PATH.toString(), STREAMERS
 const STREAMERS_INFO_DATA_PATH = pathModule.join(USER_DATA_PATH.toString(), 'streamers');
 
 class GlobalRoomPage extends PageBase {
-    constructor(ipfs, ipc, win) {
+    constructor(ipfs, ipc, win, globalRoomListener) {
         super();
         const globalRoomObj = this;
         
         this.createUserFilesIfNotExists();
         this.clearStreamersData().then(() => {
-            globalRoomObj.initialize(ipfs, ipc, win);
+            globalRoomObj.initialize(ipfs, ipc, win, globalRoomListener);
         }); //firstable clean data
         
     }
@@ -40,14 +40,12 @@ class GlobalRoomPage extends PageBase {
         }
     }
 
-    initialize(ipfs, ipc, win) {
+    initialize(ipfs, ipc, win, globalRoomListener) {
         this.ipfs = ipfs;
         this.ipc = ipc;
         this.win = win;
+        this.globalRoomListener = globalRoomListener;
         this.dataSaver = new StreamerDataSaver(this.ipfs);
-        this.globalRoom = Room(this.ipfs, GLOBAL_ROOM_NAME);
-        this.globalRoom.removeAllListeners();
-        this.globalRoom.setMaxListeners(0);
         this.initializeListenersForRooms();
 
         this.currentStreamers = [];
@@ -57,10 +55,7 @@ class GlobalRoomPage extends PageBase {
 
     initializeListenersForRooms() {
         const globalRoomPageObj = this;
-        this.globalRoom.on('subscribed', () => {
-            console.log(`Subscribed to ${GLOBAL_ROOM_NAME}!`);
-        });
-        this.globalRoom.on('message', (msg) => {
+        this.globalRoomListener.getOnStreamDataRecievedEvent().on('message_recieved', (msg) => {
             if(!super.isEnabled()) {
                 return;
             }
@@ -76,7 +71,7 @@ class GlobalRoomPage extends PageBase {
                 .catch((err) => {
                     console.error("Unable read streamer message! \n" + err.toString());
                 });
-        })
+        });
     }
 
     onStreamerInfoMessageGetted(streamerMessage) {

@@ -2,6 +2,7 @@
 const { app, BrowserWindow } = require('electron');
 const ipfsLoaderHelper = require('./helpers/ipfsLoaderHelper.js');
 const ipc = require('electron').ipcMain;
+const GlobalRoomListener = require('./helpers/globalRoomListener.js');
 
 //pages scripts
 const StreamPage = require('./pages/streamPage.js');
@@ -38,7 +39,7 @@ const DEFAULT_PAGE = USER_INFO_PAGE;
 let IpfsInstance;
 let IpfsNodeID;
 let currentWindow;
-
+let globalRoomListener;
 function InitializeApp() {
     //firstable initialize IPFS instance
     ipfsLoaderHelper.initializeIPFS_Async()
@@ -46,6 +47,7 @@ function InitializeApp() {
             console.log("Try to initialize IPFS instance...");
             IpfsInstance = ipfsInstance;
             IpfsNodeID = nodeID;    
+            globalRoomListener = new GlobalRoomListener(IpfsInstance);
         })
         .catch((error) => {
             if(error) {
@@ -102,7 +104,7 @@ function loadPageByName(pageName, args)  {
         }
         case GLOBAL_ROOM_PAGE: {
             createWindowAsync(GLOBAL_ROOM_PAGE_LINK).then((win) => {
-                _currentPage = new GlobalRoomPage(IpfsInstance, ipc, win);
+                _currentPage = new GlobalRoomPage(IpfsInstance, ipc, win, globalRoomListener);
             });
             break;
         }
