@@ -31,8 +31,8 @@ class StreamRoomBroadcaster {
 
     startBroadcastAboutStream() {
         const roomBroadcasterObj = this;
-        let globalRoomBroadcaster = this.globalRoom;
-        let streamerInfo = this.currentStreamerInfo;
+        const globalRoomBroadcaster = this.globalRoom;
+        const streamerInfo = this.currentStreamerInfo;
         this.broadcastLoopInformator = setInterval(() => {
             const jsonSTR = JSON.stringify(streamerInfo);
             const encoded64Data = roomBroadcasterObj.getEncodedData(jsonSTR);
@@ -40,6 +40,13 @@ class StreamRoomBroadcaster {
             console.log(`Broadcast about stream in ${GLOBAL_ROOM_NAME} with data: \n` + JSON.stringify(streamerInfo));
             globalRoomBroadcaster.broadcast(encoded64Data);
         }, BROADCAST_INTERVAL);
+    }
+
+    stopBroadcastAboutStream() {
+        if(this.broadcastLoopInformator) {
+            console.log("StreamRoomBroadcaster: Stop broadcast about stream!");
+            clearInterval(this.broadcastLoopInformator);
+        }
     }
 
 

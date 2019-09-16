@@ -239,6 +239,9 @@ class Stream {
 			this.ffmpegProc.kill()
 		if( this.watcherPID )
 			this.watcherPID.close()
+		if(this.roomBroadcaster) {
+			this.roomBroadcaster.stopBroadcastAboutStream();
+		}
 		this.blocks = [];
 	}
 }
