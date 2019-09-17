@@ -18,6 +18,7 @@ ipc.on('video-playlist-path-changed', (event, args) => {
 		hls.attachMedia(video);
 		hls.on(Hls.Events.MANIFEST_PARSED, () => {
 			video.play();
+			video.volume = 0;
 		});
 	}
 });
