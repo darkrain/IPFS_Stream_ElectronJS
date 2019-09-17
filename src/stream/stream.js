@@ -11,6 +11,7 @@ const fsPath = require('path');
 const cameraHelper = require('../helpers/ffmpegCameraHelper');
 const IpfsStreamUploader = require('../helpers/ipfsStreamUploader.js');
 const StreamRoomBroadcaster = require('../stream/streamRoomBroadcaster.js');
+const appConfig = require('../config/appFilesConfig.js');
 
 class Stream {
 
@@ -19,7 +20,6 @@ class Stream {
 		this.ipfs = ipfs;
 		this.ipfsStreamUploader = new IpfsStreamUploader(this.ipfs);
 		this.ipfsready = false;
-		this.ffmpegBinPath = fsPath.join(binFolderPath, 'ffmpeg.exe');
 		this.headers = '#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:8\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:EVENT\n';
 		this.blocks = [];
 		this.rooms = {};
@@ -49,7 +49,7 @@ class Stream {
 
 	loadCamerasAsync() {
 		return new Promise((resolve, rejected) => {
-			cameraHelper.getCameraNamesAsync(this.ffmpegBinPath).then((
+			cameraHelper.getCameraNamesAsync(appConfig.FFMPEG).then((
 				(data) => {
 					console.log("CAMERAS LOADED IN STREAM.JS! " + typeof(data));
 					this.cameras = data;
@@ -80,7 +80,7 @@ class Stream {
 			windowsVerbatimArguments: true,
 			
 		};
-		this.ffmpegProc = spawn(this.ffmpegBinPath, 
+		this.ffmpegProc = spawn(appConfig.FFMPEG, 
 		[
 			'-f' , 'dshow',
 			'-i',cameraDetectCommand, 
