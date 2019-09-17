@@ -5,7 +5,7 @@
   "main": "src/appNavigator.js",
   "scripts": {
     "start": "electron .",
-    "test": "mocha"
+    "test": "mocha --timeout 5000"
   },
   "author": "",
   "license": "ISC",

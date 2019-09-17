@@ -1,6 +1,6 @@
 const spawn = require('child_process').spawn;
 const fs = require('fs');
-const getCameraNamesAsync = async (ffmpegPath) => {
+const getAudioNamesAsync = async (ffmpegPath) => {
     let cmdData = '';
     try {
         cmdData = await getProcessData(ffmpegPath);    
@@ -8,46 +8,46 @@ const getCameraNamesAsync = async (ffmpegPath) => {
         console.error(err.toString());
     }
        
-    const parsedCameraNames = await getParsedCameraNames(cmdData);
-    return parsedCameraNames;
+    const parsedAudioNames = await getParsedAudioNames(cmdData);
+    return parsedAudioNames;
 }
 
-const getParsedCameraNames = async (data) => {
-    let camNames = [];
+const getParsedAudioNames = async (data) => {
+    let audioNames = [];
     const dataLines = data.split('\n');
-    const videoKeyWord = "DirectShow video devices";
     const audioKeyWord = "DirectShow audio devices";
     const alternativeNameKey = "Alternative name";
-    let isVideoDevicesDesribed = false;
+    const dummyExitKey = "dummy";
+    let isAudioDevicesDesribed = false;
 
     for(let i = 0; i < dataLines.length; i++) {
         let line = dataLines[i];
-        if (line.includes(videoKeyWord) && isVideoDevicesDesribed == false) {
-            isVideoDevicesDesribed = true;
+        if(line.includes(dummyExitKey)) {
+            break;
+        }
+        if (line.includes(audioKeyWord) && isAudioDevicesDesribed == false) {
+            isAudioDevicesDesribed = true;
             continue;
         }
-
-        if(line.includes(audioKeyWord))
-            break;
-        if(isVideoDevicesDesribed && line.includes(alternativeNameKey))
+        if(isAudioDevicesDesribed && line.includes(alternativeNameKey))
             continue;
-        if(isVideoDevicesDesribed) {
-            const camName = getCamName(line);
-            camNames.push({name: camName});
+        if(isAudioDevicesDesribed) {
+            const audioName = getAudioName(line);
+            audioNames.push({name: audioName});
         }
     }
-    console.log(`CAM NAMES: \n ${JSON.stringify(camNames)}`);
-    return camNames;
+    console.log(`Audio names: \n ${JSON.stringify(audioNames)}`);
+    return audioNames;
 };
 
-const getCamName = (camLine) => {
-    let nameOfCamera = '';
-    let camNameIndex = camLine.indexOf("\"");
-    nameOfCamera = camLine.substring(camNameIndex)
+const getAudioName = (audioLine) => {
+    let nameOfAudio = '';
+    let audioNameIndex = audioLine.indexOf("\"");
+    nameOfAudio = audioLine.substring(audioNameIndex)
         .replace("\"", '')
             .replace("\"", '')
                 .replace("\r", '');
-    return nameOfCamera;
+    return nameOfAudio;
 }
 
 const getProcessData = (ffmpegPath) => {
@@ -79,5 +79,5 @@ const getProcessData = (ffmpegPath) => {
 }
 
 module.exports = {
-    getCameraNamesAsync
+    getAudioNamesAsync
 }
