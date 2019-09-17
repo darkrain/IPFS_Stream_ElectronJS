@@ -1,18 +1,22 @@
 const dataDependingFlags = {
     isCameraReady: false,
+    isAudioReady: false,
     isStreamerDataReady: false   
 }
 
 let camData;
+let audioData;
 let streamInfo = [];
 async function checkDataIsReadyAsync(ipfsInstance, electronWindow, streamInitializer, streamInfoGenerator) {   
     //LoadCameras and update web-view list
     
-    camData = await streamInitializer.initializeCameras();
+    camData = await streamInitializer.initializeCamerasAsync();
     electronWindow.webContents.send('camera-list-update', camData);  
     dataDependingFlags.isCameraReady = camData.length > 0;    
     
-
+    audioData = await streamInitializer.initializeAudiosAsync();
+    electronWindow.webContents.send('audio-list-update', audioData);
+    dataDependingFlags.isAudioReady = audioData.length > 0;
     if(!streamInfoGenerator) {
         console.log("Streamer info generator not ready.");
         return false;
@@ -33,7 +37,7 @@ function isAllDataReady() {
         cameraReady:${dataDependingFlags.isCameraReady} \n 
         streamerDataReady: ${dataDependingFlags.isStreamerDataReady}`);
         
-    return dataDependingFlags.isCameraReady && dataDependingFlags.isStreamerDataReady;
+    return dataDependingFlags.isCameraReady && dataDependingFlags.isAudioReady && dataDependingFlags.isStreamerDataReady;
 }
 
 function getStreamerInfoArray() {

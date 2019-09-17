@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded',function(){
 	const startStreamBtn = document.getElementById('openStreamBtn');
 	const avaSelectBtn = document.getElementById('loadImgBtn');
 	const cameraSelection = document.getElementById('cameraSelection');
+	const audioSelection = document.getElementById('audioSelection');
 
 	function getRequirements() {
 		let prettyViewReq = [];
@@ -65,11 +66,14 @@ document.addEventListener('DOMContentLoaded',function(){
 	});
 
 	cameraSelection.addEventListener('change', () => {
-		const value = cameraSelection.options[cameraSelection.selectedIndex].value;
 		const text = cameraSelection.options[cameraSelection.selectedIndex].text;
-
 		ipc.send('camera-changed', text);
 	});	
+
+	audioSelection.addEventListener('change', () => {
+		const text = audioSelection.options[audioSelection.selectedIndex].text;
+		ipc.send('audio-changed', text);	
+	})
 
 	const streamerNameInputText = document.getElementById('streamerNameInputText');
 	streamerNameInputText.addEventListener('change', () => {
@@ -89,11 +93,20 @@ document.addEventListener('DOMContentLoaded',function(){
 // ### Client event subscriber handlers ###
 ipc.on('camera-list-update', (event, args) => {
 	const camData = args;	
-	console.log(camData)
 	$('#cameraSelection').empty();
 	$.each(camData, function(key, value) {   
-		console.log(value);
 		$('#cameraSelection')
+			.append($("<option></option>")
+						.attr("value",value.name)
+						.text(value.name)); 
+	});
+});
+
+ipc.on('audio-list-update', (event, args) => {
+	const audioData = args;
+	$('#audioSelection').empty();
+	$.each(audioData, function(key, value) {   
+		$('#audioSelection')
 			.append($("<option></option>")
 						.attr("value",value.name)
 						.text(value.name)); 

@@ -35,6 +35,11 @@ class StreamInfoPage extends PageBase{
       const camText = args;
       streamPageObj.streamInitializer.setCameraByName(camText);
     });
+    
+    ipc.on('audio-changed', (event, args) => {
+      const audioText = args;
+      streamPageObj.streamInitializer.setAudioByName(audioText);
+    });
 
     ipc.on('open-file-dialog', (event, args) => { 
       dialog.showOpenDialog({

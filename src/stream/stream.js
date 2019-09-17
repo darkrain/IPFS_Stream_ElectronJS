@@ -9,10 +9,11 @@ const md5 = require('md5');
 const ls = require('ls');
 const fsPath = require('path');
 const cameraHelper = require('../helpers/ffmpegCameraHelper');
+const audioHelper = require('../helpers/ffmpegAudioHelper');
 const IpfsStreamUploader = require('../helpers/ipfsStreamUploader.js');
 const StreamRoomBroadcaster = require('../stream/streamRoomBroadcaster.js');
 const appConfig = require('../config/appFilesConfig.js');
-
+const dialogErrorHelper = require('../helpers/dialogErrorHelper');
 class Stream {
 
 	constructor(ipfs, nameOfStreem, path = 'videos', binFolderPath) {
@@ -51,20 +52,37 @@ class Stream {
 		return new Promise((resolve, rejected) => {
 			cameraHelper.getCameraNamesAsync(appConfig.FFMPEG).then((
 				(data) => {
-					console.log("CAMERAS LOADED IN STREAM.JS! " + typeof(data));
+					console.log("CAMERAS LOADED IN STREAM.JS!");
 					this.cameras = data;
 					resolve(data);
 				}));
 		});		
 	}
 
+	loadAudioAsync() {
+		return new Promise((resolve, rejected) => {
+			audioHelper.getAudioNamesAsync(appConfig.FFMPEG).then((data) => {
+				console.log("AUDIO LOADED IN STREAM.JS!");
+				this.audios = data;
+				resolve(data);
+			});
+		});
+	}
+
 	getCameraList(){
-		return this.cameras
+		return this.cameras;
+	}
+	getAudioList() {
+		return this.audios;
 	}
 
 	setCameraByName(camName){
 		console.log("Camera changed to: " + camName);
 		this.camera = camName;
+	}
+	setAudioByName(audioName) {
+		console.log("Audio changed to: " + audioName);
+		this.audio = audioName;
 	}
 
 	ffmpeg(debug){		
@@ -74,7 +92,7 @@ class Stream {
 		console.log('send stream to '+ this.keep);
 		console.log('Use camera ' + this.camera)
 		//const cameraDetectCommand = `video=\"${this.camera}\"`;
-		const cameraDetectCommand = 'video=' + '"' + this.camera + '"';
+		const cameraDetectCommand = 'video=' + '"' + this.camera + '"' + ':' + 'audio='+'"'+this.audio+'"';
 		console.log('Try execute camera with command: ' + cameraDetectCommand);
 		const spawnOpts = {
 			windowsVerbatimArguments: true,
@@ -102,27 +120,38 @@ class Stream {
 		const ffmpegProcess = this.ffmpegProc;
 		ffmpegProcess.removeAllListeners();
 		ffmpegProcess.setMaxListeners(0);
-		if(debug === true) {
-			console.log("FFMPEG Input debug process...");			
-			//handle process
-			ffmpegProcess
-				.stderr.addListener('data', (data) => {
-					const dataString = data.toString();
-					if( dataString.includes('Input/output error') ){
-						console.log('Try again');
-						streamObj.ffmpegProc.kill();
-						streamObj.ffmpeg();
-					}		
-					console.log(`FFMPEG data! \n ${dataString}`)
-				});
-			ffmpegProcess
-				.stdin.addListener('error', (err) => {
-					console.log('FFMPEG STDIN ERROR! \n ' + err.toString());
-				});
-		}			
+		ffmpegProcess.on('error', (err) => {
+			console.error("FFmpeg process ERROR! \n");
+			ffmpegProcess.kill();
+			throw err;
+		});
+		
+		ffmpegProcess
+			.stderr.addListener('data', (data) => {
+				const dataString = data.toString();
+				streamObj.checkFFmpegDataForError(dataString)
+					.then(() => {
+						if(debug === true) {
+							console.log(`FFMPEG data! \n ${dataString}`);
+						}
+					}).catch((err) => {
+						dialogErrorHelper.showErorDialog('FFMPEG ERROR', err.message, true);
+					});				
+			});
 	}
 
-
+	checkFFmpegDataForError(ffmpegData) {
+		const streamObj = this;
+		return new Promise((resolve, reject) => {
+			const output = ffmpegData.toLowerCase();
+			if( output.includes('error') || output.includes('failed')){
+				console.log('Try again');
+				streamObj.ffmpegProc.kill();
+				reject(new Error("ERROR in CODEC! Check yor device. Log: \n" + ffmpegData));
+			}
+			resolve();
+		});
+	}
 	createRooms(){
 		const streamObj = this.getInstance();
 		const globalRoomName = 'borgStream';

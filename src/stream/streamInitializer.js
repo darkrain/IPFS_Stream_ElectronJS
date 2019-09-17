@@ -49,9 +49,9 @@ class StreamInitializer {
         if(this.lastCameraName) {
             this.stream.setCameraByName(this.lastCameraName);
         }       
-        else {
-            console.error("Last camera name isnt saved! Next start will throws error!!!");
-        }
+        if(this.lastAudio) {
+            this.stream.setAudioByName(this.lastAudio);
+        } 
 
         this.stream.createRooms();      
     };  
@@ -73,7 +73,7 @@ class StreamInitializer {
         this.stream.stop();
     };
 
-    initializeCameras = async () => {
+    async initializeCamerasAsync() {
         let cameraName;
         const currentStream = this.stream;
         if(!currentStream) {
@@ -96,8 +96,35 @@ class StreamInitializer {
         return dataOfCamers;
     };
 
+    async initializeAudiosAsync() {
+        let audioName;
+        const currentStream = this.stream;
+        if(!currentStream) {
+            console.error("Cannot initialize cameras becouse stream is NULL!")
+            return [];
+        }
+        let dataOfAudios = [];
+        await currentStream.loadAudioAsync().then((data) => {
+            dataOfAudios = data;
+            console.log(`CAM DATA LOADED!\n ${typeof(data)} \n Send to web-view...`);            
+            //Set camera to default at start:
+            if(data.length > 0) {
+                audioName = data[0].name;
+              currentStream.setAudioByName(audioName);
+            } else {
+              throw new Error("NO CAMERAS!");
+            }
+          });
+        this.lastAudio = audioName;
+        return dataOfAudios;
+    }
+
     setCameraByName(camName) {
         this.stream.setCameraByName(camName);
+    }
+
+    setAudioByName(audioName) {
+        this.stream.setAudioByName(audioName);
     }
 
     onVideoPathUpdatedWithRelativePath = (callback) => {
