@@ -11,8 +11,29 @@ const files = {
     USERINFO_JSON_PATH: getFullPathOfFile('user/userInfoJSON.json')
 };
 
+const folders = {
+    USER_PAGE: getFullPathOfFile('front/userInfoPage')
+}
+
 const possibleFiles = {
     USER_PHOTO_PATH: getFullPathOfFile('front/userInfoPage/img/photo')
+}
+
+function getParsedDataByPath(path) {
+    return new Promise((resolve, rejected) => {
+        if(!fs.existsSync(path))
+            rejected(new Error('Cannot load file, its not exists in path: ' + path));
+        fs.readFile(path, 'utf8', (err, data) => {
+            if(err) {
+                rejected(err);
+            } try {
+                const dataObject = JSON.parse(data);
+                resolve(dataObject);
+            } catch(er) {
+                rejected(er);
+            }
+        });    
+    });
 }
 
 function getFirstFileInFolder(path) {
@@ -36,7 +57,9 @@ function getFirstFileInFolder(path) {
 
 module.exports = {
     files,
+    folders,
     possibleFiles,
     getFirstFileInFolder,
-    getFullPathOfFile
+    getFullPathOfFile,
+    getParsedDataByPath
 }

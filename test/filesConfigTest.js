@@ -12,7 +12,7 @@ describe('App config path testing', () => {
     });
 });
 
-describe('App config helping functions testing', () => {
+describe('App config helpingFunctions: getfirstFileInFolder(path)', () => {
     it('Should return fileName when files exists', async () => {
         const path = appConfig.possibleFiles.USER_PHOTO_PATH; //path where 100% exists file
         const firstFile = await appConfig.getFirstFileInFolder(path);
@@ -22,5 +22,18 @@ describe('App config helping functions testing', () => {
         const path = pathModule.join(appConfig.possibleFiles.USER_PHOTO_PATH, 'fakeEmptyFolder'); //path where 100% no files
         const firstFile = await appConfig.getFirstFileInFolder(path);
         assert.equal(firstFile, null);
+    });
+});
+describe('App config helpingFunctions: getParsedDataByPath(path)', () => {
+    it('Should return dataObject if json file exists', async () => {
+        const path = appConfig.files.USERINFO_JSON_PATH; //path where 100% exists file
+        let fileContents = null;
+        try {
+            fileContents = await appConfig.getParsedDataByPath(path);
+        }catch(err) {
+            fileContents = null;
+        }
+        const isNotNull = fileContents != null;
+        assert.equal(isNotNull, true);
     });
 });
