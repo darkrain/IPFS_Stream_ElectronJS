@@ -1,5 +1,6 @@
 const crypto = require('crypto');
-
+const appConfig = require('../config/appFilesConfig');
+const errorDialog = require('../helpers/dialogErrorHelper');
 class StreamerInfoGenerator {
     constructor(ipfsNodeID, streamerName, streamerImg) {    
         this.nodeID = ipfsNodeID;
@@ -12,13 +13,14 @@ class StreamerInfoGenerator {
         this.streamDataHash = crypto.createHash('md5').update(nameData).digest("hex");
         const streamerImgPath = this.streamerImgPath;
         let streamerInfo = {};
+
         const AVA_IMG_NOHASH_ERR_KEY = "NOTHING";
         let avaHashInfo = await new Promise((resolve, rejected) => {
             //upload image
             ipfsInstance.addFromFs(streamerImgPath, { }, (err, result) => {
                 if (err) { 
-                    console.error("CANNOT UPLOAD AVA TO IPFS!: \n" + err);
-                    resolve(AVA_IMG_NOHASH_ERR_KEY);
+                    errorDialog.showErorDialog('StreamerInfoGenerator', `cannot add stream view image in ipfs! \n ${err.message} \n ${err.stack}`, true);
+                    rejected(err);
                 }
 
                 console.log("Result of uploading img: \n" + JSON.stringify(result));
