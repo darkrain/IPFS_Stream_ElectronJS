@@ -3,7 +3,7 @@ const { app, BrowserWindow } = require('electron');
 const ipfsLoaderHelper = require('./helpers/ipfsLoaderHelper.js');
 const ipc = require('electron').ipcMain;
 const GlobalRoomListener = require('./helpers/globalRoomListener.js');
-
+const userInfoLoader = require('./data/userInfoLoader');
 //pages scripts
 const StreamPage = require('./pages/streamPage.js');
 const UserInfoPage = require('./pages/userInfoPage.js');
@@ -33,7 +33,8 @@ const GLOBAL_ROOM_PAGE = 'globalRoomPage';
 const STREAM_WATCH_PAGE = 'streamWatchPage';
 const STREAMER_INFO_PAGE = 'streamerInfoPage';
 
-const DEFAULT_PAGE = USER_INFO_PAGE;
+//По умолчанию должна стоять страница создания юзера, если юзер еще не создан, если создан- то главный рум.
+const DEFAULT_PAGE =  userInfoLoader.isUserDataReady() ? GLOBAL_ROOM_PAGE : USER_INFO_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;

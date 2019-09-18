@@ -1,4 +1,5 @@
 const fs = require('fs');
+const appConfig = require('../config/appFilesConfig');
 
 function getUserInfoData(userInfoFilePath) {
     return new Promise((resolve, rejected) => {
@@ -21,6 +22,11 @@ function getUserInfoData(userInfoFilePath) {
     });
 }
 
+function isUserDataReady() {
+    return fs.existsSync(appConfig.USERINFO_JSON_PATH);
+}
+
 module.exports = {
-    getUserInfoData
+    getUserInfoData,
+    isUserDataReady
 }
