@@ -4,7 +4,7 @@ const pathModule = require('path');
 const PageBase = require('./pageBase');
 //External helpers
 const imgHelper = require('../helpers/imageLoaderHelper.js');
-const dataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
+const DataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
 const StreamInfoGenerator = require('../data/StreamerInfoGenerator.js');
 const linkCheckingHelper = require('../helpers/linksCheckHelper.js');
 
@@ -18,7 +18,7 @@ class StreamInfoPage extends PageBase{
       this.ipfsNodeID = ipfsNodeID;
       this.electronIPC = electronIPC;
       this.pageWindow = pageWindow;
-
+      this.dataReadyHelper = new DataReadyHelper();
       this.streamInitializer = new StreamInitializer(this.ipfs); 
       this.subscribeToIpcEvents(this.electronIPC);      
       
@@ -137,7 +137,7 @@ class StreamInfoPage extends PageBase{
     const streamerImgPathInfo = this.streamerImgPath ? this.streamerImgPath : "empty";
     const ipfsNodeIdInfo = this.ipfsNodeID ? this.ipfsNodeID : "empty";
 
-    dataReadyHelper.checkDataIsReadyAsync(
+    this.dataReadyHelper.checkDataIsReadyAsync(
       this.ipfs,
        this.pageWindow,
         this.streamInitializer,

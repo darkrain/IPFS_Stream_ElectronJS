@@ -74,6 +74,7 @@ class StreamInitializer {
     };
 
     async initializeCamerasAsync() {
+        const streamInitializerObj = this;
         let cameraName;
         const currentStream = this.stream;
         if(!currentStream) {
@@ -88,15 +89,16 @@ class StreamInitializer {
             if(data.length > 0) {
               cameraName = data[0].name;
               currentStream.setCameraByName(cameraName);
+              streamInitializerObj.lastCameraName = cameraName;
             } else {
               throw new Error("NO CAMERAS!");
             }
           });
-        this.lastCameraName = cameraName;
         return dataOfCamers;
     };
 
     async initializeAudiosAsync() {
+        const streamInitializerObj = this;
         let audioName;
         const currentStream = this.stream;
         if(!currentStream) {
@@ -106,16 +108,16 @@ class StreamInitializer {
         let dataOfAudios = [];
         await currentStream.loadAudioAsync().then((data) => {
             dataOfAudios = data;
-            console.log(`CAM DATA LOADED!\n ${typeof(data)} \n Send to web-view...`);            
+            console.log(`AUDIO DATA LOADED!\n ${typeof(data)} \n Send to web-view...`);            
             //Set camera to default at start:
             if(data.length > 0) {
                 audioName = data[0].name;
               currentStream.setAudioByName(audioName);
+              streamInitializerObj.lastAudio = audioName;
             } else {
               throw new Error("NO CAMERAS!");
             }
           });
-        this.lastAudio = audioName;
         return dataOfAudios;
     }
 
