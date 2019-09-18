@@ -46,8 +46,6 @@ class UserInfoPage extends PageBase{
                 { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
               ]
             }).then(result => { 
-              console.log(result.canceled);
-              console.log(result.filePaths);
               const file = result.filePaths[0];
                 if(file) {
                   console.log("Try to openFile: " + file.toString());
