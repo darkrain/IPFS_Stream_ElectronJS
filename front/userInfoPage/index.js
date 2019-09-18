@@ -29,6 +29,16 @@ document.addEventListener('DOMContentLoaded', () => {
     
 });
 
+ipc.on('nameChanged', (event, args) => {
+    const userNameInputText = document.getElementById('userName');
+    userNameInputText.value = args;
+});
+
+ipc.on('nickNameChanged', (event, args) => {
+    const userNickNameInputText = document.getElementById('userNickName');
+    userNickNameInputText.value = args;
+});
+
 ipc.on('selected-userava-file', (event, args) => {
     const avaImg = document.getElementById('userAvaImg');
     avaImg.src = './img/photo/' + args + '?v' + Date.now();;

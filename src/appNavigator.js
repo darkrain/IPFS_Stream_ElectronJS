@@ -83,7 +83,7 @@ async function loadPageByName(pageName, args)  {
     switch(pageName) {       
         case USER_INFO_PAGE: {
             createWindowAsync(USER_INFO_PAGE_LINK).then((win) => {
-                _currentPage = new UserInfoPage(ipc);
+                _currentPage = new UserInfoPage(ipc, win);
             });
             break;
         }

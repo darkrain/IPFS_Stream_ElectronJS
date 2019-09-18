@@ -4,14 +4,26 @@ const appRootPath = require('app-root-path');
 const imgHelper = require('../helpers/imageLoaderHelper.js');
 const dialog = require('electron').dialog;
 const PageBase = require('./pageBase.js');
+const userInfoLoader = require('../data/userInfoLoader');
+const errorHelper = require('../helpers/dialogErrorHelper');
 const USERINFO_JSON_PATH = pathModule.join(appRootPath.toString(), 'user', 'userInfoJSON.json');
 const frontPagePath = pathModule.join(appRootPath.toString(), 'front', 'userInfoPage', 'img', 'photo');
 
 class UserInfoPage extends PageBase{
-    constructor(ipc) {
+    constructor(ipc, win) {
         super();
         this.ipc = ipc;
         this.subscribeToIpcEvents(ipc);
+        //preload user info if exists
+        userInfoLoader.getUserInfoData(USERINFO_JSON_PATH).then((data) => {
+            if(data != null) {
+              win.webContents.send('nameChanged', data.name);
+              win.webContents.send('nickNameChanged', data.nickname);  
+            }
+        })
+        .catch((err) => {
+          errorHelper.showErorDialog('UserInfo page', err.toString(), true);
+        });
     }
 
     subscribeToIpcEvents(ipc) {
