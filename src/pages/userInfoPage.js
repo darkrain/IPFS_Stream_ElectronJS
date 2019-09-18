@@ -7,7 +7,7 @@ const PageBase = require('./pageBase.js');
 const userInfoLoader = require('../data/userInfoLoader');
 const errorHelper = require('../helpers/dialogErrorHelper');
 const USERINFO_JSON_PATH = pathModule.join(appRootPath.toString(), 'user', 'userInfoJSON.json');
-const frontPagePath = pathModule.join(appRootPath.toString(), 'front', 'userInfoPage', 'img', 'photo');
+const userPhotoPath = pathModule.join(appRootPath.toString(), 'front', 'userInfoPage', 'img', 'photo');
 
 class UserInfoPage extends PageBase{
     constructor(ipc, win) {
@@ -20,6 +20,17 @@ class UserInfoPage extends PageBase{
               win.webContents.send('nameChanged', data.name);
               win.webContents.send('nickNameChanged', data.nickname);  
             }
+            
+            //preload photo if exists
+            if(fs.existsSync(userPhotoPath)) {
+              if(fs.readdir(userPhotoPath, (err, files) => {
+                if(err)
+                  throw err;
+                if(files.length > 0) {
+                  win.webContents.send('selected-userava-file', files[0]);
+                }
+              }));
+            }           
         })
         .catch((err) => {
           errorHelper.showErorDialog('UserInfo page', err.toString(), true);
@@ -49,7 +60,7 @@ class UserInfoPage extends PageBase{
               const file = result.filePaths[0];
                 if(file) {
                   console.log("Try to openFile: " + file.toString());
-                  imgHelper.copyImageToApplicationFolerAsync(file, 'defaultUserAva', frontPagePath).then((copiedImgPath) => {
+                  imgHelper.copyImageToApplicationFolerAsync(file, 'defaultUserAva', userPhotoPath).then((copiedImgPath) => {
                     const fileName = pathModule.basename(copiedImgPath); //to send in client script without path
                     event.sender.send('selected-userava-file', fileName);
 
