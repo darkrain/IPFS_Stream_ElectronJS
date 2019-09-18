@@ -50,7 +50,7 @@ class Stream {
 
 	loadCamerasAsync() {
 		return new Promise((resolve, rejected) => {
-			cameraHelper.getCameraNamesAsync(appConfig.FFMPEG).then((
+			cameraHelper.getCameraNamesAsync(appConfig.files.FFMPEG).then((
 				(data) => {
 					console.log("CAMERAS LOADED IN STREAM.JS!");
 					this.cameras = data;
@@ -61,7 +61,7 @@ class Stream {
 
 	loadAudioAsync() {
 		return new Promise((resolve, rejected) => {
-			audioHelper.getAudioNamesAsync(appConfig.FFMPEG).then((data) => {
+			audioHelper.getAudioNamesAsync(appConfig.files.FFMPEG).then((data) => {
 				console.log("AUDIO LOADED IN STREAM.JS!");
 				this.audios = data;
 				resolve(data);
@@ -98,7 +98,7 @@ class Stream {
 			windowsVerbatimArguments: true,
 			
 		};
-		this.ffmpegProc = spawn(appConfig.FFMPEG, 
+		this.ffmpegProc = spawn(appConfig.files.FFMPEG, 
 		[
 			'-f' , 'dshow',
 			'-i',cameraDetectCommand, 

@@ -23,7 +23,7 @@ function getUserInfoData(userInfoFilePath) {
 }
 
 function isUserDataReady() {
-    return fs.existsSync(appConfig.USERINFO_JSON_PATH);
+    return fs.existsSync(appConfig.files.USERINFO_JSON_PATH);
 }
 
 module.exports = {

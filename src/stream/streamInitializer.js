@@ -63,7 +63,7 @@ class StreamInitializer {
             localServer.setStaticPath(this.fullVideoPath);
             localServer.startLocalServer();       
         } catch(e) {
-            console.log(`Unable to start stream! Coz \n ${e}`);
+            throw e;
         }
         
     };
@@ -115,7 +115,7 @@ class StreamInitializer {
               currentStream.setAudioByName(audioName);
               streamInitializerObj.lastAudio = audioName;
             } else {
-              throw new Error("NO CAMERAS!");
+              throw new Error("NO AUDIOS!");
             }
           });
         return dataOfAudios;

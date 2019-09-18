@@ -10,4 +10,6 @@ const files = {
     USERINFO_JSON_PATH: getFullPathOfFile('user/userInfoJSON.json')
 };
 
-module.exports = files;
+module.exports = {
+    files
+}
