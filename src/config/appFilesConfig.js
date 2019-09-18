@@ -6,7 +6,8 @@ function getFullPathOfFile(relativePath) {
 }
 
 const files = {
-    FFMPEG : getFullPathOfFile('bin/ffmpeg.exe')
+    FFMPEG : getFullPathOfFile('bin/ffmpeg.exe'),
+    USERINFO_JSON_PATH: getFullPathOfFile('user/userInfoJSON.json')
 };
 
 module.exports = files;
