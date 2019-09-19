@@ -58,7 +58,7 @@ class StreamInfoPage extends PageBase{
                 if(!filesChecker.isFileWithCorrectSizeSync(file, maxStreamAvaSize)) {
                   //go again if file not supported by size
                   //say that file too largs
-                  await dialog.showMessageBox({type:'warning', title:'File size warning', message: `File size more than ${maxStreamAvaSize}`})
+                  await dialog.showMessageBox({type:'warning', title:'File size warning', message: `File size more than ${maxStreamAvaSize} KB!!`})
                   continue;
                 }
                 console.log("Try to openFile: " + file.toString());
