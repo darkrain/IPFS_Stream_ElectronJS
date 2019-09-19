@@ -31,23 +31,32 @@ async function getListOfStreamersAsync() {
 }
 
 async function generateDataForStreamerAsync(streamerObj) {
+    const streamAvaName = 'streamerIMG.jpg';
+    const streamUserAvaName = 'streamerUserAva.jpg';
     const streamerHash = streamerObj.hashOfStreamer;
     console.log("Try to generate data for streamer : " + streamerHash);
     const streamerFolder = pathModule.join(streamersFolderPath.toString(), streamerHash);
     if(!fs.existsSync(streamerFolder)) {
         throw new Error(`Folder for stremaer ${streamerFolder} not exists !`);
     }
-    const streamerImgPath = pathModule.join(streamerFolder, 'streamerIMG.jpg');
+    const streamerImgPath = pathModule.join(streamerFolder, streamAvaName);
     if(!fs.existsSync(streamerImgPath)) {
-        throw new Error(`Avatar image for stremaer ${streamerImgPath} not exists !`);
+        throw new Error(`Stream Avatar image for stremaer ${streamerImgPath} not exists !`);
+    } 
+    const streamerUserAvaImgPath = pathModule.join(streamerFolder, streamUserAvaName);
+    if(!fs.existsSync(streamerUserAvaImgPath)) {
+        throw new Error(`USER Avatar image for stremaer ${streamerUserAvaImgPath} not exists !`);
     } 
     
-    const relativePath = '../../user/userData/streamers/' + streamerHash + '/streamerIMG.jpg';
+    //relative path for stream ava
+    const relativePath = '../../user/userData/streamers/' + streamerHash + '/' + streamAvaName; //stream avatar path
+    const relativeAvaPath = '../../user/userData/streamers/' + streamerHash + '/' + streamUserAvaName; //streamer user avatar path
     const streamData = {
         streamerName: streamerObj.nameOfStream,
         streamerImage: streamerImgPath,
         relativePath: relativePath,
-        hashOfStreamer: streamerHash
+        hashOfStreamer: streamerHash,
+        relativeUserAvaPath: relativeAvaPath
     };
     
     return streamData;

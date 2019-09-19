@@ -64,7 +64,7 @@ class GlobalRoomPage extends PageBase {
             globalRoomPageObj.onStreamerInfoMessageGetted(messageStr)
                 .then((streamerInfoObj) => {
                     //Do something with streamer when it saved.
-                    globalRoomPageObj.dataSaver.saveStreamerDataAsync(streamerInfoObj).then((avaPath) => {
+                    globalRoomPageObj.dataSaver.saveStreamerDataAsync(streamerInfoObj).then((imgData) => {
                         globalRoomPageObj.updatePageAboutStreamers();
                     });          
                 })

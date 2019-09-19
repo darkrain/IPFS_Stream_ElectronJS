@@ -2,6 +2,7 @@ const pathModule = require('path');
 const appRootPath = require('app-root-path');
 const fs = require('fs');
 const streamerAvaFileName = 'streamerIMG.jpg';
+const streamUserAvaFileName = 'streamerUserAva.jpg';
 const STREAMERS_PATH = pathModule.join(appRootPath.toString(), 'user', 'userData', 'streamers');
 
 class StreamerDataSaver {
@@ -12,9 +13,15 @@ class StreamerDataSaver {
         const streamerFolderPath = pathModule.join(STREAMERS_PATH, streamerInfoObj.hashOfStreamer);
         this.createFolderForStreamIfNotExists(STREAMERS_PATH);
         this.createFolderForStreamIfNotExists(streamerFolderPath);
-        const savedPath = await this.saveStreamerAvaAsync(streamerInfoObj.imgAvaHash, streamerFolderPath);
+        //stream page avatar
+        const savedStreamAvaPath = await this.saveImageFromStream(streamerInfoObj.imgAvaHash, streamerFolderPath, streamerAvaFileName);
+        //streamer user avatar
+        const savedUserAvaPath = await this.saveImageFromStream(streamerInfoObj.userAvatarHash, streamerFolderPath, streamUserAvaFileName);
         console.log("Streamer ava saved! At path: " + savedPath.toString());
-        return savedPath;
+        return {
+            streamAvaPath: savedStreamAvaPath,
+            userAvaPath: savedUserAvaPath
+        };
 
     }
     createFolderForStreamIfNotExists(folderPath) {
@@ -22,7 +29,7 @@ class StreamerDataSaver {
             fs.mkdirSync(folderPath);
         }     
     }
-    async saveStreamerAvaAsync(avaIpfsHash, streamerPath) {
+    async saveImageFromStream(avaIpfsHash, streamerPath, imgName) {
         const streamerSaverObj = this;
         try {
             const avaPath = await new Promise((resolve, rejected) => {
@@ -34,7 +41,7 @@ class StreamerDataSaver {
                     const buffer = file.content;
 
                     console.log("getted file from IPFS: \n" + file.path);
-                    const pathToSaveFile = pathModule.join(streamerPath, streamerAvaFileName);
+                    const pathToSaveFile = pathModule.join(streamerPath, imgName);
                     fs.writeFile(pathToSaveFile, buffer, (err) => {
                         if(err) {
                             rejected(err);
