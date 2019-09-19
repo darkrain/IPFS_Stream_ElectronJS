@@ -19,6 +19,11 @@ const possibleFiles = {
     USER_PHOTO_PATH: getFullPathOfFile('front/userInfoPage/img/photo')
 }
 
+const fileSizes = {
+    MAX_USER_AVA_KB_SIZE: 200,
+    MAX_STREAM_AVA_KB_SIZE: 500
+}
+
 function getParsedDataByPath(path) {
     return new Promise((resolve, rejected) => {
         if(!fs.existsSync(path))
@@ -61,5 +66,6 @@ module.exports = {
     possibleFiles,
     getFirstFileInFolder,
     getFullPathOfFile,
-    getParsedDataByPath
+    getParsedDataByPath,
+    fileSizes
 }

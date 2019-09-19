@@ -6,7 +6,8 @@ const PageBase = require('./pageBase');
 const imgHelper = require('../helpers/imageLoaderHelper.js');
 const DataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
 const StreamInfoGenerator = require('../data/StreamerInfoGenerator.js');
-const linkCheckingHelper = require('../helpers/linksCheckHelper.js');
+const appConfig = require('../config/appFilesConfig');
+const filesChecker = require('../data/fileCheking');
 
 let streamerInfo = [];
 
@@ -41,27 +42,42 @@ class StreamInfoPage extends PageBase{
       streamPageObj.streamInitializer.setAudioByName(audioText);
     });
 
-    ipc.on('open-file-dialog', (event, args) => { 
-      dialog.showOpenDialog({
-        properties: ['openFile'],
-        filters: [
-          { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
-        ]
-      }).then(result => { 
-        console.log(result.canceled);
-        console.log(result.filePaths);
-        const file = result.filePaths[0];
-          if(file) {
-            console.log("Try to openFile: " + file.toString());
-            imgHelper.copyImageToApplicationFolerAsync(file).then((copiedImgPath) => {
-              const fileName = pathModule.basename(copiedImgPath); //to send in client script without path
-              event.sender.send('selected-file', fileName);
-              streamPageObj.onAvaImageUploaded(copiedImgPath);
-          })};
-        })
-        .catch(err => {
-          console.error(err.toString());
-        });
+    ipc.on('open-file-dialog', async (event, args) => {
+        const maxStreamAvaSize = appConfig.fileSizes.MAX_STREAM_AVA_KB_SIZE;
+        while(true) { //loop to check if file correct, break if is true  
+          try {
+            const result = await dialog.showOpenDialog({
+              properties: ['openFile'],
+              filters: [
+                { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+              ]
+            });
+
+            const file = result.filePaths[0];
+              if(file) {
+                if(!filesChecker.isFileWithCorrectSizeSync(file, maxStreamAvaSize)) {
+                  //go again if file not supported by size
+                  //say that file too largs
+                  await dialog.showMessageBox({type:'warning', title:'File size warning', message: `File size more than ${maxStreamAvaSize}`})
+                  continue;
+                }
+                console.log("Try to openFile: " + file.toString());
+                const copiedImgPath = await  imgHelper.copyImageToApplicationFolerAsync(file);
+                const fileName = pathModule.basename(copiedImgPath); //to send in client script without path
+                event.sender.send('selected-file', fileName);
+                streamPageObj.onAvaImageUploaded(copiedImgPath);
+                break; //break loop if size is correct
+
+              } else {
+                //break if file not checked
+                break;
+              }
+
+          } catch(err) {
+              console.error(`Cannot open stream ava file coz: \n${err.message} \n${err.stack}`);
+              throw err;
+          }
+        }
     });
 
     ipc.on('streamerNameChanged', (event, args) => {
