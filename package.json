@@ -7,6 +7,11 @@
     "start": "electron .",
     "test": "mocha --timeout 5000"
   },
+  "build": {
+    "win": {
+      "target": "portable"
+    }
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
