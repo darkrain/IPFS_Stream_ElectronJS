@@ -1,9 +1,12 @@
 //*** Imports ***
 const { app, BrowserWindow } = require('electron');
+console.log("AAAAAP ! " + app.getAppPath());
 const ipfsLoaderHelper = require('./helpers/ipfsLoaderHelper.js');
 const ipc = require('electron').ipcMain;
 const GlobalRoomListener = require('./helpers/globalRoomListener.js');
 const userInfoLoader = require('./data/userInfoLoader');
+const dialogErrorHelper = require('./helpers/dialogErrorHelper');
+const logger = require('./data/logger');
 //pages scripts
 const StreamPage = require('./pages/streamPage.js');
 const UserInfoPage = require('./pages/userInfoPage.js');
@@ -53,6 +56,7 @@ function InitializeApp() {
         .catch((error) => {
             if(error) {
                 console.error("Unable initialize IPFS! \n" + error);
+                logger.printErr(error);
                 throw error;
             }
         })
@@ -81,50 +85,55 @@ async function loadPageByName(pageName, args)  {
     resetAppData(); //this function reset all data listeners from another objects, so memory leak is decreasing...
 
     console.log("Start loading page: " + pageName + "....");
-    switch(pageName) {       
-        case USER_INFO_PAGE: {
-            createWindowAsync(USER_INFO_PAGE_LINK).then((win) => {
-                _currentPage = new UserInfoPage(ipc, win);
-            });
-            break;
-        }
-        case STREAMING_PAGE: {
-            const streamArgs = args;
-            const streamerInfo = args.streamerInfo;
-            const streamInitializer = args.streamInitializer;
-            if(!streamerInfo) {
-                throw new Error(`Unable to start stream page, streamer info is NULL!!!`);
+    try{
+        switch(pageName) {       
+            case USER_INFO_PAGE: {
+                createWindowAsync(USER_INFO_PAGE_LINK).then((win) => {
+                    _currentPage = new UserInfoPage(ipc, win);
+                });
+                break;
             }
-            if(!streamInitializer) {
-                throw new Error(`Unable to start stream page, streamInitializer is NULL!!!`);
+            case STREAMING_PAGE: {
+                const streamArgs = args;
+                const streamerInfo = args.streamerInfo;
+                const streamInitializer = args.streamInitializer;
+                if(!streamerInfo) {
+                    throw new Error(`Unable to start stream page, streamer info is NULL!!!`);
+                }
+                if(!streamInitializer) {
+                    throw new Error(`Unable to start stream page, streamInitializer is NULL!!!`);
+                }
+                createWindowAsync(STREAM_PAGE_LINK).then((win) => {
+                    _currentPage = new StreamPage(streamInitializer, win, ipc, streamerInfo);        
+                });
+                break;
             }
-            createWindowAsync(STREAM_PAGE_LINK).then((win) => {
-                _currentPage = new StreamPage(streamInitializer, win, ipc, streamerInfo);        
-            });
-            break;
+            case GLOBAL_ROOM_PAGE: {
+                createWindowAsync(GLOBAL_ROOM_PAGE_LINK).then((win) => {
+                    _currentPage = new GlobalRoomPage(IpfsInstance, ipc, win, globalRoomListener);
+                });
+                break;
+            }
+            case STREAM_WATCH_PAGE: {
+                createWindowAsync(STREAMWATCH_PAGE_LINK).then((win => {
+                    const streamerInfo = args;
+                    _currentPage = new StreamWatchPage(IpfsInstance, ipc, win, streamerInfo);
+                }));
+                break;
+            }
+            case STREAMER_INFO_PAGE: {
+                createWindowAsync(STREAMERINFO_PAGE_LINK).then((win) => {
+                    _currentPage = new StreamerInfoPage(IpfsInstance, IpfsNodeID, ipc, win);
+                });
+                break;
+            }
+            default: {
+                throw new Error(`FATAL_ERROR! \n Page ${pageName} in not EXISTS!`);
+            }
         }
-        case GLOBAL_ROOM_PAGE: {
-            createWindowAsync(GLOBAL_ROOM_PAGE_LINK).then((win) => {
-                _currentPage = new GlobalRoomPage(IpfsInstance, ipc, win, globalRoomListener);
-            });
-            break;
-        }
-        case STREAM_WATCH_PAGE: {
-            createWindowAsync(STREAMWATCH_PAGE_LINK).then((win => {
-                const streamerInfo = args;
-                _currentPage = new StreamWatchPage(IpfsInstance, ipc, win, streamerInfo);
-            }));
-            break;
-        }
-        case STREAMER_INFO_PAGE: {
-            createWindowAsync(STREAMERINFO_PAGE_LINK).then((win) => {
-                _currentPage = new StreamerInfoPage(IpfsInstance, IpfsNodeID, ipc, win);
-            });
-            break;
-        }
-        default: {
-            throw new Error(`FATAL_ERROR! \n Page ${pageName} in not EXISTS!`);
-        }
+    } catch(err) {
+        logger.printErr(err);
+        dialogErrorHelper.showErorDialog('AppNavigator', `${err.message} ${err.stack}`, true);
     }
 }
 
@@ -221,9 +230,11 @@ function isPromise(object){
 process
     .on('unhandledRejection', (reason, p) => {
         console.error(reason, 'Unhandled Rejection at Promise', p);
+        logger.loggerInstance.error(reason.toString(), p.toString());
     })
     .on('uncaughtException', err => {
         console.error(err, 'Uncaught Exception thrown');
+        logger.printErr(err);
         process.exit(1);
     });
 process.setMaxListeners(0);

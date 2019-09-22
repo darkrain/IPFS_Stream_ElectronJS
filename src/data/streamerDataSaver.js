@@ -4,6 +4,7 @@ const fs = require('fs');
 const streamerAvaFileName = 'streamerIMG.jpg';
 const streamUserAvaFileName = 'streamerUserAva.jpg';
 const STREAMERS_PATH = pathModule.join(appRootPath.toString(), 'user', 'userData', 'streamers');
+const logger = require('./logger');
 
 class StreamerDataSaver {
     constructor(ipfs) {
@@ -54,6 +55,7 @@ class StreamerDataSaver {
             return avaPath;
         }
         catch(err) {
+            logger.printErr(err);
             console.error("Cannot save streamer img to file! Coz: \n" + err.toString());
             return '';
         }

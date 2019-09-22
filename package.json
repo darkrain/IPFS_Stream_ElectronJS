@@ -5,12 +5,31 @@
   "main": "src/appNavigator.js",
   "scripts": {
     "start": "electron .",
-    "test": "mocha --timeout 5000"
+    "test": "mocha --timeout 5000",
+    "postinstall": "electron-builder install-app-deps",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "build": {
+    "productName": "BorgStream",
+    "appId": "borgSystems.Stream",
     "win": {
-      "target": "portable"
-    }
+      "target": [
+        "portable"
+      ]
+    },
+    "portable": {
+      "artifactName": "borgStream.exe"
+    },
+    "extraResources": [
+      {
+        "from": "./bin/",
+        "to": "bin",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
   },
   "author": "",
   "license": "ISC",
@@ -24,6 +43,7 @@
     "ipld": "^0.24.1",
     "ipns": "^0.5.2",
     "libp2p-crypto": "^0.16.0",
+    "logger": "0.0.1",
     "ls": "^0.2.1",
     "md5": "^2.2.1",
     "node-watch": "0.6.3"
