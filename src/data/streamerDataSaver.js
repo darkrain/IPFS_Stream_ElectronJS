@@ -17,7 +17,7 @@ class StreamerDataSaver {
         const savedStreamAvaPath = await this.saveImageFromStream(streamerInfoObj.imgAvaHash, streamerFolderPath, streamerAvaFileName);
         //streamer user avatar
         const savedUserAvaPath = await this.saveImageFromStream(streamerInfoObj.userAvatarHash, streamerFolderPath, streamUserAvaFileName);
-        console.log("Streamer ava saved! At path: " + savedPath.toString());
+        console.log("Streamer ava saved! At path: " + savedUserAvaPath.toString());
         return {
             streamAvaPath: savedStreamAvaPath,
             userAvaPath: savedUserAvaPath
