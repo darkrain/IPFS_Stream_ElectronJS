@@ -11,25 +11,37 @@ function getFullPathOfFile(relativePath) {
 
 //in app data file system folder
 function getFullPathOfFileFromSystemPath(relativePath) {
-    //create appHome if not exists
-    if(!fs.existsSync(_APPHOME_)) {
-        initializeBasicFolders();
-        console.log("APP HOME CREATED!: " + _APPHOME_);
-    }
     const fullPath = path.join(_APPHOME_, relativePath);
-    if(!fs.existsSync(fullPath))
-    return ;
+    return fullPath;
 }
 
 function initializeBasicFolders() {
-    fs.mkdirSync(_APPHOME_); //firstable appData folder
-    
+    const folders = [
+        'bin',
+        'user',
+        'user/userData',
+        'user/userData/streamers',
+        'videos'
+    ]
+    return new Promise((resolve, rejected) => {
+        try {
+            fs.mkdirSync(_APPHOME_); //firstable appData folder       
+            console.log("App folder created! " + _APPHOME_);
+            for(const folder in folders) {
+                const folderPath = path.join(_APPHOME_, folders[folder]);
+                fs.mkdirSync(folderPath);
+            }
+            resolve();
+        } catch(err) {
+            rejected(err);
+        }
+    });     
 }
 
 const files = {
-    FFMPEG : getFullPathOfFile('bin/ffmpeg.exe'),
-    USERINFO_JSON_PATH: getFullPathOfFile('user/userInfoJSON.json'),
-    USER_PHOTO_PATH: getFullPathOfFile('front/userInfoPage/img/photo')
+    FFMPEG : getFullPathOfFileFromSystemPath('bin/ffmpeg.exe'),
+    USERINFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userInfoJSON.json'),
+    USER_PHOTO_PATH: getFullPathOfFileFromSystemPath('front/userInfoPage/img/photo')
 };
 
 const folders = {
@@ -88,5 +100,6 @@ module.exports = {
     getFirstFileInFolder,
     getFullPathOfFile,
     getParsedDataByPath,
-    fileSizes
+    fileSizes,
+    initializeBasicFolders
 }

@@ -7,6 +7,7 @@ const GlobalRoomListener = require('./src/helpers/globalRoomListener.js');
 const userInfoLoader = require('./src/data/userInfoLoader');
 const dialogErrorHelper = require('./src/helpers/dialogErrorHelper');
 const logger = require('./src/data/logger');
+const appConfig = require('./appFilesConfig');
 //pages scripts
 const StreamPage = require('./src/pages/streamPage.js');
 const UserInfoPage = require('./src/pages/userInfoPage.js');
@@ -59,6 +60,9 @@ function InitializeApp() {
                 logger.printErr(error);
                 throw error;
             }
+        })
+        .then(async () => {
+            await appConfig.initializeBasicFolders();
         })
         .then(() => {
             console.log("Try to initialize Electron...");
