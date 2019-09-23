@@ -1,5 +1,5 @@
 const assert = require('assert');
-const appConfig = require('../src/config/appFilesConfig');
+const appConfig = require('../appFilesConfig');
 const userInfoLoader = require('../src/data/userInfoLoader');
 describe('UserInfo loader functional testing', () => {
     it('Should return data when file exists', async () => {
