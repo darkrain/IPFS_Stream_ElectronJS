@@ -15,37 +15,65 @@ function getFullPathOfFileFromSystemPath(relativePath) {
     return fullPath;
 }
 
-function initializeBasicFolders() {
+async function initializeBasicFolders() {
     const folders = [
         'bin',
         'user',
         'user/userData',
         'user/userData/streamers',
+        'user/img',
+        'user/img/photo',
         'videos'
     ]
-    return new Promise((resolve, rejected) => {
+    await new Promise((resolve, rejected) => {
         try {
-            fs.mkdirSync(_APPHOME_); //firstable appData folder       
-            console.log("App folder created! " + _APPHOME_);
-            for(const folder in folders) {
-                const folderPath = path.join(_APPHOME_, folders[folder]);
-                fs.mkdirSync(folderPath);
+            if(!fs.existsSync(_APPHOME_))
+                fs.mkdirSync(_APPHOME_); //firstable appData folder       
+            for(const index in folders) {
+                const folderPath = path.join(_APPHOME_, folders[index]);
+                if(!fs.existsSync(folderPath))
+                    fs.mkdirSync(folderPath);
             }
             resolve();
         } catch(err) {
             rejected(err);
         }
-    });     
+    }); 
+    
+    await copyNecessaryData();
+}
+
+async function copyNecessaryData() {
+    const copyPaths = [
+        'bin/ffmpeg.exe'
+    ];
+    for(const index in copyPaths) {
+        const relativePath = copyPaths[index];
+        await new Promise((resolve, rejected) => {
+            const fullFilePath = getFullPathOfFile(relativePath);
+            const destFilePath = getFullPathOfFileFromSystemPath(relativePath);
+            if(!fs.existsSync(destFilePath)) {
+                fs.copyFile(fullFilePath, destFilePath, (err) => {
+                    if(err)
+                        rejected(err);
+                    resolve();
+                });
+            } else {
+                resolve();
+            }       
+        });
+    }
 }
 
 const files = {
     FFMPEG : getFullPathOfFileFromSystemPath('bin/ffmpeg.exe'),
     USERINFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userInfoJSON.json'),
-    USER_PHOTO_PATH: getFullPathOfFileFromSystemPath('front/userInfoPage/img/photo')
+    USER_PHOTO_PATH: getFullPathOfFileFromSystemPath('img/photo') 
 };
 
 const folders = {
-    USER_PAGE: getFullPathOfFile('front/userInfoPage')
+    USER_PAGE: getFullPathOfFile('front/userInfoPage'),
+    USER_DATA_PATH: getFullPathOfFileFromSystemPath('user/userData')
 }
 
 const possibleFiles = {
