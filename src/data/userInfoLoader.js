@@ -1,5 +1,5 @@
 const fs = require('fs');
-const appConfig = require('../config/appFilesConfig');
+const appConfig = require('../../appFilesConfig');
 
 function getUserInfoData(userInfoFilePath) {
     return new Promise((resolve, rejected) => {
@@ -23,7 +23,16 @@ function getUserInfoData(userInfoFilePath) {
 }
 
 function isUserDataReady() {
-    return fs.existsSync(appConfig.files.USERINFO_JSON_PATH);
+    const data = fs.readFileSync(appConfig.files.USERINFO_JSON_PATH, 'utf8');
+    try {
+        const obj = JSON.parse(data);
+
+        console.log("Keys length: " + Object.keys(obj).length);
+        return Object.keys(obj).length > 0;
+    } catch(err) {
+        console.log("Some error in user data checker: " + err.toString());
+        return false;
+    }
 }
 
 module.exports = {
