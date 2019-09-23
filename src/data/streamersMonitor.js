@@ -1,7 +1,8 @@
 const fs = require('fs');
 const pathModule = require('path');
 const appRootPath = require('app-root-path');
-const userDataPath = pathModule.join(appRootPath.toString(), 'user', 'userData');
+const appConfig = require('../../appFilesConfig');
+const userDataPath = appConfig.folders.USER_DATA_PATH;
 const streamersDataFilePath = pathModule.join(userDataPath.toString(), 'streamers.json');
 const streamersFolderPath = pathModule.join(userDataPath.toString(), 'streamers');
 

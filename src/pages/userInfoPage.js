@@ -8,7 +8,7 @@ const userInfoLoader = require('../data/userInfoLoader');
 const errorHelper = require('../helpers/dialogErrorHelper');
 const appConfig = require('../../appFilesConfig');
 const filesChecker = require('../data/fileCheking');
-const USERINFO_JSON_PATH = pathModule.join(appRootPath.toString(), 'user', 'userInfoJSON.json');
+const USERINFO_JSON_PATH = appConfig.files.USERINFO_JSON_PATH;
 const userPhotoPath = pathModule.join(appRootPath.toString(), 'front', 'userInfoPage', 'img', 'photo');
 const defaultPhotoRelativePath = './img/defaultUserAva.png';
 

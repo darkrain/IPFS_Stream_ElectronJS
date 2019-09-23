@@ -8,9 +8,10 @@ const dataConverter = require('../helpers/dataConverters.js');
 const StreamerDataSaver = require('../data/streamerDataSaver.js');
 const streamersMonitor = require('../data/streamersMonitor.js');
 const PageBase = require('./pageBase');
+const appConfig = require('../../appFilesConfig');
 
 //constants
-const USER_DATA_PATH = pathModule.join(appRootPath.toString(), 'user', 'userData');
+const USER_DATA_PATH = appConfig.folders.USER_DATA_PATH;
 const GLOBAL_ROOM_NAME = 'borgStream';
 const STREAMERS_JSON_FILE = 'streamers.json';
 const STREAMERS_DATA_PATH = pathModule.join(USER_DATA_PATH.toString(), STREAMERS_JSON_FILE);

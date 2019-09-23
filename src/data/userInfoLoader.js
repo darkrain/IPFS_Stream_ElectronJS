@@ -23,6 +23,8 @@ function getUserInfoData(userInfoFilePath) {
 }
 
 function isUserDataReady() {
+    //test
+    return false;
     const data = fs.readFileSync(appConfig.files.USERINFO_JSON_PATH, 'utf8');
     try {
         const obj = JSON.parse(data);
