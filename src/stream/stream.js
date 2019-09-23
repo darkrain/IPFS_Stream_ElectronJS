@@ -7,12 +7,13 @@ const watch = require('node-watch');
 const fs = require('fs');	
 const md5 = require('md5');	 
 const ls = require('ls');
+const { execFile } = require('child_process');
 const fsPath = require('path');
 const cameraHelper = require('../helpers/ffmpegCameraHelper');
 const audioHelper = require('../helpers/ffmpegAudioHelper');
 const IpfsStreamUploader = require('../helpers/ipfsStreamUploader.js');
 const StreamRoomBroadcaster = require('../stream/streamRoomBroadcaster.js');
-const appConfig = require('../config/appFilesConfig.js');
+const appConfig = require('../../appFilesConfig.js');
 const dialogErrorHelper = require('../helpers/dialogErrorHelper');
 class Stream {
 
@@ -98,8 +99,7 @@ class Stream {
 			windowsVerbatimArguments: true,
 			
 		};
-		this.ffmpegProc = spawn(appConfig.files.FFMPEG, 
-		[
+		const args = [
 			'-f' , 'dshow',
 			'-i',cameraDetectCommand, 
 			'-profile:v', 'high422', //set profile to support 4:2:2 resolution
@@ -115,8 +115,10 @@ class Stream {
 			'-hls_time', '4', 
 			'-hls_playlist_type', 'event', 
 			`${ this.keep }`
-		], spawnOpts);
-
+		];
+		
+		this.ffmpegProc = execFile(appConfig.files.FFMPEG, args, spawnOpts);
+		
 		const ffmpegProcess = this.ffmpegProc;
 		ffmpegProcess.removeAllListeners();
 		ffmpegProcess.setMaxListeners(0);

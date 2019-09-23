@@ -1,4 +1,4 @@
-const appNavigator = require('../appNavigator.js');
+const appNavigator = require('../../appNavigator.js');
 
 module.exports = {
     loadPageByName: (pageName, pageArgs) => {

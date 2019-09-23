@@ -1,18 +1,18 @@
 //*** Imports ***
 const { app, BrowserWindow } = require('electron');
 console.log("AAAAAP ! " + app.getAppPath());
-const ipfsLoaderHelper = require('./helpers/ipfsLoaderHelper.js');
+const ipfsLoaderHelper = require('./src/helpers/ipfsLoaderHelper.js');
 const ipc = require('electron').ipcMain;
-const GlobalRoomListener = require('./helpers/globalRoomListener.js');
-const userInfoLoader = require('./data/userInfoLoader');
-const dialogErrorHelper = require('./helpers/dialogErrorHelper');
-const logger = require('./data/logger');
+const GlobalRoomListener = require('./src/helpers/globalRoomListener.js');
+const userInfoLoader = require('./src/data/userInfoLoader');
+const dialogErrorHelper = require('./src/helpers/dialogErrorHelper');
+const logger = require('./src/data/logger');
 //pages scripts
-const StreamPage = require('./pages/streamPage.js');
-const UserInfoPage = require('./pages/userInfoPage.js');
-const GlobalRoomPage = require('./pages/globalRoomPage.js');
-const StreamWatchPage = require('./pages/streamWatchPage.js');
-const StreamerInfoPage = require('./pages/streamInfoPage.js');
+const StreamPage = require('./src/pages/streamPage.js');
+const UserInfoPage = require('./src/pages/userInfoPage.js');
+const GlobalRoomPage = require('./src/pages/globalRoomPage.js');
+const StreamWatchPage = require('./src/pages/streamWatchPage.js');
+const StreamerInfoPage = require('./src/pages/streamInfoPage.js');
 //*** End Imports ***
 
 //*** Page links ***

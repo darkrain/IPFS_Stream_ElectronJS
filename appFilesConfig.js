@@ -1,14 +1,35 @@
 const path = require('path');
-const appRootPath = require('app-root-path');
 const fs = require('fs');
+const _HOME_ = require('os').homedir();
+const _SEP_ = require('path').sep;
+const _APPHOME_ = `${_HOME_}${_SEP_}.borgStream${_SEP_}`;
 
+//in app folder
 function getFullPathOfFile(relativePath) {
-    return path.join(appRootPath.toString(), relativePath);
+    return path.join(__dirname, relativePath);
+}
+
+//in app data file system folder
+function getFullPathOfFileFromSystemPath(relativePath) {
+    //create appHome if not exists
+    if(!fs.existsSync(_APPHOME_)) {
+        initializeBasicFolders();
+        console.log("APP HOME CREATED!: " + _APPHOME_);
+    }
+    const fullPath = path.join(_APPHOME_, relativePath);
+    if(!fs.existsSync(fullPath))
+    return ;
+}
+
+function initializeBasicFolders() {
+    fs.mkdirSync(_APPHOME_); //firstable appData folder
+    
 }
 
 const files = {
     FFMPEG : getFullPathOfFile('bin/ffmpeg.exe'),
-    USERINFO_JSON_PATH: getFullPathOfFile('user/userInfoJSON.json')
+    USERINFO_JSON_PATH: getFullPathOfFile('user/userInfoJSON.json'),
+    USER_PHOTO_PATH: getFullPathOfFile('front/userInfoPage/img/photo')
 };
 
 const folders = {

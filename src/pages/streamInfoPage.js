@@ -6,7 +6,7 @@ const PageBase = require('./pageBase');
 const imgHelper = require('../helpers/imageLoaderHelper.js');
 const DataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
 const StreamInfoGenerator = require('../data/StreamerInfoGenerator.js');
-const appConfig = require('../config/appFilesConfig');
+const appConfig = require('../../appFilesConfig');
 const filesChecker = require('../data/fileCheking');
 
 let streamerInfo = [];

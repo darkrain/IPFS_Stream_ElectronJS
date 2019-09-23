@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const appConfig = require('../config/appFilesConfig');
+const appConfig = require('../../appFilesConfig');
 const errorDialog = require('../helpers/dialogErrorHelper');
 const pathModule = require('path');
 class StreamerInfoGenerator {

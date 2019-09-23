@@ -2,7 +2,7 @@
   "name": "vstreameripfs",
   "version": "1.0.0",
   "description": "",
-  "main": "src/appNavigator.js",
+  "main": "appNavigator.js",
   "scripts": {
     "start": "electron .",
     "test": "mocha --timeout 5000",
@@ -20,16 +20,7 @@
     },
     "portable": {
       "artifactName": "borgStream.exe"
-    },
-    "extraResources": [
-      {
-        "from": "./bin/",
-        "to": "bin",
-        "filter": [
-          "**/*"
-        ]
-      }
-    ]
+    }
   },
   "author": "",
   "license": "ISC",
