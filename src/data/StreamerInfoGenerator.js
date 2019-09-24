@@ -18,17 +18,18 @@ class StreamerInfoGenerator {
         //try to upload userAva
         let userAvaHash = null;
         try {
+            //upload userAvatar image
             const userInfoObject = await appConfig.getParsedDataByPath(appConfig.files.USERINFO_JSON_PATH);
-            const userAvaPath = pathModule.join(appConfig.folders.USER_PAGE, userInfoObject.photoPath);
+            const userAvaBase64 = userInfoObject.photoBase64;           
             userAvaHash = await new Promise((resolve, rejected) => {
-                //upload userAvatar image
-                ipfsInstance.addFromFs(userAvaPath, {}, (err, result) => {
-                    if(err) 
+                const buffer = new Buffer(userAvaBase64, 'base64');
+                ipfsInstance.add(buffer, [], (err, result) => {
+                    if(err)
                         throw err;
                     const hash = result[0].hash;
                     console.log("User ava hash has been uploaded! \n hash:" + hash);
-                    resolve(hash);      
-                });
+                    resolve(hash);   
+                });        
             });
         } catch (err) {
             errorDialog.showErorDialog('StreamerInfoGenerator', `Cannot upload user avatar in ipfs! \n ${err.message} \n${err.stack}`, true);

@@ -115,10 +115,9 @@ ipc.on('audio-list-update', (event, args) => {
 
 //When user selected file for ava
 ipc.on('selected-file', (event, args) => {
-	const fileName = args;
-	const filePathForHTML = `../../user/${fileName}` + '?v' + Date.now();
-	const imgAvaElement = document.getElementById('streamerAvaImg');
-	imgAvaElement.src = filePathForHTML;
+	const avaImg = document.getElementById('streamerAvaImg');
+    const base64img = args;
+    avaImg.src = `data:image/png;base64,${base64img}`;
 });
 
 ipc.on('update-requirements', (event, args) => {

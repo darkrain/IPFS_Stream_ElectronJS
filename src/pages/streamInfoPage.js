@@ -3,7 +3,7 @@ const StreamInitializer = require('../stream/streamInitializer.js');
 const pathModule = require('path');
 const PageBase = require('./pageBase');
 //External helpers
-const imgHelper = require('../helpers/imageLoaderHelper.js');
+const fileHandler = require('../data/fileHandling');
 const DataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
 const StreamInfoGenerator = require('../data/StreamerInfoGenerator.js');
 const appConfig = require('../../appFilesConfig');
@@ -15,6 +15,7 @@ class StreamInfoPage extends PageBase{
   constructor(ipfs, ipfsNodeID, electronIPC, pageWindow) {
       super();
       //initialize class mebmers:
+      this.base64Ava = '';
       this.ipfs = ipfs;
       this.ipfsNodeID = ipfsNodeID;
       this.electronIPC = electronIPC;
@@ -61,11 +62,9 @@ class StreamInfoPage extends PageBase{
                   await dialog.showMessageBox({type:'warning', title:'File size warning', message: `File size more than ${maxStreamAvaSize} KB!!`})
                   continue;
                 }
-                console.log("Try to openFile: " + file.toString());
-                const copiedImgPath = await  imgHelper.copyImageToApplicationFolerAsync(file);
-                const fileName = pathModule.basename(copiedImgPath); //to send in client script without path
-                event.sender.send('selected-file', fileName);
-                streamPageObj.onAvaImageUploaded(copiedImgPath);
+                const avaBase64 = await fileHandler.readFileAsBase64Async(file);
+                event.sender.send('selected-file', avaBase64);
+                streamPageObj.onAvaImageUploaded(file);
                 break; //break loop if size is correct
 
               } else {
@@ -171,7 +170,9 @@ class StreamInfoPage extends PageBase{
                 streamerInfo = readyData.streamInfo;    
                 console.log("Streamer info updated! : \n" + JSON.stringify(streamerInfo));
             }
-    });
+    }).catch(err => {
+      throw err;
+    })
   }
 
   stop() {
