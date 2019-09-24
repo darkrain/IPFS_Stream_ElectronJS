@@ -22,11 +22,11 @@ ipc.on('listOfStreamersUpdated', (event, args) => {
         const streamerInfo = streamersArray[i];
         const streamerHash = streamerInfo.hashOfStreamer;
         const streamerName = streamerInfo.streamerName;
-        const imgRelativePath = streamerInfo.relativePath;
-        const userAvaRelativePath = streamerInfo.relativeUserAvaPath;
+        const streamAvaImgBase64 = streamerInfo.streamerAvaBase64;
+        const userAvaImgBase64 = streamerInfo.userAvaBase64;
         const buttonID = 'streamer' + i.toString();
-        const htmlData = `<div><p>${streamerName}<p><img src="${imgRelativePath}" width="200" height="75"> 
-        <img src="${userAvaRelativePath}" width="200" height="75">  
+        const htmlData = `<div><p>${streamerName}<p><img src="data:image/png;base64,${streamAvaImgBase64}" width="200" height="75"> 
+        <img src="data:image/png;base64,${userAvaImgBase64}" width="200" height="75">  
         </div> <div><button id="${buttonID}" type="button">Watch ${streamerName}</button></div>`;
         $(listID).append(`<li>${htmlData}</li>`);     
         const streamerButton = document.getElementById(buttonID);

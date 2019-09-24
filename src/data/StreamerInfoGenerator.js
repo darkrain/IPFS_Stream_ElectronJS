@@ -10,6 +10,7 @@ class StreamerInfoGenerator {
     }
 
     async getGeneratedStreamerInfoAsync(ipfsInstance) {
+        //Here's data prepared for save in JSON file about streamers
         const nameData = this.nodeID + this.streamerName;
         this.streamDataHash = crypto.createHash('md5').update(nameData).digest("hex");
         const streamerImgPath = this.streamerImgPath;

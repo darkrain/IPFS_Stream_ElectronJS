@@ -8,6 +8,23 @@ function readFileAsBase64Async(filePath) {
         });
     });
 }
+
+function readFileFromIpfsAsBase64Async(ipfsInstance, hashIpfs) {
+    return new Promise((resolve, rejected) => {
+        try {
+            ipfsInstance.get(hashIpfs, (err, files) => {
+                if(err)
+                    rejected(err);
+                const file = files[0];
+                const buffer = file.content;
+                resolve(buffer);
+            });
+        } catch(err) {
+            rejected(err);
+        }
+    });
+}
 module.exports =  {
-    readFileAsBase64Async
+    readFileAsBase64Async,
+    readFileFromIpfsAsBase64Async
 }

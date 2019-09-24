@@ -5,14 +5,12 @@ const appRootPath = require('app-root-path');
 const fs = require('fs');
 const fsExtra = require('fs-extra');
 const dataConverter = require('../helpers/dataConverters.js');
-const StreamerDataSaver = require('../data/streamerDataSaver.js');
 const streamersMonitor = require('../data/streamersMonitor.js');
 const PageBase = require('./pageBase');
 const appConfig = require('../../appFilesConfig');
 
 //constants
 const USER_DATA_PATH = appConfig.folders.USER_DATA_PATH;
-const GLOBAL_ROOM_NAME = 'borgStream';
 const STREAMERS_JSON_FILE = 'streamers.json';
 const STREAMERS_DATA_PATH = pathModule.join(USER_DATA_PATH.toString(), STREAMERS_JSON_FILE);
 const STREAMERS_INFO_DATA_PATH = pathModule.join(USER_DATA_PATH.toString(), 'streamers');
@@ -46,7 +44,6 @@ class GlobalRoomPage extends PageBase {
         this.ipc = ipc;
         this.win = win;
         this.globalRoomListener = globalRoomListener;
-        this.dataSaver = new StreamerDataSaver(this.ipfs);
         this.initializeListenersForRooms();
 
         this.currentStreamers = [];
@@ -63,11 +60,9 @@ class GlobalRoomPage extends PageBase {
             const messageStr = msg.data.toString();
             console.log(`Message getted: \n from: ${msg.from} \n data: ${msg.data}`);
             globalRoomPageObj.onStreamerInfoMessageGetted(messageStr)
-                .then((streamerInfoObj) => {
-                    //Do something with streamer when it saved.
-                    globalRoomPageObj.dataSaver.saveStreamerDataAsync(streamerInfoObj).then((imgData) => {
-                        globalRoomPageObj.updatePageAboutStreamers();
-                    });          
+                .then((streamerInfoObj) => {                 
+                    //Do something with streamer when it saved.  
+                    globalRoomPageObj.updatePageAboutStreamers();      
                 })
                 .catch((err) => {
                     console.error("Unable read streamer message! \n" + err.toString());
@@ -76,6 +71,7 @@ class GlobalRoomPage extends PageBase {
     }
 
     onStreamerInfoMessageGetted(streamerMessage) {
+        //save stream info in JSON file data
         const globalRoomPageObj = this;
         return new Promise((resolve, rejected) => {
             const streamerInfoObj = globalRoomPageObj.tryParseStreamerInfo(streamerMessage);
@@ -187,9 +183,11 @@ class GlobalRoomPage extends PageBase {
 
     updatePageAboutStreamers() {
         const globalRoomObj = this;
-        streamersMonitor.getStreamersDataAsync().then((streamersArray) => {
+        streamersMonitor.getStreamersDataAsync(this.ipfs).then((streamersArray) => {
             console.log("Streamers array updated! \n " + JSON.stringify(streamersArray));
             globalRoomObj.win.webContents.send('listOfStreamersUpdated', streamersArray);
+        }).catch(err => {
+            throw err;
         });
     }
 

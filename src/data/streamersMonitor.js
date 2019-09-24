@@ -5,6 +5,7 @@ const appConfig = require('../../appFilesConfig');
 const userDataPath = appConfig.folders.USER_DATA_PATH;
 const streamersDataFilePath = pathModule.join(userDataPath.toString(), 'streamers.json');
 const streamersFolderPath = pathModule.join(userDataPath.toString(), 'streamers');
+const fileHandling = require('./fileHandling');
 
 async function getListOfStreamersAsync() {
     try {
@@ -31,50 +32,42 @@ async function getListOfStreamersAsync() {
     }   
 }
 
-async function generateDataForStreamerAsync(streamerObj) {
-    const streamAvaName = 'streamerIMG.jpg';
-    const streamUserAvaName = 'streamerUserAva.jpg';
+async function generateDataForStreamerAsync(streamerObj, ipfs) {
+    //This function prepared data for frontend page (load img from ipfs and save as base64)
     const streamerHash = streamerObj.hashOfStreamer;
     console.log("Try to generate data for streamer : " + streamerHash);
     const streamerFolder = pathModule.join(streamersFolderPath.toString(), streamerHash);
     if(!fs.existsSync(streamerFolder)) {
         throw new Error(`Folder for stremaer ${streamerFolder} not exists !`);
     }
-    const streamerImgPath = pathModule.join(streamerFolder, streamAvaName);
-    if(!fs.existsSync(streamerImgPath)) {
-        throw new Error(`Stream Avatar image for stremaer ${streamerImgPath} not exists !`);
-    } 
-    const streamerUserAvaImgPath = pathModule.join(streamerFolder, streamUserAvaName);
-    if(!fs.existsSync(streamerUserAvaImgPath)) {
-        throw new Error(`USER Avatar image for stremaer ${streamerUserAvaImgPath} not exists !`);
-    } 
     
-    //relative path for stream ava
-    const relativePath = '../../user/userData/streamers/' + streamerHash + '/' + streamAvaName; //stream avatar path
-    const relativeAvaPath = '../../user/userData/streamers/' + streamerHash + '/' + streamUserAvaName; //streamer user avatar path
+    const streamAvaBase64 = await fileHandling.readFileFromIpfsAsBase64Async(ipfs ,streamerObj.imgAvaHash);
+    const userAvaBase64 = await fileHandling.readFileFromIpfsAsBase64Async(ipfs ,streamerObj.userAvatarHash);
+
     const streamData = {
         streamerName: streamerObj.nameOfStream,
-        streamerImage: streamerImgPath,
-        relativePath: relativePath,
         hashOfStreamer: streamerHash,
-        relativeUserAvaPath: relativeAvaPath
+        streamerAvaBase64: streamAvaBase64,
+        userAvaBase64: userAvaBase64
     };
     
     return streamData;
 }
 
-async function getStreamersDataAsync() {
-    const streamersList = await getListOfStreamersAsync();
-    const streamersData = [];
-    for(let i = 0; i < streamersList.length; i++) {
-        const streamer = streamersList[i];
-        console.log("Added streamer info in array: " + JSON.stringify(streamer));
-        const generatedStreamerData = await generateDataForStreamerAsync(streamer);
-        streamersData.push(generatedStreamerData); 
-
-    }
-
-    return streamersData;
+async function getStreamersDataAsync(ipfs) {
+    try{
+        const streamersList = await getListOfStreamersAsync();
+        const streamersData = [];
+        for(let i = 0; i < streamersList.length; i++) {
+            const streamer = streamersList[i];
+            console.log("Added streamer info in array: " + JSON.stringify(streamer));
+            const generatedStreamerData = await generateDataForStreamerAsync(streamer, ipfs);
+            streamersData.push(generatedStreamerData); 
+        }
+        return streamersData;
+    } catch(err) {
+        throw err;
+    }   
 }
 
 module.exports = {
