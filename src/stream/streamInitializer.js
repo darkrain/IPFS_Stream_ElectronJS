@@ -1,17 +1,11 @@
 const pathModule = require('path');
-const appRootPath = require('app-root-path');
-const EventEmitter = require('events');
 const Stream = require('./stream.js');
 const localServer = require('../localServer/localServer.js');
-class OnStreamVideoRelativePathUpdatedEvent extends EventEmitter {};
+const appConfig = require('../../appFilesConfig');
 
 class StreamInitializer {
     constructor(IPFSinstance) {               
         this.ipfs = IPFSinstance;
-        //events
-        this.onStreamVideoRelativePathUpdatedEvent =  new OnStreamVideoRelativePathUpdatedEvent(); 
-        this.onStreamVideoRelativePathUpdatedEvent.removeAllListeners();
-        this.onStreamVideoRelativePathUpdatedEvent.setMaxListeners(0); //to avoid warnings    
         //reset at start
         this.resetStream();     
     }
@@ -26,7 +20,7 @@ class StreamInitializer {
     };
 
     getModuleFolderPath(folderName) {
-        return pathModule.join(appRootPath.toString(), folderName).toString();
+        return appConfig.getFullPathOfFileFromSystemPath(folderName);
     };
 
     getBinFolder() {
@@ -40,12 +34,10 @@ class StreamInitializer {
         const binFolder = this.getBinFolder();
         const streamName = this.generateRandomStreamName(); 
         console.log("Create new stream instance inside initializer..");
-      
-        this.relativeVideoPath = '../' + videoFolderName + '/' + streamName;
-        this.fullVideoPath = pathModule.join(this.getModuleFolderPath(videoFolderName), streamName);
-        this.onStreamVideoRelativePathUpdatedEvent.emit('onVideoFolderUpdated', this.relativeVideoPath);
 
-        this.stream = new Stream(this.ipfs, streamName, videoFolderName, binFolder);
+        this.fullVideoPath = pathModule.join(this.getModuleFolderPath(videoFolderName), streamName);
+
+        this.stream = new Stream(this.ipfs, streamName,  this.fullVideoPath ,binFolder);
         if(this.lastCameraName) {
             this.stream.setCameraByName(this.lastCameraName);
         }       
@@ -129,16 +121,8 @@ class StreamInitializer {
         this.stream.setAudioByName(audioName);
     }
 
-    onVideoPathUpdatedWithRelativePath = (callback) => {
-        callback(path);
-    }
-
     getLastFullVideoPath = () => {
         return this.fullVideoPath;
-    }
-
-    getLastVideoRelativePath = () => {
-        return this.relativeVideoPath;
     }
 
     isStreamStarted = () => {

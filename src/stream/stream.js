@@ -5,8 +5,6 @@ const spawn = require('child_process').spawn;
 const Room = require('ipfs-pubsub-room')
 const watch = require('node-watch');
 const fs = require('fs');	
-const md5 = require('md5');	 
-const ls = require('ls');
 const { execFile } = require('child_process');
 const fsPath = require('path');
 const cameraHelper = require('../helpers/ffmpegCameraHelper');
@@ -15,9 +13,10 @@ const IpfsStreamUploader = require('../helpers/ipfsStreamUploader.js');
 const StreamRoomBroadcaster = require('../stream/streamRoomBroadcaster.js');
 const appConfig = require('../../appFilesConfig.js');
 const dialogErrorHelper = require('../helpers/dialogErrorHelper');
+const pathModule = require('path');
 class Stream {
 
-	constructor(ipfs, nameOfStreem, path = 'videos', binFolderPath) {
+	constructor(ipfs, nameOfStreem, path, binFolderPath) {
 		console.log(`Try initialize sream with fields: \n ${ipfs} \n ${nameOfStreem} \n ${binFolderPath}`);
 		this.ipfs = ipfs;
 		this.ipfsStreamUploader = new IpfsStreamUploader(this.ipfs);
@@ -25,22 +24,14 @@ class Stream {
 		this.headers = '#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:8\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:EVENT\n';
 		this.blocks = [];
 		this.rooms = {};
-		this.path = path;
-		this.keepPath = this.path+'/'+nameOfStreem+'/';
+		this.keepPath = path;
 		this.nameOfStreem = nameOfStreem;
-		this.keep = this.keepPath + 'master.m3u8';		
-		this.m3u8IPFS = this.keepPath + 'streamIPFS.m3u8';
+		this.keep = pathModule.join(this.keepPath, 'master.m3u8');	
+		this.m3u8IPFS = pathModule.join(this.keepPath, 'streamIPFS.m3u8');
 		this.isPlalistInitialized = false;		
 		
-		if (!fs.existsSync(this.path)){
-		    fs.mkdirSync(this.path);
-
-		    if (!fs.existsSync(this.keepPath))
-		    	fs.mkdirSync(this.keepPath);		    
-
-		}else if(!fs.existsSync(this.keepPath))
-			fs.mkdirSync(this.keepPath);
-		    
+		if (!fs.existsSync(this.keepPath))
+			fs.mkdirSync(this.keepPath);		    
 		
 		this.createRooms();	
 	}

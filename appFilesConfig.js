@@ -77,7 +77,7 @@ const files = {
 const folders = {
     USER_PAGE: getFullPathOfFile('front/userInfoPage'),
     USER_DATA_PATH: getFullPathOfFileFromSystemPath('user/userData'),
-    USER_PHOTO_PATH: getFullPathOfFileFromSystemPath('img/photo') 
+    USER_PHOTO_PATH: getFullPathOfFileFromSystemPath('img/photo')
 }
 
 const fileSizes = {
@@ -128,5 +128,6 @@ module.exports = {
     getFullPathOfFile,
     getParsedDataByPath,
     fileSizes,
-    initializeBasicFolders
+    initializeBasicFolders,
+    getFullPathOfFileFromSystemPath
 }
