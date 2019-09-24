@@ -16,8 +16,8 @@ function readFileFromIpfsAsBase64Async(ipfsInstance, hashIpfs) {
                 if(err)
                     rejected(err);
                 const file = files[0];
-                const buffer = file.content;
-                resolve(buffer);
+                const base64 = Buffer.from(file.content).toString('base64');
+                resolve(base64);
             });
         } catch(err) {
             rejected(err);
