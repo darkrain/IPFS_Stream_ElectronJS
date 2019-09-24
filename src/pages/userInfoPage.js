@@ -1,7 +1,5 @@
 const fs = require('fs');
 const pathModule = require('path');
-const appRootPath = require('app-root-path');
-const imgHelper = require('../helpers/imageLoaderHelper.js');
 const dialog = require('electron').dialog;
 const PageBase = require('./pageBase.js');
 const userInfoLoader = require('../data/userInfoLoader');
@@ -9,8 +7,8 @@ const errorHelper = require('../helpers/dialogErrorHelper');
 const appConfig = require('../../appFilesConfig');
 const filesChecker = require('../data/fileCheking');
 const USERINFO_JSON_PATH = appConfig.files.USERINFO_JSON_PATH;
-const userPhotoPath = pathModule.join(appRootPath.toString(), 'front', 'userInfoPage', 'img', 'photo');
-const defaultPhotoRelativePath = './img/defaultUserAva.png';
+const userPhotoPath = appConfig.folders.USER_PHOTO_PATH;
+const fileHandler = require('../data/fileHandling');
 
 class UserInfoPage extends PageBase{
     constructor(ipc, win) {
@@ -18,15 +16,12 @@ class UserInfoPage extends PageBase{
         this.ipc = ipc;
         this.subscribeToIpcEvents(ipc);
 
-        this.lastPhotoRelativePath = defaultPhotoRelativePath;
-
         //preload user info if exists
         userInfoLoader.getUserInfoData(USERINFO_JSON_PATH).then((data) => {
             if(data != null) {
               win.webContents.send('nameChanged', data.name);
               win.webContents.send('nickNameChanged', data.nickname);  
-            }
-            
+            }           
             //preload photo if exists
             if(fs.existsSync(userPhotoPath)) {
               if(fs.readdir(userPhotoPath, (err, files) => {
@@ -75,10 +70,9 @@ class UserInfoPage extends PageBase{
                     continue;
                   }
                   console.log("Try to openFile: " + file.toString());
-                  const copiedImgPath = await imgHelper.copyImageToApplicationFolerAsync(file, 'defaultUserAva', userPhotoPath);
-                  const fileName = pathModule.basename(copiedImgPath); //to send in client script without path
-                  userInfoPageObj.lastPhotoRelativePath = './img/photo/' + fileName;
-                  event.sender.send('selected-userava-file', fileName);
+                  const imgBase64 = await fileHandler.readFileAsBase64Async(file);
+                  userInfoPageObj.lastPhotoBase64 = imgBase64;
+                  event.sender.send('selected-userava-file', imgBase64);
                   break;
 
                 } else {
@@ -113,7 +107,7 @@ class UserInfoPage extends PageBase{
         this.data = {
             "name" : this.userName,
             "nickname" : this.nickName,
-            "photoPath" : this.lastPhotoRelativePath
+            "photoBase64" : this.lastPhotoBase64
         };
         fs.writeFileSync(USERINFO_JSON_PATH, JSON.stringify(this.data));
     }

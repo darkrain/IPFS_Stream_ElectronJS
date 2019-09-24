@@ -39,7 +39,9 @@ ipc.on('nickNameChanged', (event, args) => {
     userNickNameInputText.value = args;
 });
 
+
 ipc.on('selected-userava-file', (event, args) => {
     const avaImg = document.getElementById('userAvaImg');
-    avaImg.src = './img/photo/' + args + '?v' + Date.now();;
+    const base64img = args;
+    avaImg.src = `data:image/png;base64,${base64img}`;
 });

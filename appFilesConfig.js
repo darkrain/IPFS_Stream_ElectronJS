@@ -71,17 +71,13 @@ async function copyNecessaryData() {
 
 const files = {
     FFMPEG : getFullPathOfFileFromSystemPath('bin/ffmpeg.exe'),
-    USERINFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userInfoJSON.json'),
-    USER_PHOTO_PATH: getFullPathOfFileFromSystemPath('img/photo') 
+    USERINFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userInfoJSON.json')
 };
 
 const folders = {
     USER_PAGE: getFullPathOfFile('front/userInfoPage'),
-    USER_DATA_PATH: getFullPathOfFileFromSystemPath('user/userData')
-}
-
-const possibleFiles = {
-    USER_PHOTO_PATH: getFullPathOfFile('front/userInfoPage/img/photo')
+    USER_DATA_PATH: getFullPathOfFileFromSystemPath('user/userData'),
+    USER_PHOTO_PATH: getFullPathOfFileFromSystemPath('img/photo') 
 }
 
 const fileSizes = {
@@ -128,7 +124,6 @@ function getFirstFileInFolder(path) {
 module.exports = {
     files,
     folders,
-    possibleFiles,
     getFirstFileInFolder,
     getFullPathOfFile,
     getParsedDataByPath,
