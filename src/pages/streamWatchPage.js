@@ -5,8 +5,8 @@ const appRootPath = require('app-root-path');
 const fs = require('fs');
 const localServer = require('../localServer/localServer.js');
 const PageBase = require('./pageBase');
-
-const STREAMERS_DATA_PATH = pathModule.join(appRootPath.toString(), 'user','userData','streamers');
+const appConfig = require('../../appFilesConfig');
+const STREAMERS_DATA_PATH = pathModule.join(appConfig.folders.USER_DATA_PATH ,'streamers');
 
 class StreamWatchPage extends PageBase{
     constructor(ipfs, ipc, win, streamerInfo){  

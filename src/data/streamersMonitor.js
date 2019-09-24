@@ -38,7 +38,7 @@ async function generateDataForStreamerAsync(streamerObj, ipfs) {
     console.log("Try to generate data for streamer : " + streamerHash);
     const streamerFolder = pathModule.join(streamersFolderPath.toString(), streamerHash);
     if(!fs.existsSync(streamerFolder)) {
-        throw new Error(`Folder for stremaer ${streamerFolder} not exists !`);
+        fs.mkdirSync(streamerFolder);
     }
     
     const streamAvaBase64 = await fileHandling.readFileFromIpfsAsBase64Async(ipfs ,streamerObj.imgAvaHash);
