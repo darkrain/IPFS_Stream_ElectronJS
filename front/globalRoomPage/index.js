@@ -24,15 +24,31 @@ ipc.on('listOfStreamersUpdated', (event, args) => {
         const streamerName = streamerInfo.streamerName;
         const streamAvaImgBase64 = streamerInfo.streamerAvaBase64;
         const userAvaImgBase64 = streamerInfo.userAvaBase64;
-        const buttonID = 'streamer' + i.toString();
-        const htmlData = `<div><p>${streamerName}<p><img src="data:image/png;base64,${streamAvaImgBase64}" width="200" height="75"> 
-        <img src="data:image/png;base64,${userAvaImgBase64}" width="200" height="75">  
-        </div> <div><button id="${buttonID}" type="button">Watch ${streamerName}</button></div>`;
-        $(listID).append(`<li>${htmlData}</li>`);     
-        const streamerButton = document.getElementById(buttonID);
+
+        const streamContaner = document.createElement('div');
+        const streamNameP = document.createElement('p');
+        streamNameP.textContent = streamerName;
+        const streamAvaImg = document.createElement('img');
+        streamAvaImg.src = `data:image/png;base64,${streamAvaImgBase64}`;
+        const userAvaImg = document.createElement('img');
+        userAvaImg.src = `data:image/png;base64,${userAvaImgBase64}`;
+        const streamerButton = document.createElement('button');
+        streamerButton.type = "button";
+        streamerButton.textContent = `Watch ${streamerName}`;
         streamerButton.addEventListener('click', function() {
             const streamWatchPage = 'streamWatchPage';
             ipc.send('goto-page', {pageName: streamWatchPage, pageArgs: streamerInfo});
         });
+        
+        streamContaner.append(streamNameP);
+        streamContaner.append(streamAvaImg);
+        streamContaner.append(userAvaImg);
+        streamContaner.append(streamerButton);
+
+        const liElem = document.createElement('li');
+        liElem.append(streamContaner);
+        document.getElementById(listID).append(liElem);
+
+        
     }   
 });
