@@ -17,6 +17,7 @@ ipc.on('listOfStreamersUpdated', (event, args) => {
     const streamersArray = args;
     const listID = '#listOfStreamers';
     const list = document.getElementById(listID);
+    list.innerHTML = '';
     //empty at start
     $(listID).empty();
     for(let i = 0 ; i < streamersArray.length; i++) {
