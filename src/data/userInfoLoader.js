@@ -22,17 +22,12 @@ function getUserInfoData(userInfoFilePath) {
     });
 }
 
-function isUserDataReady() {
-    //test
-    return false;
-    const data = fs.readFileSync(appConfig.files.USERINFO_JSON_PATH, 'utf8');
+function isUserDataReady() { 
     try {
+        const data = fs.readFileSync(appConfig.files.USERINFO_JSON_PATH, 'utf8');
         const obj = JSON.parse(data);
-
-        console.log("Keys length: " + Object.keys(obj).length);
         return Object.keys(obj).length > 0;
     } catch(err) {
-        console.log("Some error in user data checker: " + err.toString());
         return false;
     }
 }
