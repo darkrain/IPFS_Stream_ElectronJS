@@ -16,6 +16,7 @@ $( document ).ready(function() {
 ipc.on('listOfStreamersUpdated', (event, args) => {
     const streamersArray = args;
     const listID = '#listOfStreamers';
+    const list = document.getElementById(listID);
     //empty at start
     $(listID).empty();
     for(let i = 0 ; i < streamersArray.length; i++) {
@@ -39,7 +40,7 @@ ipc.on('listOfStreamersUpdated', (event, args) => {
             const streamWatchPage = 'streamWatchPage';
             ipc.send('goto-page', {pageName: streamWatchPage, pageArgs: streamerInfo});
         });
-        
+
         streamContaner.append(streamNameP);
         streamContaner.append(streamAvaImg);
         streamContaner.append(userAvaImg);
@@ -47,8 +48,7 @@ ipc.on('listOfStreamersUpdated', (event, args) => {
 
         const liElem = document.createElement('li');
         liElem.append(streamContaner);
-        document.getElementById(listID).append(liElem);
-
         
+        list.append(liElem);    
     }   
 });
