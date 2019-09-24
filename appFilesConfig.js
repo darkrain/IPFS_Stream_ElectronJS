@@ -39,8 +39,12 @@ async function initializeBasicFolders() {
             rejected(err);
         }
     }); 
-    
-    await copyNecessaryData();
+    try {
+
+    } catch(err) {
+        await copyNecessaryData();
+        throw err;
+    }  
 }
 
 async function copyNecessaryData() {

@@ -62,7 +62,11 @@ function InitializeApp() {
             }
         })
         .then(async () => {
-            await appConfig.initializeBasicFolders();
+            try {
+                await appConfig.initializeBasicFolders();
+            } catch(err) {
+                throw err;
+            }
         })
         .then(() => {
             console.log("Try to initialize Electron...");
@@ -176,7 +180,14 @@ function createWindowAsync(linkToPage) {
     });
 }
   
-app.on('ready', InitializeApp);
+app.on('ready', () => {
+    try {
+        InitializeApp()
+    } catch(err) {
+        logger.printErr(err);
+        dialogErrorHelper.showErorDialog("AppNavigator", `Cannot run application, coz: \n ${err.message} \n ${err.stack}`, true);
+    }
+});
   
 // Выходим, когда все окна будут закрыты.
 app.on('window-all-closed', () => {
