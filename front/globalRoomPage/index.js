@@ -48,6 +48,6 @@ ipc.on('listOfStreamersUpdated', (event, args) => {
 
         const liElem = document.createElement('li');
         liElem.append(streamContaner);
-        list.innerHTML(list.outerHTML);
+        list.innerHTML = liElem.outerHTML;
     }   
 });
