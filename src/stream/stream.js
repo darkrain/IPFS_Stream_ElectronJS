@@ -232,7 +232,7 @@ class Stream {
 								}
 
 								streamObj.blocks.push(chunkData);
-								const filePath = streamObj.keepPath+chunkFileName;
+								const filePath = pathModule.join(streamObj.keepPath, chunkFileName);
 								streamObj.ipfs.addFromFs((filePath), (err, result) => {
 									if (err) { throw err }
 									const chunkHash = result[0].hash;
