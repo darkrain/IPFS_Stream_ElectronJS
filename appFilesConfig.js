@@ -49,18 +49,19 @@ async function copyNecessaryData() {
     ];
     for(const index in copyPaths) {
         const relativePath = copyPaths[index];
-        await new Promise((resolve, rejected) => {
-            const fullFilePath = getFullPathOfFile(relativePath);
-            const destFilePath = getFullPathOfFileFromSystemPath(relativePath);
-            if(!fs.existsSync(destFilePath)) {
-                fs.copyFile(fullFilePath, destFilePath, (err) => {
-                    if(err)
-                        rejected(err);
-                    resolve();
-                });
-            } else {
+        const fullFilePath = getFullPathOfFile(relativePath);
+        const destFilePath = getFullPathOfFileFromSystemPath(relativePath);
+        if(fs.existsSync(destFilePath)) {
+            console.log(`File ${destFilePath} exists, continue..`);
+            continue;
+        }
+        console.log(`File ${destFilePath} not exists! Copy...`);
+        await new Promise((resolve, rejected) => {   
+            fs.copyFile(fullFilePath, destFilePath, (err) => {
+                if(err)
+                    rejected(err);
                 resolve();
-            }       
+            });             
         });
     }
 }
