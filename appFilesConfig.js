@@ -40,9 +40,8 @@ async function initializeBasicFolders() {
         }
     }); 
     try {
-
-    } catch(err) {
         await copyNecessaryData();
+    } catch(err) {    
         throw err;
     }  
 }
