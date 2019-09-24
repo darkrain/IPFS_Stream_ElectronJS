@@ -58,7 +58,7 @@ class GlobalRoomPage extends PageBase {
                 return;
             }
             const messageStr = msg.data.toString();
-            console.log(`Message getted: \n from: ${msg.from} \n data: ${msg.data}`);
+            console.log(`Message getted: \n from: ${msg.from} \n `);
             globalRoomPageObj.onStreamerInfoMessageGetted(messageStr)
                 .then((streamerInfoObj) => {                 
                     //Do something with streamer when it saved.  
@@ -90,9 +90,8 @@ class GlobalRoomPage extends PageBase {
 
     tryParseStreamerInfo(infoMsgEncoded) {
         try {
-            console.log(`Try pars str: ${infoMsgEncoded}`);
             const parsed = dataConverter.convertBase64DataToObject(infoMsgEncoded);          
-            console.log("Parsed!: \n" + parsed);
+            console.log("Parsed!");
             console.log("Name: \n" + parsed.nameOfStream);
 
             return parsed;
@@ -138,10 +137,7 @@ class GlobalRoomPage extends PageBase {
                 } else {       
                     let fileDataInJsonArray = JSON.parse(fileData);                
                     //if streamer not exist write info about him in file
-                    console.log("streamer info object: " + streamerInfoJson);
                     fileDataInJsonArray.push(streamerInfoJson);
-                    console.log("Data info array now: \n " + JSON.stringify(fileDataInJsonArray));
-                    console.log("File data length: " + fileDataInJsonArray.length);
                     fs.writeFile(STREAMERS_DATA_PATH, JSON.stringify(fileDataInJsonArray), (err) => {
                         if(err) {
                             console.error("Unable to save streamer in existsing file! \n" + err);
@@ -167,7 +163,6 @@ class GlobalRoomPage extends PageBase {
                 let streamer = streamersArr[i];
                 const streamName = streamer.nameOfStream;
                 const streamHash = streamer.hashOfStreamer;
-                console.log(`Checking if ${JSON.stringify(streamer)} exists in data...`);
                 if(searchedStreamName === streamName && searchedStreamHash === streamHash) {
                     console.log(`Streamer with name: ${streamName} already exists in data!`);
                     return true;
@@ -184,7 +179,7 @@ class GlobalRoomPage extends PageBase {
     updatePageAboutStreamers() {
         const globalRoomObj = this;
         streamersMonitor.getStreamersDataAsync(this.ipfs).then((streamersArray) => {
-            console.log("Streamers array updated! \n " + JSON.stringify(streamersArray));
+            console.log("Streamers array updated! \n ");
             globalRoomObj.win.webContents.send('listOfStreamersUpdated', streamersArray);
         }).catch(err => {
             throw err;
