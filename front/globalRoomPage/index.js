@@ -47,6 +47,7 @@ $( document ).ready(function() {
     
             const liElem = document.createElement('li');
             liElem.append(streamContaner);
+            list.append(liElem);
         }   
     });
 });
