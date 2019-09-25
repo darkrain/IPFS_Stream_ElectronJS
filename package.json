@@ -9,7 +9,8 @@
     "postinstall": "electron-builder install-app-deps",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
-    "clean": "node devDataRemover.js"
+    "clean": "node devDataRemover.js",
+    "share": "electron-builder --dir && node buildScripts/copyBuild.js"
   },
   "build": {
     "productName": "BorgStream",
