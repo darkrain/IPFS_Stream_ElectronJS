@@ -30,8 +30,12 @@ $( document ).ready(function() {
             streamNameP.textContent = streamerName;
             const streamAvaImg = document.createElement('img');
             streamAvaImg.src = `data:image/png;base64,${streamAvaImgBase64}`;
+            streamAvaImg.width = '200px';
+            streamAvaImg.height = '200px';
             const userAvaImg = document.createElement('img');
             userAvaImg.src = `data:image/png;base64,${userAvaImgBase64}`;
+            userAvaImg.width = '200px';
+            userAvaImg.height = '200px';
             const streamerButton = document.createElement('button');
             streamerButton.type = "button";
             streamerButton.textContent = `Watch ${streamerName}`;
