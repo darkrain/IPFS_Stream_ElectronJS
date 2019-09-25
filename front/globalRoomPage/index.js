@@ -18,7 +18,6 @@ $( document ).ready(function() {
         const list = document.getElementById(listID);
         //empty at start
         $(listID).empty();
-        list.innerHTML = '';
         for(let i = 0 ; i < streamersArray.length; i++) {
             const streamerInfo = streamersArray[i];
             const streamerHash = streamerInfo.hashOfStreamer;
@@ -48,7 +47,6 @@ $( document ).ready(function() {
     
             const liElem = document.createElement('li');
             liElem.append(streamContaner);
-            list.innerHTML = liElem.outerHTML;
         }   
     });
 });
