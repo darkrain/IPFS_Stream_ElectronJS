@@ -17,7 +17,7 @@ $( document ).ready(function() {
         const listID = 'listOfStreamers';
         const list = document.getElementById(listID);
         //empty at start
-        $(listID).empty();
+        $(list).empty();
         for(let i = 0 ; i < streamersArray.length; i++) {
             const streamerInfo = streamersArray[i];
             const streamerHash = streamerInfo.hashOfStreamer;

@@ -123,6 +123,7 @@ class GlobalRoomPage extends PageBase {
             }
         }).catch((err) => { 
             console.error("Unable to create json streamers data file ! \n " + err.toString()); 
+            throw err;
         });
         //find if file already exists
         await new Promise((resolve, rejected) => {
@@ -133,10 +134,10 @@ class GlobalRoomPage extends PageBase {
                     throw err;
                 }
 
-                let isStreamerExists = 
+                const isStreamerExists = 
                     globalRoomPageObj.isStreamerInfoAlreadyExistsInfo(fileData,streamerInfoJson);
 
-                if(isStreamerExists) {
+                if(isStreamerExists === true) {
                     resolve();
                 } else {       
                     let fileDataInJsonArray = JSON.parse(fileData);                
@@ -154,6 +155,7 @@ class GlobalRoomPage extends PageBase {
             });
         }).catch((err) => {
             console.error("cannot save streamer... coz: \n" + err.toString());
+            throw err;
         });
     }
 
@@ -176,7 +178,7 @@ class GlobalRoomPage extends PageBase {
             return false;
         } catch(err) {
             console.error("Unable to parse streamers info array! \n" + err.toString());
-            return false;
+            throw err;
         }
     }
 
