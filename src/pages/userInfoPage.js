@@ -15,6 +15,7 @@ class UserInfoPage extends PageBase{
         super();
         this.ipc = ipc;
         this.subscribeToIpcEvents(ipc);
+        this.isAvatarChooised = false;
 
         //preload user info if exists
         userInfoLoader.getUserInfoData(USERINFO_JSON_PATH).then((data) => {
@@ -47,7 +48,11 @@ class UserInfoPage extends PageBase{
             userInfoPageObj.updateUserInfoJSON();
         });
 
-        ipc.on('openGlobalRoomPage', (event, args) => {
+        ipc.on('openGlobalRoomPage',async (event, args) => {
+          if(userInfoPageObj.isAvatarChooised === false) {
+            await dialog.showMessageBox({type:'warning', title:'No photo!', message: `Please load your photo for profile.`});
+            return;
+          }
           super.goToGlobalPage();
         })
 
@@ -73,6 +78,7 @@ class UserInfoPage extends PageBase{
                   const imgBase64 = await fileHandler.readFileAsBase64Async(file);
                   userInfoPageObj.lastPhotoBase64 = imgBase64;
                   event.sender.send('selected-userava-file', imgBase64);
+                  userInfoPageObj.isAvatarChooised = true;
                   break;
 
                 } else {
