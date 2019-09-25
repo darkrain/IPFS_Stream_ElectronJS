@@ -52,22 +52,26 @@ class GlobalRoomPage extends PageBase {
     }
 
     initializeListenersForRooms() {
-        const globalRoomPageObj = this;
-        this.globalRoomListener.getOnStreamDataRecievedEvent().on('message_recieved', (msg) => {
-            if(!super.isEnabled()) {
-                return;
-            }
-            const messageStr = msg.data.toString();
-            console.log(`Message getted: \n from: ${msg.from} \n `);
-            globalRoomPageObj.onStreamerInfoMessageGetted(messageStr)
-                .then((streamerInfoObj) => {                 
-                    //Do something with streamer when it saved.  
-                    globalRoomPageObj.updatePageAboutStreamers();      
-                })
-                .catch((err) => {
-                    console.error("Unable read streamer message! \n" + err.toString());
-                });
-        });
+        try {
+            const globalRoomPageObj = this;
+            this.globalRoomListener.getOnStreamDataRecievedEvent().on('message_recieved', (msg) => {
+                if(!super.isEnabled()) {
+                    return;
+                }
+                const messageStr = msg.data.toString();
+                console.log(`Message getted: \n from: ${msg.from} \n `);
+                globalRoomPageObj.onStreamerInfoMessageGetted(messageStr)
+                    .then((streamerInfoObj) => {                 
+                        //Do something with streamer when it saved.  
+                        globalRoomPageObj.updatePageAboutStreamers();      
+                    })
+                    .catch((err) => {
+                        throw err;
+                    });
+            });
+        } catch(err) {
+            throw err;
+        }      
     }
 
     onStreamerInfoMessageGetted(streamerMessage) {

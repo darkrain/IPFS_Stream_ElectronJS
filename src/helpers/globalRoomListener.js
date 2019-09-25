@@ -16,10 +16,14 @@ class GlobalRoomListener {
     }
 
     subscribeToGlobalRoom() {
-        const globalRoomListenerObj = this;
-        this.globalRoom.on('message', (msg) => {
-            globalRoomListenerObj.OnStreamDataRecievedEvent.emit('message_recieved', msg);
-        });
+        try {
+            const globalRoomListenerObj = this;
+            this.globalRoom.on('message', (msg) => {
+                globalRoomListenerObj.OnStreamDataRecievedEvent.emit('message_recieved', msg);
+            });
+        } catch(err) {
+            throw err;
+        }       
     }
 
     getOnStreamDataRecievedEvent() {

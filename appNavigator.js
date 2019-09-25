@@ -71,6 +71,8 @@ function InitializeApp() {
         .then(() => {
             console.log("Try to initialize Electron...");
             onAppInitialized();
+        }).catch(err => {
+            throw err;
         });
 }
 

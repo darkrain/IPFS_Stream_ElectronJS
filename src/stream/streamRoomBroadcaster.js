@@ -25,7 +25,7 @@ class StreamRoomBroadcaster {
         this.globalRoom.setMaxListeners(0);
         //subscribe to handle errors
         this.globalRoom.on('error', (err) => {
-            console.log("UNABLE TO SEND message! \n" + err);
+            throw err;
         })
     }
 
@@ -34,11 +34,16 @@ class StreamRoomBroadcaster {
         const globalRoomBroadcaster = this.globalRoom;
         const streamerInfo = this.currentStreamerInfo;
         this.broadcastLoopInformator = setInterval(() => {
-            const jsonSTR = JSON.stringify(streamerInfo);
-            const encoded64Data = roomBroadcasterObj.getEncodedData(jsonSTR);
-
-            console.log(`Broadcast about stream in ${GLOBAL_ROOM_NAME} with data: \n` + JSON.stringify(streamerInfo));
-            globalRoomBroadcaster.broadcast(encoded64Data);
+            try {
+                const jsonSTR = JSON.stringify(streamerInfo);
+                const encoded64Data = roomBroadcasterObj.getEncodedData(jsonSTR);
+    
+                console.log(`Broadcast about stream in ${GLOBAL_ROOM_NAME} with data: \n` + JSON.stringify(streamerInfo));
+                globalRoomBroadcaster.broadcast(encoded64Data);
+            } catch(err) {
+                throw err;
+            }
+            
         }, BROADCAST_INTERVAL);
     }
 
