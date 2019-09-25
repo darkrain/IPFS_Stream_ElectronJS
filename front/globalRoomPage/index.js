@@ -14,7 +14,7 @@ $( document ).ready(function() {
 
     ipc.on('listOfStreamersUpdated', (event, args) => {
         const streamersArray = args;
-        const listID = '#listOfStreamers';
+        const listID = 'listOfStreamers';
         const list = document.getElementById(listID);
         //empty at start
         $(listID).empty();
