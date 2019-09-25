@@ -9,8 +9,13 @@ const pathsToClean = [
 
 function cleanData() {
     for(const i in pathsToClean) {
-        if(fsExtra.existsSync(pathsToClean[i]))
-            fsExtra.removeSync(pathsToClean[i]);
+        const filePath = pathsToClean[i];
+        try {
+            if(fsExtra.existsSync(filePath))
+            fsExtra.removeSync(filePath);
+        } catch(err) {
+            console.error(`Cannot remove folder ${filePath} \n ${err.message}`);
+        }      
     }
 }
 
