@@ -23,9 +23,10 @@ class StreamPage extends PageBase{
 
   //### Callbacks for Events's ###
   onPlaylistRelativePathUpdated = () => {
-    const videoPath = this.streamInitializer.getLastFullVideoPath(); 
-    console.log("Relative path for videos updated!: " + videoPath);
-    this.pageWindow.webContents.send('video-playlist-path-changed', videoPath);
+    const delayBeforePlay = 2000;
+    setTimeout(() => {
+      this.pageWindow.webContents.send('video-playlist-path-changed');
+    }, delayBeforePlay); 
   }
   //### END Callbacks for Event's ###
 

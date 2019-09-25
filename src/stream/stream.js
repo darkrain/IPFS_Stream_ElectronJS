@@ -205,7 +205,8 @@ class Stream {
 
 			if(isPlaylist && isStreamInitialized === false) {
 				console.log("Playlist updated!")
-				onPlaylistChangedCallback();
+				if(onPlaylistChangedCallback)
+					onPlaylistChangedCallback();
 				isStreamInitialized = true;
 			}	
 
