@@ -9,6 +9,13 @@ $(document).ready(function() {
 	$('#backBtn').click(function(){
 		ipc.send('gotoGlobalPage');
 	});
+	$('#createStreamBtn').click(function() {
+		const args = {
+            pageName: 'streamerInfoPage',
+            pageArgs: 'none'
+        }
+        ipc.send('goto-page', args);
+	});
 });  
 
 ipc.on('stream-loaded', (event, args) => {
