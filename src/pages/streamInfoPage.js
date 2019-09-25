@@ -62,10 +62,14 @@ class StreamInfoPage extends PageBase{
                   await dialog.showMessageBox({type:'warning', title:'File size warning', message: `File size more than ${maxStreamAvaSize} KB!!`})
                   continue;
                 }
-                const avaBase64 = await fileHandler.readFileAsBase64Async(file);
-                event.sender.send('selected-file', avaBase64);
-                streamPageObj.onAvaImageUploaded(file);
-                break; //break loop if size is correct
+                try {
+                  const avaBase64 = await fileHandler.readFileAsBase64Async(file);
+                  event.sender.send('selected-file', avaBase64);
+                  streamPageObj.onAvaImageUploaded(file);
+                  break; //break loop if size is correct
+                } catch(err) {
+                    throw err;
+                }         
 
               } else {
                 //break if file not checked
