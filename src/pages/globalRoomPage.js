@@ -144,13 +144,12 @@ class GlobalRoomPage extends PageBase {
                         const founded = streamersArray.find(streamer => streamer.hashOfStreamer === streamerInfoJson.hashOfStreamer);
                         if(founded) {
                             founded.watchersCount = streamerInfoJson.watchersCount;
-
                             //write in file
-                            fs.writeFileSync(STREAMERS_DATA_PATH, JSON.stringify((streamersArray), (err) => {
+                            fs.writeFile(STREAMERS_DATA_PATH, JSON.stringify(streamersArray), (err) => {
                                 if(err)
                                     rejected(err);
                                 resolve();
-                            }));
+                            });
                         }
                     } catch(err) {
                         rejected(err);
