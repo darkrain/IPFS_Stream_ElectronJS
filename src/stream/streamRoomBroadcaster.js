@@ -47,6 +47,9 @@ class StreamRoomBroadcaster {
             try {
                 const countOfwarchers = roomBroadcasterObj.roomCounter.getAllPeers();
                 streamerInfo.watchersCount = countOfwarchers;
+
+                console.log("Count of users sended: " +  streamerInfo.watchersCount);
+
                 const jsonSTR = JSON.stringify(streamerInfo);
                 const encoded64Data = roomBroadcasterObj.getEncodedData(jsonSTR);
     

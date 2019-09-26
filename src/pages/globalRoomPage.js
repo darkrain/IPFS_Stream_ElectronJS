@@ -79,6 +79,7 @@ class GlobalRoomPage extends PageBase {
         const globalRoomPageObj = this;
         return new Promise((resolve, rejected) => {
             const streamerInfoObj = globalRoomPageObj.tryParseStreamerInfo(streamerMessage);
+            console.log("Parsed streamer info watch count: " + streamerInfoObj.watchersCount);
             if(streamerInfoObj != null) {
                 globalRoomPageObj.saveStreamerInfoInLocalFileIfItNotExistsAsync(streamerInfoObj)
                     .then(() => {
