@@ -86,7 +86,7 @@ ipfs/
 videos/
 user/
 front/userInfoPage/img/photo/
-
+.idea
 # TypeScript v1 declaration files
 
 typings/
