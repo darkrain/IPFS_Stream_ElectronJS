@@ -34,14 +34,14 @@ class StreamWatchPage extends PageBase{
             //Some actions on exit watch page...
         });
         this.ipc.on('gotoGlobalPage', async (event, args) => {
-            await this.onExit();
+            this.onExit();
             super.goToGlobalPage();
         });
     }
 
-    async onExit() {
+    onExit() {
         if(this.streamerRoom) {
-            await this.streamerRoom.leave()
+            this.streamerRoom.leave();
         }
     }
 
