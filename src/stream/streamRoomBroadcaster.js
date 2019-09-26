@@ -74,7 +74,6 @@ class StreamRoomBroadcaster {
         }
     }
 
-
     startBroadcastAboutSteramBlock(streamBlock) {
         const streamBlockStr = JSON.stringify(streamBlock);
         const encodedBlock = this.getEncodedData(streamBlockStr);
