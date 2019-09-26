@@ -27,4 +27,4 @@ function readFileFromIpfsAsBase64Async(ipfsInstance, hashIpfs) {
 module.exports =  {
     readFileAsBase64Async,
     readFileFromIpfsAsBase64Async
-}
+};

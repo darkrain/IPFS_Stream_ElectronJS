@@ -138,8 +138,23 @@ class GlobalRoomPage extends PageBase {
                     globalRoomPageObj.isStreamerInfoAlreadyExistsInfo(fileData, streamerInfoJson);
 
                 if(isStreamerExists === true) {
-                    //TODO: rewrite watchers count if streamer already exists                   
-                    resolve();
+                    //update watchers count if streamer already exists
+                    try {
+                        const streamersArray = JSON.parse(fileData);
+                        const founded = streamersArray.find(streamer => streamer.hashOfStreamer === streamerInfoJson.hashOfStreamer);
+                        if(founded) {
+                            founded.watchersCount = streamerInfoJson.watchersCount;
+
+                            //write in file
+                            fs.writeFileSync(STREAMERS_DATA_PATH, JSON.stringify((streamersArray), (err) => {
+                                if(err)
+                                    rejected(err);
+                                resolve();
+                            }));
+                        }
+                    } catch(err) {
+                        rejected(err);
+                    }
                 } else {       
                     let fileDataInJsonArray = JSON.parse(fileData);                
                     //if streamer not exist write info about him in file
