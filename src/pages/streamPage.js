@@ -18,8 +18,10 @@ class StreamPage extends PageBase{
     const streamPageObj = this;
     const broadcastEvent = this.streamInitializer.getStreamRoomBroadcaster().getBroadcastEvent();
     broadcastEvent.on('onStreamBroadcasted', (event, args) => {
-      const countOfWatchers = args.watchCount;
-      streamPageObj.pageWindow.webContents.send('watcher-count-update', countOfWatchers);
+      if(args) {
+        const countOfWatchers = args.watchCount;
+        streamPageObj.pageWindow.webContents.send('watcher-count-update', countOfWatchers);
+      }     
     });
   }
   

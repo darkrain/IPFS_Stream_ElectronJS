@@ -54,9 +54,10 @@ class StreamRoomBroadcaster {
                 //update watchersCount
                 roomBroadcasterObj.watchersCount = roomBroadcasterObj.roomCounter.getCountOfWatchers();
                 //emit each time
-                roomBroadcasterObj.broadcastEvent.emit('onStreamBroadcasted', {
+                const dataObject = {
                     watchCount: roomBroadcasterObj.watchersCount
-                });
+                }
+                roomBroadcasterObj.broadcastEvent.emit('onStreamBroadcasted', dataObject);
             } catch(err) {
                 throw err;
             }
