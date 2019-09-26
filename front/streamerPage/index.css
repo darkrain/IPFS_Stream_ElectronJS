@@ -29,6 +29,11 @@ button:hover {opacity: 1}
     font-family: Ubuntu;
 }
 
+#countOfWatchers {
+  color: #fff;
+  font-size: large;
+}
+
 div {
   margin-top: 20px;
   margin-bottom: 20px;

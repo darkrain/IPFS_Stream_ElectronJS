@@ -22,4 +22,10 @@ ipc.on('video-playlist-path-changed', (event, args) => {
 	}
 });
 
+ipc.on('watcher-count-update', (event, args) => {
+	const watchersCount = args;
+	const textCounter = document.getElementById('countOfWatchers');
+	textCounter.textContent = `Count of watchers: ${watchersCount}`;
+});
+
 // ### END Client event subscriber handlers ###
