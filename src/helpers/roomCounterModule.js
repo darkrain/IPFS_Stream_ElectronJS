@@ -18,6 +18,10 @@ class RoomCounter {
     getCountOfWatchers() {
         return this.coutOfWatchers;
     }
+
+    getAllPeers() {
+        return this.roomToListen.getPeers().length;
+    }
 }
 
 module.exports = RoomCounter;

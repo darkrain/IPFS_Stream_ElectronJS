@@ -41,7 +41,9 @@ class StreamWatchPage extends PageBase{
 
     onExit() {
         if(this.streamerRoom) {
-            this.streamerRoom.leave();
+            this.streamerRoom.leave().then(() => {
+                console.log("LEave from room!");
+            })
         }
     }
 

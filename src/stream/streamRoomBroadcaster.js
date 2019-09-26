@@ -52,7 +52,7 @@ class StreamRoomBroadcaster {
                 globalRoomBroadcaster.broadcast(encoded64Data);
 
                 //update watchersCount
-                roomBroadcasterObj.watchersCount = roomBroadcasterObj.roomCounter.getCountOfWatchers();
+                roomBroadcasterObj.watchersCount = roomBroadcasterObj.roomCounter.getAllPeers();
                 //emit each time
                 const dataObject = {
                     watchCount: roomBroadcasterObj.watchersCount
