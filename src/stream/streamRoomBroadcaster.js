@@ -45,6 +45,8 @@ class StreamRoomBroadcaster {
         const streamerInfo = this.currentStreamerInfo;
         this.broadcastLoopInformator = setInterval(() => {
             try {
+                const countOfwarchers = roomBroadcasterObj.roomCounter.getAllPeers();
+                streamerInfo.watchersCount = countOfwarchers;
                 const jsonSTR = JSON.stringify(streamerInfo);
                 const encoded64Data = roomBroadcasterObj.getEncodedData(jsonSTR);
     
@@ -52,7 +54,7 @@ class StreamRoomBroadcaster {
                 globalRoomBroadcaster.broadcast(encoded64Data);
 
                 //update watchersCount
-                roomBroadcasterObj.watchersCount = roomBroadcasterObj.roomCounter.getAllPeers();
+                roomBroadcasterObj.watchersCount = countOfwarchers;
                 //emit each time
                 const dataObject = {
                     watchCount: roomBroadcasterObj.watchersCount
@@ -75,8 +77,6 @@ class StreamRoomBroadcaster {
     }
 
     startBroadcastAboutSteramBlock(streamBlock) {
-        //add peers data
-        streamBlock.watchersCount = this.roomCounter.getAllPeers();
         const streamBlockStr = JSON.stringify(streamBlock);
         const encodedBlock = this.getEncodedData(streamBlockStr);
         this.streamerRoom.broadcast(encodedBlock);
