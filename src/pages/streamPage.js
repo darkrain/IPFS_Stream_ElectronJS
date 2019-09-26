@@ -10,9 +10,19 @@ class StreamPage extends PageBase{
       this.streamInitializer = streamInitializer; 
       this.subscribeToIpcEvents(this.electronIPC);      
       
-      this.streamInitializer.startStream(this.onPlaylistRelativePathUpdated, streamerInfo)
+      this.streamInitializer.startStream(this.onPlaylistRelativePathUpdated, streamerInfo);
+      this.subscribeToBroadcastEvents();
   }
 
+  subscribeToBroadcastEvents() {
+    const streamPageObj = this;
+    const broadcastEvent = this.streamInitializer.getStreamRoomBroadcaster().getBroadcastEvent();
+    broadcastEvent.on('onStreamBroadcasted', (event, args) => {
+      const countOfWatchers = args.watchCount;
+      streamPageObj.pageWindow.webContents.send('watcher-count-update', countOfWatchers);
+    });
+  }
+  
   subscribeToIpcEvents = (ipc) => {
     //### IPC calls ###   
     ipc.on('backBtnClicked', (event, args) => {

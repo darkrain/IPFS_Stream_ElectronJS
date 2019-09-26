@@ -65,6 +65,10 @@ class StreamInitializer {
         this.stream.stop();
     };
 
+    getStreamRoomBroadcaster() {
+        return this.stream.getRooomBroadcaster();
+    }
+    
     async initializeCamerasAsync() {
         const streamInitializerObj = this;
         let cameraName;

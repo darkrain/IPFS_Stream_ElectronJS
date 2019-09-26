@@ -1,11 +1,18 @@
 const Room = require('ipfs-pubsub-room');
+const RoomCounter = require('../helpers/roomCounterModule');
+const EventEmitter = require('events');
 
 const BROADCAST_INTERVAL = 10000; //ms
 const GLOBAL_ROOM_NAME = 'borgStream';
+
+class BroadcastEvent extends EventEmitter {}
+
 class StreamRoomBroadcaster {
     constructor(ipfs, streamerInfo) {
         this.ipfs = ipfs;
         this.rooms = {};
+        this.watchersCount = 0;
+        this.broadcastEvent = new BroadcastEvent();
         this.initializeRooms(streamerInfo);
     }
 
@@ -26,7 +33,10 @@ class StreamRoomBroadcaster {
         //subscribe to handle errors
         this.globalRoom.on('error', (err) => {
             throw err;
-        })
+        });
+
+        //initialize room counter
+        this.roomCounter = new RoomCounter(this.streamerRoom);    
     }
 
     startBroadcastAboutStream() {
@@ -38,15 +48,24 @@ class StreamRoomBroadcaster {
                 const jsonSTR = JSON.stringify(streamerInfo);
                 const encoded64Data = roomBroadcasterObj.getEncodedData(jsonSTR);
     
-                console.log(`Broadcast about stream in ${GLOBAL_ROOM_NAME} with data: \n` + JSON.stringify(streamerInfo));
+                console.log(`Broadcast about stream in ${GLOBAL_ROOM_NAME} !`);
                 globalRoomBroadcaster.broadcast(encoded64Data);
+
+                //update watchersCount
+                roomBroadcasterObj.watchersCount = roomBroadcasterObj.roomCounter.getCountOfWatchers();
+                //emit each time
+                roomBroadcasterObj.broadcastEvent.emit('onStreamBroadcasted', {
+                    watchCount: roomBroadcasterObj.watchersCount
+                });
             } catch(err) {
                 throw err;
             }
             
         }, BROADCAST_INTERVAL);
     }
-
+    getBroadcastEvent() {
+        return this.broadcastEvent;
+    }
     stopBroadcastAboutStream() {
         if(this.broadcastLoopInformator) {
             console.log("StreamRoomBroadcaster: Stop broadcast about stream!");

@@ -181,7 +181,10 @@ class Stream {
 	    }); 		
 	}
 
-
+	getRooomBroadcaster() {
+		return this.roomBroadcaster;
+	}
+	
 	start(onPlaylistReadyCallback, streamerInfo) {
 		if(!this.camera) {
 			throw 'Camera is not set';
