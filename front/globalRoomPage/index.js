@@ -40,6 +40,7 @@ $( document ).ready(function() {
                 ipc.send('goto-page', {pageName: streamWatchPage, pageArgs: streamerInfo});
             });
 
+            //TODO: Why it is UNDEFINED!?
             const streamWatchCount = streamerInfo.watchersCount;
             const streamerWatchCountText = document.createElement('p');
             streamerWatchCountText.textContent = `Watch count: ${streamWatchCount}`;
