@@ -48,7 +48,8 @@ async function generateDataForStreamerAsync(streamerObj, ipfs) {
         streamerName: streamerObj.nameOfStream,
         hashOfStreamer: streamerHash,
         streamerAvaBase64: streamAvaBase64,
-        userAvaBase64: userAvaBase64
+        userAvaBase64: userAvaBase64,
+        streamWatchCount: streamerObj.streamWatchCount
     };
     
     return streamData;
