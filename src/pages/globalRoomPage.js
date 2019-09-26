@@ -78,8 +78,7 @@ class GlobalRoomPage extends PageBase {
         //save stream info in JSON file data
         const globalRoomPageObj = this;
         return new Promise((resolve, rejected) => {
-            const streamerInfoObj = globalRoomPageObj.tryParseStreamerInfo(streamerMessage);
-            console.log("Parsed streamer info watch count: " + streamerInfoObj.watchersCount);
+            const streamerInfoObj = globalRoomPageObj.tryParseStreamerInfo(streamerMessage);          
             if(streamerInfoObj != null) {
                 globalRoomPageObj.saveStreamerInfoInLocalFileIfItNotExistsAsync(streamerInfoObj)
                     .then(() => {
@@ -134,7 +133,7 @@ class GlobalRoomPage extends PageBase {
                     console.log(`Unable to read file! ` + err);
                     throw err;
                 }
-
+                console.log("Save streamer info watch count: " + streamerInfoJson.watchersCount);
                 const isStreamerExists = 
                     globalRoomPageObj.isStreamerInfoAlreadyExistsInfo(fileData,streamerInfoJson);
 
