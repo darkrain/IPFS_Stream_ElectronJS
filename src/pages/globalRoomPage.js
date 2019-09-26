@@ -138,8 +138,7 @@ class GlobalRoomPage extends PageBase {
                     globalRoomPageObj.isStreamerInfoAlreadyExistsInfo(fileData, streamerInfoJson);
 
                 if(isStreamerExists === true) {
-                    //TODO: rewrite watchers count if streamer already exists
-                    
+                    //TODO: rewrite watchers count if streamer already exists                   
                     resolve();
                 } else {       
                     let fileDataInJsonArray = JSON.parse(fileData);                
