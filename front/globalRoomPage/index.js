@@ -39,10 +39,15 @@ $( document ).ready(function() {
                 const streamWatchPage = 'streamWatchPage';
                 ipc.send('goto-page', {pageName: streamWatchPage, pageArgs: streamerInfo});
             });
-    
+
+            const streamWatchCount = streamerInfo.watchersCount;
+            const streamerWatchCountText = document.createElement('p');
+            streamerWatchCountText.textContent = `Watch count: ${streamWatchCount}`;
+
             streamContaner.append(streamNameP);
             streamContaner.append(streamAvaImg);
             streamContaner.append(userAvaImg);
+            streamContaner.append(streamerWatchCountText);
             streamContaner.append(streamerButton);
     
             const liElem = document.createElement('li');
