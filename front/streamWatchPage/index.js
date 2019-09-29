@@ -26,7 +26,7 @@ $(document).ready(function() {
 	});
 
 	$('#sendMsgBtn').click(function () {
-		const text = document.getElementById('messageInput').value;
+		const text = document.getElementById('messageInput').textContent;
 		ipc.send('onMessageSend', text);
 	});
 });  
@@ -41,6 +41,7 @@ function addMessageToChat(msgData) {
 	const messageFrom = document.createElement('p');
 	const messageText = document.createElement('p');
 	messageFrom.textContent = `From: ${from}`;
+	//TODO WHY MESSAGE IS SO FUCKING IDIOTOZ?
 	messageText.textContent = `Message: ${message}`;
 	messageDiv.append(messageFrom);
 	messageDiv.append(messageText);
