@@ -18,7 +18,17 @@ class StreamWatchPage extends PageBase{
         this.streamerInfo = streamerInfo;
         this.lastBlockIndex = 0;
         this.isStreamInitialized = false;
-        const streamWatchPageObj = this;    
+
+        const streamWatchPageObj = this;
+        this.streamChatRoom = new ChatRoom(this.ipfs, streamerInfo.streamerHash);
+        this.streamChatRoom.chatRoomEvent.on('onMessage', messageData => {
+            streamWatchPageObj.win.webContents.send('chatMessageGetted', messageData);
+        });
+        //when you try to send message
+        this.ipc.on('onMessageSend', (event, args) => {
+            streamWatchPageObj.streamChatRoom.sendMessage(args);
+        });
+
         this.initializeStreamerPath(this.streamerInfo).then((path) => {
             console.log("Stream path initialized!: " + path.toString());
             //DO something when path exists
@@ -133,7 +143,7 @@ class StreamWatchPage extends PageBase{
                         const chunkData = {
                             fileName: chunkName,
                             extInf: extInf
-                        }
+                        };
                         resolve(chunkData);
                     });
                 });
