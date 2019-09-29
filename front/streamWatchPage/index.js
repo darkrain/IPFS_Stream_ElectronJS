@@ -20,8 +20,25 @@ $(document).ready(function() {
 	ipc.on('countOfWatchers-updated', (event, args) => {
 		$('#countOfWatchers').text(`Count of watchers: ${args}`);
 	});
+
+	ipc.on('chatMessageGetted', (event, args) => {
+		addMessageToChat(args);
+	});
+
+	$('#sendMsgBtn').click(function () {
+		const text = document.getElementById('messageInput').value;
+		ipc.send('onMessageSend', text);
+	});
 });  
 
+
+function addMessageToChat(msgData) {
+	const from = msgData.from;
+	const message = msgData.message;
+	const chatBodyID = '#chatBody';
+	$(chatBodyID).append(
+		$("div").append(`<p>From: ${from}</p>\n <p>Message ${message}</p>`));
+}
 
 ipc.on('stream-loaded', (event, args) => {
     const httpPath = "http://localhost:4000/master.m3u8";

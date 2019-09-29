@@ -11,22 +11,43 @@
         <link rel="stylesheet" type="text/css" href="index.css" />
     </head>
     <body>
-        <div>
-            <h1 id='streamerNameBlock'></h1>
-        </div>      
 
-        <div class="videoPlayerContainer">
-            <video id="video-player" width="700" height="450" controls>
-            </video>   
+    <section class="container">
+        <div class="leftSide">
+            <div>
+                <h1 id='streamerNameBlock'></h1>
+            </div>
+
+            <div class="videoPlayerContainer">
+                <video id="video-player" width="700" height="450" controls>
+                </video>
+            </div>
+            <div>
+                <p id="countOfWatchers">Count of watchers: 0</p>
+            </div>
+            <div>
+                <button id="createStreamBtn" type="button">Create your own stream!</button>
+            </div>
+            <div>
+                <button id="backBtn" type="button">Back to streams list</button>
+            </div>
         </div>
-        <div>
-            <p id="countOfWatchers">Count of watchers: 0</p>
+        <div class="rightSide">
+            <div>
+                <p>Stream chat:</p>
+            </div>
+            <div id="chatBody">
+
+            </div>
+            <div id="chatControls">
+                <div>
+                    <input id="messageInput" type="text" placeholder="Your message">
+                </div>
+                <div>
+                    <button id="sendMsgBtn" type="button" >Send message</button>
+                </div>
+            </div>
         </div>
-        <div>
-            <button id="createStreamBtn" type="button">Create your own stream!</button>
-        </div>
-        <div>
-            <button id="backBtn" type="button">Back to streams list</button>
-        </div>
+    </section>
     </body>
 </html>

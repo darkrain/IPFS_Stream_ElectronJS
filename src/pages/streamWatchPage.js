@@ -2,6 +2,7 @@ const Room = require('ipfs-pubsub-room');
 const dataConverter = require('../helpers/dataConverters.js');
 const pathModule = require('path');
 const appRootPath = require('app-root-path');
+const ChatRoom = require('../data/ChatRoom');
 const fs = require('fs');
 const localServer = require('../localServer/localServer.js');
 const PageBase = require('./pageBase');
