@@ -36,6 +36,7 @@ async function generateDataForStreamerAsync(streamerObj, ipfs) {
     //This function prepared data for frontend page (load img from ipfs and save as base64)
     const streamerHash = streamerObj.hashOfStreamer;
     console.log("Try to generate data for streamer : " + streamerHash);
+    console.log("Try to generate data for streamer : " + JSON.stringify(streamerObj));
     const streamerFolder = pathModule.join(streamersFolderPath.toString(), streamerHash);
     if(!fs.existsSync(streamerFolder)) {
         fs.mkdirSync(streamerFolder);
