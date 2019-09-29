@@ -80,6 +80,9 @@ class StreamRoomBroadcaster {
     }
 
     startBroadcastAboutSteramBlock(streamBlock) {
+        //Set count of watchers too
+        streamBlock.streamWatchCount = this.roomCounter.getAllPeers();
+
         const streamBlockStr = JSON.stringify(streamBlock);
         const encodedBlock = this.getEncodedData(streamBlockStr);
         this.streamerRoom.broadcast(encodedBlock);

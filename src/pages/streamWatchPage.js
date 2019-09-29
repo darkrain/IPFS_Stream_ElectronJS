@@ -26,6 +26,7 @@ class StreamWatchPage extends PageBase{
             streamWatchPageObj.subscribeToStreamerRoom(streamWatchPageObj.streamerInfo);
             localServer.setStaticPath(streamWatchPageObj.streamerVideoFolder);
             localServer.startLocalServer();
+            streamWatchPageObj.win.webContents.send('countOfWatchers-updated', streamerInfo.streamWatchCount);
         }).catch((err) => {
             console.error("Cannot initialize streamer path: \n" + err.toString())
         });
@@ -97,8 +98,12 @@ class StreamWatchPage extends PageBase{
             }
             const messageStr = msg.data.toString();
             console.log("Getted message from streamer: " + messageStr);
-            streamWatchPageObj.onStreamDataGetted(messageStr).then(() => {
+            streamWatchPageObj.onStreamDataGetted(messageStr).then((streamBlock) => {
                 console.log("Chunk created!");
+
+                //Actions when data has get
+                streamWatchPageObj.win.webContents.send('countOfWatchers-updated', streamBlock.streamWatchCount);
+
             }).catch((err) => {
                 console.error("Chunk cannot be created! ERROR!" + err.toString());
             })
@@ -136,8 +141,10 @@ class StreamWatchPage extends PageBase{
             await this.updateM3UFile(lastChunkData);
             this.initializeStartingStreamIfNotYet();
             streamWatchPageObj.lastBlockIndex++;
+            return streamBlock;
         } catch(err) {
             console.error("Unable handle stream data: \n" + err.toString());
+            throw  err;
         }
     }
 
