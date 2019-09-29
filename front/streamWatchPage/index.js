@@ -33,7 +33,6 @@ $(document).ready(function() {
 
 
 function addMessageToChat(msgData) {
-	alert("DATA GETTED: " + JSON.stringify(msgData));
 	const from = msgData.from;
 	const message = msgData.message;
 	const chatBodyID = 'chatBody';

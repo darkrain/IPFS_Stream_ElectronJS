@@ -17,7 +17,7 @@ class ChatRoom {
 
         this.chatRoom.on('message', (message) => {
             const from = message.from;
-            const data = message.data;
+            const data = message.data.toString();
             this.chatRoomEvent.emit('onMessage', {
                 from: from ,
                 message: data
