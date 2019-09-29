@@ -27,6 +27,7 @@ class ChatRoom {
     }
 
     sendMessage(messageStr) {
+        //TODO send encoded JSON!
         const message = `From: ${this.ipfs.id} \n Message: ${messageStr}`;
         this.chatRoom.broadcast(message);
     }
