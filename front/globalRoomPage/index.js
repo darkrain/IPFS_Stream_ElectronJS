@@ -41,7 +41,7 @@ $( document ).ready(function() {
             });
 
             //TODO: Why it is UNDEFINED!?
-            const streamWatchCount = streamerInfo.watchersCount;
+            const streamWatchCount = streamerInfo.streamWatchCount;
             const streamerWatchCountText = document.createElement('p');
             streamerWatchCountText.textContent = `Watch count: ${streamWatchCount}`;
 
