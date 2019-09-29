@@ -19,7 +19,7 @@ class ChatRoom {
             const from = message.from;
             const data = message.data;
             this.chatRoomEvent.emit('onMessage', {
-                from: from,
+                from: from ,
                 message: data
             });
         });
