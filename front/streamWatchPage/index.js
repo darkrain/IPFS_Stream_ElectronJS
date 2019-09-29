@@ -35,9 +35,16 @@ $(document).ready(function() {
 function addMessageToChat(msgData) {
 	const from = msgData.from;
 	const message = msgData.message;
-	const chatBodyID = '#chatBody';
-	$(chatBodyID).append(
-		$("div").append(`<p>From: ${from}</p>\n <p>Message ${message}</p>`));
+	const chatBodyID = 'chatBody';
+	const chatBody = document.getElementById(chatBodyID);
+	const messageDiv = document.createElement('div');
+	const messageFrom = document.createElement('p');
+	const messageText = document.createElement('p');
+	messageFrom.textContent = `From: ${from}`;
+	messageText.textContent = `Message: ${message}`;
+	messageDiv.append(messageFrom);
+	messageDiv.append(messageText);
+	chatBody.append(messageDiv);
 }
 
 ipc.on('stream-loaded', (event, args) => {
