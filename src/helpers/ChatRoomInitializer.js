@@ -8,7 +8,7 @@ class ChatRoomInitializer {
     }
     initialize() {
         const chatRoomInitializerObj = this;
-        this.streamChatRoom = new ChatRoom(this.ipfs, streamerInfo.hashOfStreamer);
+        this.streamChatRoom = new ChatRoom(this.ipfs, this.streamerInfo.hashOfStreamer);
         this.streamChatRoom.chatRoomEvent.on('onMessage', async messageData => {
             const ipfsID = await new Promise(resolve => {
                 ipfs.id((err, res) => {
