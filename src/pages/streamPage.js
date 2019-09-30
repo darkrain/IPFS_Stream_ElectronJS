@@ -1,9 +1,9 @@
 const PageBase = require('./pageBase');
-//External helpers
-
+const ChatRoomInitializer = require('../helpers/ChatRoomInitializer');
 class StreamPage extends PageBase{
-  constructor(streamInitializer, win, electronIPC, streamerInfo) {
+  constructor(ipfs, streamInitializer, win, electronIPC, streamerInfo) {
       super();
+      this.ipfs = ipfs;
       this.electronIPC = electronIPC;
       this.pageWindow = win;
       this.streamerInfo = streamerInfo;
@@ -12,6 +12,9 @@ class StreamPage extends PageBase{
       
       this.streamInitializer.startStream(this.onPlaylistRelativePathUpdated, streamerInfo);
       this.subscribeToBroadcastEvents();
+
+      this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.electronIPC, this.streamerInfo);
+      this.chatRoomInitializer.initialize();
   }
 
   subscribeToBroadcastEvents() {

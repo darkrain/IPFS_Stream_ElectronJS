@@ -114,7 +114,7 @@ async function loadPageByName(pageName, args)  {
                     throw new Error(`Unable to start stream page, streamInitializer is NULL!!!`);
                 }
                 createWindowAsync(STREAM_PAGE_LINK).then((win) => {
-                    _currentPage = new StreamPage(streamInitializer, win, ipc, streamerInfo);        
+                    _currentPage = new StreamPage(IpfsInstance, streamInitializer, win, ipc, streamerInfo);
                 });
                 break;
             }

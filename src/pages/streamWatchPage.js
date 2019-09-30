@@ -1,8 +1,8 @@
 const Room = require('ipfs-pubsub-room');
 const dataConverter = require('../helpers/dataConverters.js');
 const pathModule = require('path');
-const appRootPath = require('app-root-path');
 const ChatRoom = require('../data/ChatRoom');
+const ChatRoomInitializer = require('../helpers/ChatRoomInitializer');
 const fs = require('fs');
 const localServer = require('../localServer/localServer.js');
 const PageBase = require('./pageBase');
@@ -18,24 +18,10 @@ class StreamWatchPage extends PageBase{
         this.streamerInfo = streamerInfo;
         this.lastBlockIndex = 0;
         this.isStreamInitialized = false;
-
         const streamWatchPageObj = this;
-        this.streamChatRoom = new ChatRoom(this.ipfs, streamerInfo.hashOfStreamer);
-        this.streamChatRoom.chatRoomEvent.on('onMessage', async messageData => {
-            const ipfsID = await new Promise(resolve => {
-                ipfs.id((err, res) => {
-                    if(err) throw err;
-                    resolve(res.id);
-                });
-            });
-            const isMyMessage = messageData.from === ipfsID;
-            messageData.isMyMessage = isMyMessage;
-            streamWatchPageObj.win.webContents.send('chatMessageGetted', messageData);
-        });
-        //when you try to send message
-        this.ipc.on('onMessageSend', (event, msgText) => {
-            streamWatchPageObj.streamChatRoom.sendMessage(msgText);
-        });
+
+        this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.ipc, this.streamerInfo);
+        this.chatRoomInitializer.initialize();
 
         this.initializeStreamerPath(this.streamerInfo).then((path) => {
             console.log("Stream path initialized!: " + path.toString());
