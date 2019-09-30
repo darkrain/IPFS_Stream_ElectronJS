@@ -29,7 +29,7 @@ class StreamWatchPage extends PageBase{
                 });
             });
             const isMyMessage = messageData.from === ipfsID;
-            console.log(`Is my message? \n msg from id: ${messageData.from} \n your id: ${ipfs.id}`);
+            console.log(`Is my message? \n msg from id: ${messageData.from} \n your id: ${ipfsID}`);
             messageData.isMyMessage = isMyMessage;
             streamWatchPageObj.win.webContents.send('chatMessageGetted', messageData);
         });
