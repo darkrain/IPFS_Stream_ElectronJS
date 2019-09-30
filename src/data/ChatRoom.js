@@ -16,7 +16,6 @@ class ChatRoom {
         this.chatRoomEvent = new ChatRoomEvent();
 
         this.chatRoom.on('message', (msg) => {
-            console.log('RAW MESSAGE: ' + JSON.stringify(msg));
             const from = msg.from;
             const messageContent = msg.data.toString();
             const msgData = {

@@ -20,12 +20,13 @@ class StreamWatchPage extends PageBase{
         this.isStreamInitialized = false;
 
         const streamWatchPageObj = this;
-        this.streamChatRoom = new ChatRoom(this.ipfs, streamerInfo.streamerHash);
+        this.streamChatRoom = new ChatRoom(this.ipfs, streamerInfo.hashOfStreamer);
         this.streamChatRoom.chatRoomEvent.on('onMessage', messageData => {
             streamWatchPageObj.win.webContents.send('chatMessageGetted', messageData);
         });
         //when you try to send message
         this.ipc.on('onMessageSend', (event, msgText) => {
+            console.log("try send message: " + msgText);
             streamWatchPageObj.streamChatRoom.sendMessage(msgText);
         });
 
