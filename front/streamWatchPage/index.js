@@ -26,8 +26,8 @@ $(document).ready(function() {
 	});
 
 	$('#sendMsgBtn').click(function () {
-		const text = document.getElementById('messageInput');
-		ipc.send('onMessageSend', text.value);
+		const messageInput = document.getElementById('messageInput');
+		ipc.send('onMessageSend', messageInput.value);
 	});
 });  
 

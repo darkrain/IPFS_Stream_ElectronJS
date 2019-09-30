@@ -18,16 +18,16 @@ class ChatRoom {
         this.chatRoom.on('message', (message) => {
             const from = message.from;
             const data = message.data.toString();
-            this.chatRoomEvent.emit('onMessage', {
+            const msgData = {
                 from: from ,
                 message: data
-            });
+            };
+            this.chatRoomEvent.emit('onMessage', msgData);
         });
 
     }
 
     sendMessage(messageStr) {
-        //TODO send encoded JSON!
         const message = `From: ${this.ipfs.id} \n Message: ${messageStr}`;
         this.chatRoom.broadcast(message);
     }

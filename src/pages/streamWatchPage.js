@@ -25,8 +25,9 @@ class StreamWatchPage extends PageBase{
             streamWatchPageObj.win.webContents.send('chatMessageGetted', messageData);
         });
         //when you try to send message
-        this.ipc.on('onMessageSend', (event, args) => {
-            streamWatchPageObj.streamChatRoom.sendMessage(args);
+        this.ipc.on('onMessageSend', (event, msgText) => {
+            streamWatchPageObj.streamChatRoom.sendMessage(msgText);
+            console.log("Try send message: " + msgText);
         });
 
         this.initializeStreamerPath(this.streamerInfo).then((path) => {
