@@ -23,9 +23,9 @@ class StreamWatchPage extends PageBase{
         this.streamChatRoom = new ChatRoom(this.ipfs, streamerInfo.hashOfStreamer);
         this.streamChatRoom.chatRoomEvent.on('onMessage', async messageData => {
             const ipfsID = await new Promise(resolve => {
-                ipfs.id((err, id) => {
+                ipfs.id((err, res) => {
                     if(err) throw err;
-                    resolve(id);
+                    resolve(res.id);
                 });
             });
             const isMyMessage = messageData.from === ipfsID;
