@@ -11,7 +11,7 @@ class ChatRoomInitializer {
         this.streamChatRoom = new ChatRoom(this.ipfs, this.streamerInfo.hashOfStreamer);
         this.streamChatRoom.chatRoomEvent.on('onMessage', async messageData => {
             const ipfsID = await new Promise(resolve => {
-                ipfs.id((err, res) => {
+                chatRoomInitializerObj.ipfs.id((err, res) => {
                     if(err) throw err;
                     resolve(res.id);
                 });
