@@ -23,6 +23,7 @@ class StreamWatchPage extends PageBase{
         this.streamChatRoom = new ChatRoom(this.ipfs, streamerInfo.hashOfStreamer);
         this.streamChatRoom.chatRoomEvent.on('onMessage', messageData => {
             const isMyMessage = messageData.from === ipfs.id;
+            console.log(`Is my message? \n msg from id: ${messageData.from} \n your id: ${ipfs.id}`);
             messageData.isMyMessage = isMyMessage;
             streamWatchPageObj.win.webContents.send('chatMessageGetted', messageData);
         });
