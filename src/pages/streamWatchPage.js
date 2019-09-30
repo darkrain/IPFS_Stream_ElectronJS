@@ -26,8 +26,8 @@ class StreamWatchPage extends PageBase{
         });
         //when you try to send message
         this.ipc.on('onMessageSend', (event, msgText) => {
+            console.log(`Chat message! \n from: ${msgText.from} \n message: ${msgText.message}`);
             streamWatchPageObj.streamChatRoom.sendMessage(msgText);
-            console.log("Try send message: " + msgText);
         });
 
         this.initializeStreamerPath(this.streamerInfo).then((path) => {
