@@ -20,7 +20,7 @@ class StreamWatchPage extends PageBase{
         this.isStreamInitialized = false;
         const streamWatchPageObj = this;
 
-        this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.ipc, this.streamerInfo);
+        this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.ipc, this.win, this.streamerInfo);
         this.chatRoomInitializer.initialize();
 
         this.initializeStreamerPath(this.streamerInfo).then((path) => {

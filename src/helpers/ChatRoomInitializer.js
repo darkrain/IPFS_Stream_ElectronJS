@@ -1,9 +1,10 @@
 const ChatRoom = require('../data/ChatRoom');
 
 class ChatRoomInitializer {
-    constructor(ipfs, ipc, streamerInfo) {
+    constructor(ipfs, ipc, win,streamerInfo) {
         this.ipc = ipc;
         this.ipfs = ipfs;
+        this.win = win;
         this.streamerInfo = streamerInfo;
     }
     initialize() {

@@ -13,7 +13,7 @@ class StreamPage extends PageBase{
       this.streamInitializer.startStream(this.onPlaylistRelativePathUpdated, streamerInfo);
       this.subscribeToBroadcastEvents();
 
-      this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.electronIPC, this.streamerInfo);
+      this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.electronIPC, this.pageWindow, this.streamerInfo);
       this.chatRoomInitializer.initialize();
   }
 
