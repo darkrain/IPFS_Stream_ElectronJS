@@ -34,6 +34,7 @@ $(document).ready(function() {
 
 function addMessageToChat(msgData) {
 	const isMyMessage = msgData.isMyMessage;
+	alert("Is my message? :" + isMyMessage);
 	const from = isMyMessage ? "YOU" : msgData.from;
 	const message = msgData.message;
 	const chatBodyID = 'chatBody';
