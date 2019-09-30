@@ -33,7 +33,8 @@ $(document).ready(function() {
 
 
 function addMessageToChat(msgData) {
-	const from = msgData.from;
+	const isMyMessage = msgData.isMyMessage;
+	const from = isMyMessage ? "YOU" : msgData.from;
 	const message = msgData.message;
 	const chatBodyID = 'chatBody';
 	const chatBody = document.getElementById(chatBodyID);
@@ -41,7 +42,6 @@ function addMessageToChat(msgData) {
 	const messageFrom = document.createElement('p');
 	const messageText = document.createElement('p');
 	messageFrom.textContent = `From: ${from}`;
-	//TODO WHY MESSAGE IS SO FUCKING IDIOTOZ?
 	messageText.textContent = `Message: ${message}`;
 	messageDiv.append(messageFrom);
 	messageDiv.append(messageText);

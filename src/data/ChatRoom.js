@@ -22,7 +22,6 @@ class ChatRoom {
                 from: messageFrom,
                 message: messageContent
             };
-            console.log(`Chat message! \n ${JSON.stringify(msgData)}`);
             this.chatRoomEvent.emit('onMessage', msgData);
         });
 
