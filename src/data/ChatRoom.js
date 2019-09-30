@@ -16,12 +16,14 @@ class ChatRoom {
         this.chatRoomEvent = new ChatRoomEvent();
 
         this.chatRoom.on('message', (message) => {
+            console.log('RAW MESSAGE: ' + JSON.stringify(message));
             const from = message.from;
             const data = message.data.toString();
             const msgData = {
                 from: from ,
                 message: data
             };
+            console.log(`Chat message! \n ${JSON.stringify(msgData)}`);
             this.chatRoomEvent.emit('onMessage', msgData);
         });
 
