@@ -16,10 +16,10 @@ class ChatRoom {
         this.chatRoomEvent = new ChatRoomEvent();
 
         this.chatRoom.on('message', (msg) => {
-            const from = msg.from;
+            const messageFrom = msg.from;
             const messageContent = msg.data.toString();
             const msgData = {
-                from: from ,
+                from: messageFrom,
                 message: messageContent
             };
             console.log(`Chat message! \n ${JSON.stringify(msgData)}`);
@@ -29,8 +29,7 @@ class ChatRoom {
     }
 
     sendMessage(messageStr) {
-        const message = `From: ${this.ipfs.id} \n Message: ${messageStr}`;
-        this.chatRoom.broadcast(message);
+        this.chatRoom.broadcast(messageStr);
     }
 
     getChatRoomname() {
