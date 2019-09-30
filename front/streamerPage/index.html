@@ -6,22 +6,43 @@
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> <!--HLS-->
     <script src="../lib/jquery-3.4.1.js"> </script>
-    <script src="index.js"> </script> 
+    <script src="index.js"> </script>
+    <script src="../additionals/chatFunc.js"></script>
     <script>if (window.module) module = window.module;</script>
     <link rel="stylesheet" type="text/css" href="index.css" />
   </head>
   <body>
-    <div class="videoBlock">
+  <section class="container">
+    <div class="leftSide">
+      <div class="videoBlock">
         <video id="video-player" width="800" height="400" controls>
-        </video>   
-    </div>
+        </video>
+      </div>
 
-    <div>
-      <p id="countOfWatchers">Count of watchers: 0</p>
-    </div>
+      <div>
+        <p id="countOfWatchers">Count of watchers: 0</p>
+      </div>
 
-    <div class="back">
-      <button id="backBtn" type="button">Back to streams</button>
+      <div class="back">
+        <button id="backBtn" type="button">Back to streams</button>
+      </div>
     </div>
+    <div class="rightSide">
+      <div>
+        <p>Stream chat:</p>
+      </div>
+      <div id="chatBody">
+
+      </div>
+      <div id="chatControls">
+        <div>
+          <input id="messageInput" type="text" placeholder="Your message">
+        </div>
+        <div>
+          <button id="sendMsgBtn" type="button" >Send message</button>
+        </div>
+      </div>
+    </div>
+  </section>
   </body>
 </html>

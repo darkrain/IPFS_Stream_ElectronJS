@@ -99,3 +99,29 @@ div {
 #wrapper .right, #wrapper .left {display: inline-block; vertical-align: top;}
 #wrapper .left {width: 300px}
 #wrapper .left>div {width:300px}
+
+/* Pattern styles */
+.container {
+    display: grid;
+}
+
+.leftSide {
+    grid-column: 1;
+}
+
+.rightSide {
+    background: deepskyblue;
+    grid-column: 2;
+}
+
+#chatBody {
+    height: 400px;
+    width: 200px;
+    background: white;
+    margin: 20px;
+    overflow-y: scroll;
+}
+
+#chatControls {
+    margin-left: 50px;
+}

@@ -5,6 +5,16 @@ $(document).ready(function() {
 	$('#backBtn').click(function(){
 		ipc.send('backBtnClicked');
 	});
+
+	ipc.on('chatMessageGetted', (event, args) => {
+		addMessageToChat(args);
+	});
+
+	$('#sendMsgBtn').click(function () {
+		const messageInput = document.getElementById('messageInput');
+		ipc.send('onMessageSend', messageInput.value);
+		messageInput.value = '';
+	});
 });
 
 // ### Client event subscriber handlers ###
