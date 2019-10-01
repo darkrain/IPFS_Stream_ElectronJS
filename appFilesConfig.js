@@ -70,8 +70,7 @@ async function copyNecessaryData() {
     }
 }
 
-function getFfmpegPath() {
-    const currentOs = osDetector.getOs();
+function getFfmpegPath(currentOs = osDetector.getOs()) {
     let ffmegPath = null;
     switch(currentOs) {
         case 'LINUX': {
@@ -152,5 +151,6 @@ module.exports = {
     getParsedDataByPath,
     fileSizes,
     initializeBasicFolders,
-    getFullPathOfFileFromSystemPath
+    getFullPathOfFileFromSystemPath,
+    getFfmpegPath
 }

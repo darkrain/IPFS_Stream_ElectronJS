@@ -1,5 +1,5 @@
 const DeviceCommands = {
-    LINUX: ['v4l2-ctl', '--list-devices'],
+    LINUX: ['--list-devices'],
     WINDOWS: ['-list_devices', 'true',
     '-f', 'dshow',
     '-i', 'dummy'],

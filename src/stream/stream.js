@@ -84,8 +84,7 @@ class Stream {
 		const cameraDetectCommand = 'video=' + '"' + this.camera + '"' + ':' + 'audio='+'"'+this.audio+'"';
 		console.log('Try execute camera with command: ' + cameraDetectCommand);
 		const spawnOpts = {
-			windowsVerbatimArguments: true,
-			
+			windowsVerbatimArguments: true
 		};
 		const args = [
 			'-f' , 'dshow',
