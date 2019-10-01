@@ -40,25 +40,22 @@ class Stream {
 		return this;
 	}
 
-	loadCamerasAsync() {
-		return new Promise((resolve, rejected) => {
-			cameraHelper.getCameraNamesAsync(appConfig.files.FFMPEG).then((
-				(data) => {
-					console.log("CAMERAS LOADED IN STREAM.JS!");
-					this.cameras = data;
-					resolve(data);
-				}));
-		});		
+	async loadCamerasAsync() {
+		try {
+			this.cameras = await cameraHelper.getCameraNamesAsync(appConfig.files.FFMPEG);
+			return this.cameras;
+		} catch(err) {
+			throw err;
+		}			
 	}
 
-	loadAudioAsync() {
-		return new Promise((resolve, rejected) => {
-			audioHelper.getAudioNamesAsync(appConfig.files.FFMPEG).then((data) => {
-				console.log("AUDIO LOADED IN STREAM.JS!");
-				this.audios = data;
-				resolve(data);
-			});
-		});
+	async loadAudioAsync() {
+		try {
+			this.audios = await audioHelper.getAudioNamesAsync(appConfig.files.FFMPEG);
+			return this.audios;
+		} catch(err) {
+			throw err;
+		}
 	}
 
 	getCameraList(){

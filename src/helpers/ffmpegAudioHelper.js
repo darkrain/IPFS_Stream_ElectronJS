@@ -5,7 +5,7 @@ const getAudioNamesAsync = async (ffmpegPath) => {
     try {
         cmdData = await getProcessData(ffmpegPath);    
     } catch(err) {
-        console.error(err.toString());
+        throw err;
     }
        
     const parsedAudioNames = await getParsedAudioNames(cmdData);
@@ -56,25 +56,32 @@ const getProcessData = (ffmpegPath) => {
 
             reject(new Error("NO FFMPEG.EXE in path: " + ffmpegPath));
         }
-        let ffmpegListCameras = spawn(ffmpegPath, 
+        try {
+            let ffmpegListCameras = spawn(ffmpegPath, 
                 [
                     '-list_devices', 'true',
                     '-f', 'dshow',
                     '-i', 'dummy'	
                 ]);
 
-        let dataChunks;
-        ffmpegListCameras
-            .stderr
-            .on('data', (chunk) => {
-                dataChunks += chunk.toString();               
+            let dataChunks;
+            ffmpegListCameras
+                .stderr
+                .on('data', (chunk) => {
+                    dataChunks += chunk.toString();               
+                });
+            ffmpegListCameras.on('error', (err) => {
+                throw err;
             });
-        //Wait before all data can recieved
-        const delay = 2000;       
-        setTimeout(() => {
-            ffmpegListCameras.kill();
-            resolve(dataChunks);
-        }, delay);
+            //Wait before all data can recieved
+            const delay = 2000;       
+            setTimeout(() => {
+                ffmpegListCameras.kill();
+                resolve(dataChunks);
+            }, delay);
+        } catch(err) {
+            throw err;
+        }
     });   
 }
 

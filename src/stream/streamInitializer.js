@@ -77,20 +77,20 @@ class StreamInitializer {
             console.error("Cannot initialize cameras becouse stream is NULL!")
             return [];
         }
-        let dataOfCamers = [];
-        await currentStream.loadCamerasAsync().then((data) => {
-            dataOfCamers = data;
-            console.log(`CAM DATA LOADED!\n ${typeof(data)} \n Send to web-view...`);            
-            //Set camera to default at start:
-            if(data.length > 0) {
-              cameraName = data[0].name;
-              currentStream.setCameraByName(cameraName);
-              streamInitializerObj.lastCameraName = cameraName;
+        try {
+            const dataOfCamers = await currentStream.loadCamerasAsync();  
+            if(dataOfCamers.length > 0) {
+                cameraName = dataOfCamers[0].name;
+                currentStream.setCameraByName(cameraName);
+                streamInitializerObj.lastCameraName = cameraName;               
             } else {
-              throw new Error("NO CAMERAS!");
+                cameraName = 'NO CAMERA!';
+                console.error("FFMPEG ERROR: No cameras!");
             }
-          });
-        return dataOfCamers;
+            return dataOfCamers;
+        } catch(err) {
+            throw err;
+        }        
     };
 
     async initializeAudiosAsync() {
@@ -101,20 +101,20 @@ class StreamInitializer {
             console.error("Cannot initialize cameras becouse stream is NULL!")
             return [];
         }
-        let dataOfAudios = [];
-        await currentStream.loadAudioAsync().then((data) => {
-            dataOfAudios = data;
-            console.log(`AUDIO DATA LOADED!\n ${typeof(data)} \n Send to web-view...`);            
-            //Set camera to default at start:
-            if(data.length > 0) {
-                audioName = data[0].name;
-              currentStream.setAudioByName(audioName);
-              streamInitializerObj.lastAudio = audioName;
+        try {
+            const dataOfAudios = await currentStream.loadAudioAsync();
+            if(dataOfAudios.length > 0) {
+                audioName = dataOfAudios[0].name;
+            currentStream.setAudioByName(audioName);
+            streamInitializerObj.lastAudio = audioName;
             } else {
-              throw new Error("NO AUDIOS!");
+                audioName = "NO AUDIO!";
+                console.error("NO AUDIOS!");
             }
-          });
-        return dataOfAudios;
+            return dataOfAudios;
+        } catch(err) {
+            throw err;
+        }
     }
 
     setCameraByName(camName) {
