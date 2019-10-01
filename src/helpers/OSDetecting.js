@@ -13,7 +13,7 @@ function getOs(){
         return null;
     return normalizedKey;
 }
-getOs();
-module.exports = {
 
+module.exports = {
+    getOs
 };

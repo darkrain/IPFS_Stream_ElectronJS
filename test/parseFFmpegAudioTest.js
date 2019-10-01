@@ -2,7 +2,7 @@ const assert = require('assert');
 const audioHelper = require('../src/helpers/ffmpegAudioHelper.js');
 const appConfig = require('../appFilesConfig');
 // AAA pattern.
-describe('Parsing ffmpeg audio devices', () => {
+describe.skip('Parsing ffmpeg audio devices', () => {
     it('Should return more than 0 audio devices', async () => {
         //Arrange
         const audioDevices = await audioHelper.getAudioNamesAsync(appConfig.files.FFMPEG);
