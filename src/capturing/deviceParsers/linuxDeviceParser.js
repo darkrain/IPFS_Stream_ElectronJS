@@ -44,7 +44,7 @@ class LinuxDeviceParser extends FfmpegParserBase {
     }
     async getAudioDevices() {
         //TODO how to specify audio for linux!?
-        throw new Error("No implementation!");
+        return ['FROM CAMERA']; //return empty audio for linux... Temporary!?
     }
 }
 
