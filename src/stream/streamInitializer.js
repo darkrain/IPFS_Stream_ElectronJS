@@ -2,6 +2,7 @@ const pathModule = require('path');
 const Stream = require('./stream.js');
 const localServer = require('../localServer/localServer.js');
 const appConfig = require('../../appFilesConfig');
+const FFmpegController = require('../capturing/ffmpegController');
 
 class StreamInitializer {
     constructor(IPFSinstance) {               
@@ -23,29 +24,21 @@ class StreamInitializer {
         return appConfig.getFullPathOfFileFromSystemPath(folderName);
     };
 
-    getBinFolder() {
-        return this.getModuleFolderPath('bin');
-    }
-
     resetStream() {
         const date = new Date();
         console.log(`Reset stream in .. ${date.getMinutes()}m ${date.getSeconds()}`);
         const videoFolderName = "videos";
-        const binFolder = this.getBinFolder();
         const streamName = this.generateRandomStreamName(); 
         console.log("Create new stream instance inside initializer..");
 
+        this.ffmpegController = new FFmpegController();
         this.fullVideoPath = pathModule.join(this.getModuleFolderPath(videoFolderName), streamName);
-
-        this.stream = new Stream(this.ipfs, streamName,  this.fullVideoPath ,binFolder);
-        if(this.lastCameraName) {
-            this.stream.setCameraByName(this.lastCameraName);
-        }       
-        if(this.lastAudio) {
-            this.stream.setAudioByName(this.lastAudio);
-        } 
-
-        this.stream.createRooms();      
+        const playListPath = pathModule.join(this.fullVideoPath, 'master.m3u8');
+        this.ffmpegRecorder = this.ffmpegController.getFFmpegRecorder(playListPath);
+        this.stream = new Stream(this.ipfs, streamName, this.fullVideoPath, this.ffmpegRecorder);
+        this.stream.createRooms();  
+        
+        this.deviceParser = this.ffmpegController.getDeviceParser();
     };  
 
     startStream(playListReadyCallBack, streamerInfo) {
@@ -78,10 +71,10 @@ class StreamInitializer {
             return [];
         }
         try {
-            const dataOfCamers = await currentStream.loadCamerasAsync();  
+            const dataOfCamers = await this.deviceParser.getVideoDevices();
             if(dataOfCamers.length > 0) {
                 cameraName = dataOfCamers[0].name;
-                currentStream.setCameraByName(cameraName);
+                this.setCameraByName(cameraName);
                 streamInitializerObj.lastCameraName = cameraName;               
             } else {
                 cameraName = 'NO CAMERA!';
@@ -102,11 +95,11 @@ class StreamInitializer {
             return [];
         }
         try {
-            const dataOfAudios = await currentStream.loadAudioAsync();
+            const dataOfAudios = await this.deviceParser.getAudioDevices();
             if(dataOfAudios.length > 0) {
                 audioName = dataOfAudios[0].name;
-            currentStream.setAudioByName(audioName);
-            streamInitializerObj.lastAudio = audioName;
+                this.setAudioByName(audioName);
+                streamInitializerObj.lastAudio = audioName;
             } else {
                 audioName = "NO AUDIO!";
                 console.error("NO AUDIOS!");
@@ -118,11 +111,11 @@ class StreamInitializer {
     }
 
     setCameraByName(camName) {
-        this.stream.setCameraByName(camName);
+        this.ffmpegRecorder.setCamera(camName);
     }
 
     setAudioByName(audioName) {
-        this.stream.setAudioByName(audioName);
+        this.ffmpegRecorder.setAudio(audioName);
     }
 
     getLastFullVideoPath = () => {

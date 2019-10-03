@@ -25,6 +25,10 @@ class RecorderBase {
             console.log(`Camera changed to: ${this.cameraCommand}!`);
         }
     }
+    setAudio(audioName) {
+        //TODO Implement audio logic for FFMPEG
+        throw new Error(`not implemented!`);
+    } 
 
     startRecord() {
         if(this.cameraCommand === null)

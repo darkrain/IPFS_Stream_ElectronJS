@@ -1,23 +1,15 @@
-const spawn = require('child_process').spawn;
- 
-//let camera = '/dev/video0';
-//let fileName = 'master';
 const Room = require('ipfs-pubsub-room')
 const watch = require('node-watch');
 const fs = require('fs');	
-const { execFile } = require('child_process');
 const fsPath = require('path');
-const cameraHelper = require('../helpers/ffmpegCameraHelper');
-const audioHelper = require('../helpers/ffmpegAudioHelper');
 const IpfsStreamUploader = require('../helpers/ipfsStreamUploader.js');
 const StreamRoomBroadcaster = require('../stream/streamRoomBroadcaster.js');
-const appConfig = require('../../appFilesConfig.js');
 const dialogErrorHelper = require('../helpers/dialogErrorHelper');
 const pathModule = require('path');
 class Stream {
 
-	constructor(ipfs, nameOfStreem, path, binFolderPath) {
-		console.log(`Try initialize sream with fields: \n ${ipfs} \n ${nameOfStreem} \n ${binFolderPath}`);
+	constructor(ipfs, nameOfStreem, path, ffmpegRecorder) {
+		console.log(`Try initialize sream with fields: \n ${ipfs} \n ${nameOfStreem}`);
 		this.ipfs = ipfs;
 		this.ipfsStreamUploader = new IpfsStreamUploader(this.ipfs);
 		this.ipfsready = false;
@@ -26,9 +18,9 @@ class Stream {
 		this.rooms = {};
 		this.keepPath = path;
 		this.nameOfStreem = nameOfStreem;
-		this.keep = pathModule.join(this.keepPath, 'master.m3u8');	
 		this.m3u8IPFS = pathModule.join(this.keepPath, 'streamIPFS.m3u8');
-		this.isPlalistInitialized = false;		
+		this.isPlalistInitialized = false;
+		this.ffmpegRecorder = ffmpegRecorder;		
 		
 		if (!fs.existsSync(this.keepPath))
 			fs.mkdirSync(this.keepPath);		    
@@ -40,71 +32,11 @@ class Stream {
 		return this;
 	}
 
-	async loadCamerasAsync() {
-		try {
-			this.cameras = await cameraHelper.getCameraNamesAsync(appConfig.files.FFMPEG);
-			return this.cameras;
-		} catch(err) {
-			throw err;
-		}			
-	}
-
-	async loadAudioAsync() {
-		try {
-			this.audios = await audioHelper.getAudioNamesAsync(appConfig.files.FFMPEG);
-			return this.audios;
-		} catch(err) {
-			throw err;
-		}
-	}
-
-	getCameraList(){
-		return this.cameras;
-	}
-	getAudioList() {
-		return this.audios;
-	}
-
-	setCameraByName(camName){
-		console.log("Camera changed to: " + camName);
-		this.camera = camName;
-	}
-	setAudioByName(audioName) {
-		console.log("Audio changed to: " + audioName);
-		this.audio = audioName;
-	}
 
 	ffmpeg(debug){		
-
 		const streamObj = this.getInstance();
-
-		console.log('send stream to '+ this.keep);
-		console.log('Use camera ' + this.camera)
-		//const cameraDetectCommand = `video=\"${this.camera}\"`;
-		const cameraDetectCommand = 'video=' + '"' + this.camera + '"' + ':' + 'audio='+'"'+this.audio+'"';
-		console.log('Try execute camera with command: ' + cameraDetectCommand);
-		const spawnOpts = {
-			windowsVerbatimArguments: true
-		};
-		const args = [
-			'-f' , 'dshow',
-			'-i',cameraDetectCommand, 
-			'-profile:v', 'high422', //set profile to support 4:2:2 resolution
-			'-level', '3.0',
-			'-c:v', 'libx264',
-			'-crf','35', //crf is video qualiti from 1(best) to 51 (worst)
-			'-preset','veryfast',
-			'-c:a', 'aac', 
-			'-b:a', '128k', 
-			'-ac','2',
-			'-f', 'hls', 
-			'-pix_fmt', 'yuv420p', //to support 4:2:2 resoultion
-			'-hls_time', '4', 
-			'-hls_playlist_type', 'event', 
-			`${ this.keep }`
-		];
-		
-		this.ffmpegProc = execFile(appConfig.files.FFMPEG, args, spawnOpts);
+		console.log('send stream to '+ this.keep);	
+		this.ffmpegProc = this.ffmpegRecorder.startRecord();
 		
 		const ffmpegProcess = this.ffmpegProc;
 		ffmpegProcess.removeAllListeners();
@@ -182,9 +114,6 @@ class Stream {
 	}
 	
 	start(onPlaylistReadyCallback, streamerInfo) {
-		if(!this.camera) {
-			throw 'Camera is not set';
-		}
 		this.isPlalistInitialized = false;		
 		this.getInstance().ffmpeg(false);
 		this.getInstance().streamWatcher(onPlaylistReadyCallback);

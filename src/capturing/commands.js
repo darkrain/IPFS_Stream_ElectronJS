@@ -34,6 +34,7 @@ function getWindowsDshowCommand() {
         '-hls_time', '4', 
         '-hls_playlist_type', 'event', 
     ]
+    return commands;
 }
 
 //NOTE: this commands not including output path!!!

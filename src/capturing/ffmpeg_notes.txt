@@ -3,3 +3,6 @@ $ ffmpeg -f v4l2 -video_size 640x480 -i /dev/video0 -f alsa -i default -c:v libx
 
 To record HLS from LINUX:
 $ ffmpeg -f v4l2 -video_size 640x480 -i /dev/video0 -f alsa -i default -c:v libx264 -preset ultrafast -c:a aac -f hls -pix_fmt yuv420p -hls_time 4 -hls_playlist_type event master.m3u8
+
+Formula to specify dshow camera in WINDOWS:
+'video=' + '"' + this.camera + '"' + ':' + 'audio='+'"'+this.audio+'"';
