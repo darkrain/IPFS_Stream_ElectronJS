@@ -16,24 +16,28 @@ class RecorderBase {
         this.cameraCommand = null;
     }
 
-    setCamera(camName) {
-        //find camera key and change it
-        const index = this.commandsToRun.indexOf(KEYS.CAM_KEY);
-        if(~index) { //if z >= 0
-            this.commandsToRun[index] = camName.trim();
-            this.cameraCommand = camName;
-            console.log(`Camera changed to: ${this.cameraCommand}!`);
-        }
+    setCamera(camName) {   
+        this.cameraCommand = camName;
+        console.log(`Camera changed to: ${this.cameraCommand}!`);
     }
     setAudio(audioName) {
         //TODO Implement audio logic for FFMPEG
         throw new Error(`not implemented!`);
     } 
 
+    changeCameraBeforeRun() {
+        //find camera key and change it
+        const index = this.commandsToRun.indexOf(KEYS.CAM_KEY);
+        if(~index) { //if z >= 0
+            this.commandsToRun[index] = this.cameraCommand;
+        }
+    }
+
     startRecord() {
         if(this.cameraCommand === null)
             throw new Error("No camera!");
         try {
+            this.changeCameraBeforeRun();
             console.log(`Try to execute FFMPEG recorder with commands: \n ${this.commandsToRun}`);
             const ffmpegProc = execFile(this.ffmpegPath, this.commandsToRun, this.spawnOptions); 
             return ffmpegProc;

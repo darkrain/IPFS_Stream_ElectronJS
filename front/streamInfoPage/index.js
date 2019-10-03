@@ -97,8 +97,8 @@ ipc.on('camera-list-update', (event, args) => {
 	$.each(camData, function(key, value) {   
 		$('#cameraSelection')
 			.append($("<option></option>")
-						.attr("value",value.name)
-						.text(value.name)); 
+						.attr("value",value)
+						.text(value)); 
 	});
 });
 

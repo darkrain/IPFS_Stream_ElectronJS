@@ -38,7 +38,7 @@ class LinuxDeviceParser extends FfmpegParserBase {
         for(let i = 0; i < splitted.length; i++) {
             const line = splitted[i];
             if(line.includes('/dev/'))
-                devices.push(line);
+                devices.push(line.trim());
         }
         return devices;
     }
