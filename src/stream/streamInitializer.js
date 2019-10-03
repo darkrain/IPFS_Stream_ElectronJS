@@ -73,7 +73,7 @@ class StreamInitializer {
         try {
             const dataOfCamers = await this.deviceParser.getVideoDevices();
             if(dataOfCamers.length > 0) {
-                cameraName = dataOfCamers[0].name;
+                cameraName = dataOfCamers[0];
                 this.setCameraByName(cameraName);
                 streamInitializerObj.lastCameraName = cameraName;               
             } else {
@@ -97,7 +97,7 @@ class StreamInitializer {
         try {
             const dataOfAudios = await this.deviceParser.getAudioDevices();
             if(dataOfAudios.length > 0) {
-                audioName = dataOfAudios[0].name;
+                audioName = dataOfAudios[0];
                 this.setAudioByName(audioName);
                 streamInitializerObj.lastAudio = audioName;
             } else {

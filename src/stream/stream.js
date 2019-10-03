@@ -17,6 +17,7 @@ class Stream {
 		this.blocks = [];
 		this.rooms = {};
 		this.keepPath = path;
+		this.keep =  pathModule.join(this.keepPath, 'master.m3u8');
 		this.nameOfStreem = nameOfStreem;
 		this.m3u8IPFS = pathModule.join(this.keepPath, 'streamIPFS.m3u8');
 		this.isPlalistInitialized = false;
@@ -35,9 +36,9 @@ class Stream {
 
 	ffmpeg(debug){		
 		const streamObj = this.getInstance();
-		console.log('send stream to '+ this.keep);	
+		console.log('send stream to '+ this.keepPath);	
 		this.ffmpegProc = this.ffmpegRecorder.startRecord();
-		
+		console.log()
 		const ffmpegProcess = this.ffmpegProc;
 		ffmpegProcess.removeAllListeners();
 		ffmpegProcess.setMaxListeners(0);
@@ -115,7 +116,7 @@ class Stream {
 	
 	start(onPlaylistReadyCallback, streamerInfo) {
 		this.isPlalistInitialized = false;		
-		this.getInstance().ffmpeg(false);
+		this.getInstance().ffmpeg(true);
 		this.getInstance().streamWatcher(onPlaylistReadyCallback);
 
 		this.roomBroadcaster = new StreamRoomBroadcaster(this.ipfs, streamerInfo);
@@ -128,7 +129,7 @@ class Stream {
 		const streamObj = this.getInstance();
 		streamObj.watcherPID = watch(this.keepPath, function(evt, name) {
 			const fileName = fsPath.basename(name);
-			const playlistName = fsPath.basename(streamObj.keep);
+			const playlistName = 'master.m3u8';
 			let isPlaylist = fileName === playlistName;
 
 			if(isPlaylist && isStreamInitialized === false) {
