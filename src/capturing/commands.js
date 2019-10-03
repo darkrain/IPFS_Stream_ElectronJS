@@ -7,7 +7,8 @@ const DeviceCommands = {
 };
 
 const KEYS = {
-    CAM_KEY: 'CAM'
+    CAM_KEY: 'CAM',
+    AUDIO_KEY: 'AUDIO'
 }
 
 //DONT FORGET PUSH PATH TO PLAYLIST AFTER GET IT! In getters functions!
