@@ -97,7 +97,7 @@ class WinDeviceParser extends FfmpegParserBase {
     async getAudioDevices() {
         try {
             const dataChunks = await this.getOutputAsync(parsingCommands);
-            throw this.parseAudioFromData(dataChunks);
+            return this.parseAudioFromData(dataChunks);
         } catch(err) {
             throw err;
         }    
