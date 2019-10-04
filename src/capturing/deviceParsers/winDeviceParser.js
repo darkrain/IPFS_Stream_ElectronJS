@@ -10,7 +10,7 @@ class WinDeviceParser extends FfmpegParserBase {
         this.video = null;
     }
 
-    async parseAudioFromData(data) {
+    parseAudioFromData(data) {
         let audioNames = [];
         const dataLines = data.split('\n');
         const audioKeyWord = "DirectShow audio devices";
@@ -48,7 +48,7 @@ class WinDeviceParser extends FfmpegParserBase {
         return nameOfAudio;
     }
 
-    async parseVideoFromData(data) {
+    parseVideoFromData(data) {
         let camNames = [];
         const dataLines = data.split('\n');
         const videoKeyWord = "DirectShow video devices";
