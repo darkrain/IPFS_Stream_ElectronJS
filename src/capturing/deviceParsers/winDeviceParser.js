@@ -8,13 +8,6 @@ class WinDeviceParser extends FfmpegParserBase {
 
         this.audio = null;
         this.video = null;
-        this.getDevices();
-    }
-
-    async getDevices() {
-        const dataChunks = await super.getOutputAsync(parsingCommands);
-        this.audio = await this.parseAudioFromData(dataChunks);
-        this.video = await this.parseVideoFromData(dataChunks);
     }
 
     async parseAudioFromData(data) {
@@ -94,10 +87,12 @@ class WinDeviceParser extends FfmpegParserBase {
     }
 
     async getVideoDevices() {
-        return this.video;
+        const dataChunks = await super.getOutputAsync(parsingCommands);
+        return this.getVideoDevices(dataChunks);
     }
     async getAudioDevices() {
-        throw this.audio;
+        const dataChunks = await super.getOutputAsync(parsingCommands);
+        throw this.getAudioDevices(dataChunks);
     }
 }
 
