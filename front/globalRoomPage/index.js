@@ -1,6 +1,6 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
-
+const streamersLoop = $.templates("#streamersLoop");
 $( document ).ready(function() {
     console.log( "ready!" );
 
@@ -12,49 +12,25 @@ $( document ).ready(function() {
         ipc.send('goto-page', args);
     });
 
-    ipc.on('listOfStreamersUpdated', (event, args) => {
-        const streamersArray = args;
-        const listID = 'listOfStreamers';
-        const list = document.getElementById(listID);
-        //empty at start
-        $(list).empty();
-        for(let i = 0 ; i < streamersArray.length; i++) {
-            const streamerInfo = streamersArray[i];
-            const streamerHash = streamerInfo.hashOfStreamer;
-            const streamerName = streamerInfo.streamerName;
-            const streamAvaImgBase64 = streamerInfo.streamerAvaBase64;
-            const userAvaImgBase64 = streamerInfo.userAvaBase64;
-    
-            const streamContaner = document.createElement('div');
-            const streamNameP = document.createElement('p');
-            streamNameP.textContent = streamerName;
-            const streamAvaImg = document.createElement('img');
-            streamAvaImg.src = `data:image/png;base64,${streamAvaImgBase64}`;
-            const userAvaImg = document.createElement('img');
-            userAvaImg.src = `data:image/png;base64,${userAvaImgBase64}`;
-            const streamerButton = document.createElement('button');
-            streamerButton.type = "button";
-            streamerButton.textContent = `Watch ${streamerName}`;
-            streamerButton.addEventListener('click', function() {
+
+    $('body').on('click', '[data-watch]', (e) => {
+        e.preventDefault();
+        let watchId = $(event.target).attr('data-watch');
+
+        for( i in window.listOfStreamers){
+            let streamer = window.listOfStreamers[i];
+
+            if( streamer.hashOfStreamer == watchId){
                 const streamWatchPage = 'streamWatchPage';
-                ipc.send('goto-page', {pageName: streamWatchPage, pageArgs: streamerInfo});
-            });
+                ipc.send('goto-page', {pageName: streamWatchPage, pageArgs: streamer});  
+                break;              
+            }
+        }
+    })
 
-            //TODO: Why it is UNDEFINED!?
-            const streamWatchCount = streamerInfo.streamWatchCount;
-            const streamerWatchCountText = document.createElement('p');
-            streamerWatchCountText.textContent = `Watch count: ${streamWatchCount}`;
-
-            streamContaner.append(streamNameP);
-            streamContaner.append(streamAvaImg);
-            streamContaner.append(userAvaImg);
-            streamContaner.append(streamerWatchCountText);
-            streamContaner.append(streamerButton);
-    
-            const liElem = document.createElement('li');
-            liElem.append(streamContaner);
-            list.append(liElem);
-        }   
+    ipc.on('listOfStreamersUpdated', (event, args) => {
+        window.listOfStreamers = args;
+        $('#listOfStreamers').html(streamersLoop.render({streamerInfo:args}))
     });
 });
 
