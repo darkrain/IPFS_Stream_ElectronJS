@@ -1,36 +1,84 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>BorgStream</title>
-        <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
-        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> <!--HLS-->
-        <script src="../lib/jquery-3.4.1.js"> </script>
-        <script src="index.js"> </script> 
-        <script>if (window.module) module = window.module;</script>
-        <link rel="stylesheet" type="text/css" href="index.css" />
-    </head>
-    <body>
-        <div>
-            <h1>User info page!</h1>
-        </div>
-        <div>
-            <p>Your ava</p>
-            <div>
-                <img id="userAvaImg" src="./img/defaultUserAva.png" width="200px" height="275px">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Page title -->
+    <title>BorgStream</title>
+
+    <!-- Vendor styles -->
+    <link rel="stylesheet" href="../vendor/fontawesome/css/font-awesome.css"/>
+    <link rel="stylesheet" href="../vendor/animate.css/animate.css"/>
+    <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.css"/>
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="../styles/pe-icons/pe-icon-7-stroke.css"/>
+    <link rel="stylesheet" href="../styles/pe-icons/helper.css"/>
+    <link rel="stylesheet" href="../styles/stroke-icons/style.css"/>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" type="text/css" href="index.css" />
+</head>
+<body class="blank">
+
+<!-- Wrapper-->
+<div class="wrapper">
+
+
+    <!-- Main content-->
+    <section class="content">
+        <div class="container-center animated slideInDown">
+            <div class="view-header">
+                <div class="header-icon">
+                    <i class="pe page-header-icon pe-7s-add-user"></i>
+                </div>
+                <div class="header-title">
+                    <h3>Ваши данные</h3>
+                    <small>
+                        Пожалуйста заполние данные
+                    </small>
+                </div>
             </div>
-            <button id="chooiseUserAvaBtn">Open file</button>
+
+            <div class="panel panel-filled">
+                <div class="panel-body">
+                    <form  novalidate>
+                        <div id="ava" class="text-center">
+                            <img id="userAvaImg" src="./img/defaultAvatar.png" class="rounded-circle " width="200px" height="200px">
+                            
+                        </div>
+                        <button id="chooiseUserAvaBtn" class="btn btn-default " type="button"><i class="fa fa-upload"></i> <span class="bold">Загрузить</span></button>
+                        <div class="form-group">
+                            <label class="col-form-label" for="username">Имя</label>
+                            <input type="text" placeholder="Володя" title="" required="" value="" name="userName" id="userName" class="form-control">
+                            <span class="form-text small">Пример: Володя или Эльвира</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label" for="password">Ник</label>
+                            <input type="text" title="@funnyman" placeholder="@funnyman" required="" value="" name="userNickName" id="userNickName" class="form-control">
+                            <span class="form-text small">Пример: @funnyman</span>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-accent" id="createAccountBtn">Создать аккаунт</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div>
-            <p>Your name</p>
-            <input id="userName" type="text" placeholder="Pass your name" value="Volodya">
-        </div>
-        <div>
-            <p>Your nickname</p>
-            <input id="userNickName" type="text" placeholder="Pass your nick" value="AR_BABY">
-        </div>
-        <div>
-            <button id="createAccountBtn">Create Account!</button>
-        </div>
-    </body>
+    </section>
+    <!-- End main content-->
+
+</div>
+<!-- End wrapper-->
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+<!-- Vendor scripts -->
+<script src="../vendor/pacejs/pace.min.js"></script>
+<script src="../vendor/jquery/dist/jquery.min.js"></script>
+<script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="index.js"> </script> 
+<!-- App scripts -->
+<script>if (window.module) module = window.module;</script>
+
+</body>
+
 </html>
