@@ -2,6 +2,7 @@ const pathModule = require('path');
 const Stream = require('./stream.js');
 const localServer = require('../localServer/localServer.js');
 const appConfig = require('../../appFilesConfig');
+const FFmpegController = require('../capturing/ffmpegController');
 
 class StreamInitializer {
     constructor(IPFSinstance) {               
@@ -23,29 +24,21 @@ class StreamInitializer {
         return appConfig.getFullPathOfFileFromSystemPath(folderName);
     };
 
-    getBinFolder() {
-        return this.getModuleFolderPath('bin');
-    }
-
     resetStream() {
         const date = new Date();
         console.log(`Reset stream in .. ${date.getMinutes()}m ${date.getSeconds()}`);
         const videoFolderName = "videos";
-        const binFolder = this.getBinFolder();
         const streamName = this.generateRandomStreamName(); 
         console.log("Create new stream instance inside initializer..");
 
+        this.ffmpegController = new FFmpegController();
         this.fullVideoPath = pathModule.join(this.getModuleFolderPath(videoFolderName), streamName);
-
-        this.stream = new Stream(this.ipfs, streamName,  this.fullVideoPath ,binFolder);
-        if(this.lastCameraName) {
-            this.stream.setCameraByName(this.lastCameraName);
-        }       
-        if(this.lastAudio) {
-            this.stream.setAudioByName(this.lastAudio);
-        } 
-
-        this.stream.createRooms();      
+        const playListPath = pathModule.join(this.fullVideoPath, 'master.m3u8');
+        this.ffmpegRecorder = this.ffmpegController.getFFmpegRecorder(playListPath);
+        this.stream = new Stream(this.ipfs, streamName, this.fullVideoPath, this.ffmpegRecorder);
+        this.stream.createRooms();  
+        
+        this.deviceParser = this.ffmpegController.getDeviceParser();
     };  
 
     startStream(playListReadyCallBack, streamerInfo) {
@@ -77,20 +70,20 @@ class StreamInitializer {
             console.error("Cannot initialize cameras becouse stream is NULL!")
             return [];
         }
-        let dataOfCamers = [];
-        await currentStream.loadCamerasAsync().then((data) => {
-            dataOfCamers = data;
-            console.log(`CAM DATA LOADED!\n ${typeof(data)} \n Send to web-view...`);            
-            //Set camera to default at start:
-            if(data.length > 0) {
-              cameraName = data[0].name;
-              currentStream.setCameraByName(cameraName);
-              streamInitializerObj.lastCameraName = cameraName;
+        try {
+            const dataOfCamers = await this.deviceParser.getVideoDevices();
+            if(dataOfCamers.length > 0) {
+                cameraName = dataOfCamers[0];
+                this.setCameraByName(cameraName);
+                streamInitializerObj.lastCameraName = cameraName;               
             } else {
-              throw new Error("NO CAMERAS!");
+                cameraName = 'NO CAMERA!';
+                console.error("FFMPEG ERROR: No cameras!");
             }
-          });
-        return dataOfCamers;
+            return dataOfCamers;
+        } catch(err) {
+            throw err;
+        }        
     };
 
     async initializeAudiosAsync() {
@@ -101,28 +94,28 @@ class StreamInitializer {
             console.error("Cannot initialize cameras becouse stream is NULL!")
             return [];
         }
-        let dataOfAudios = [];
-        await currentStream.loadAudioAsync().then((data) => {
-            dataOfAudios = data;
-            console.log(`AUDIO DATA LOADED!\n ${typeof(data)} \n Send to web-view...`);            
-            //Set camera to default at start:
-            if(data.length > 0) {
-                audioName = data[0].name;
-              currentStream.setAudioByName(audioName);
-              streamInitializerObj.lastAudio = audioName;
+        try {
+            const dataOfAudios = await this.deviceParser.getAudioDevices();
+            if(dataOfAudios.length > 0) {
+                audioName = dataOfAudios[0];
+                this.setAudioByName(audioName);
+                streamInitializerObj.lastAudio = audioName;
             } else {
-              throw new Error("NO AUDIOS!");
+                audioName = "NO AUDIO!";
+                console.error("NO AUDIOS!");
             }
-          });
-        return dataOfAudios;
+            return dataOfAudios;
+        } catch(err) {
+            throw err;
+        }
     }
 
     setCameraByName(camName) {
-        this.stream.setCameraByName(camName);
+        this.ffmpegRecorder.setCamera(camName);
     }
 
     setAudioByName(audioName) {
-        this.stream.setAudioByName(audioName);
+        this.ffmpegRecorder.setAudio(audioName);
     }
 
     getLastFullVideoPath = () => {

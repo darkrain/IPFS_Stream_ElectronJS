@@ -18,9 +18,10 @@ class DataReadyCheckHelper {
         } 
     
         if(this.dataDependingFlags.isAudioReady === false) {
+            //TODO check audio for another OS!
             this.audioData = await streamInitializer.initializeAudiosAsync();
             electronWindow.webContents.send('audio-list-update', this.audioData);
-            this.dataDependingFlags.isAudioReady = this.audioData && this.audioData.length > 0;
+            this.dataDependingFlags.isAudioReady = this.audioData && this.audioData.length > 0;                                
         }
         
         if(!streamInfoGenerator) {

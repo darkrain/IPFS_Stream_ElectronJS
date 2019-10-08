@@ -97,8 +97,8 @@ ipc.on('camera-list-update', (event, args) => {
 	$.each(camData, function(key, value) {   
 		$('#cameraSelection')
 			.append($("<option></option>")
-						.attr("value",value.name)
-						.text(value.name)); 
+						.attr("value",value)
+						.text(value)); 
 	});
 });
 
@@ -108,8 +108,8 @@ ipc.on('audio-list-update', (event, args) => {
 	$.each(audioData, function(key, value) {   
 		$('#audioSelection')
 			.append($("<option></option>")
-						.attr("value",value.name)
-						.text(value.name)); 
+						.attr("value",value)
+						.text(value)); 
 	});
 });
 

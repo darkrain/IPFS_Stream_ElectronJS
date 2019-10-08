@@ -1,7 +1,7 @@
 const assert = require('assert');
 const fileHandler = require('../src/data/fileHandling');
 
-describe('Test file converter to base64', () => {
+describe.skip('Test file converter to base64', () => {
     it('Should return base64 data', async () => {
         const filePath = "C:\\Files\\boriz.png"; //this file should exists!
 

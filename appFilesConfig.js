@@ -1,3 +1,4 @@
+const osDetector = require('./src/helpers/OSDetecting.js');
 const path = require('path');
 const fs = require('fs');
 const _HOME_ = require('os').homedir();
@@ -69,8 +70,29 @@ async function copyNecessaryData() {
     }
 }
 
+function getFfmpegPath(currentOs = osDetector.getOs()) {
+    let ffmegPath = null;
+    switch(currentOs) {
+        case 'LINUX': {
+            ffmegPath = `${_SEP_}usr${_SEP_}bin${_SEP_}ffmpeg`;
+            break;
+        }
+        case 'MAC': {
+            throw new Error("No implement ffmpeg path for mac yet...");
+        }   
+        case 'WINDOWS': {
+            ffmegPath = getFullPathOfFileFromSystemPath('bin/ffmpeg.exe');
+            break;
+        }
+        default: {
+            throw new Error("Cannot specify your OS to get FFMPEG PATH :-(!");
+        }
+    }
+    return ffmegPath;
+}
+
 const files = {
-    FFMPEG : getFullPathOfFileFromSystemPath('bin/ffmpeg.exe'),
+    FFMPEG : getFfmpegPath(),
     USERINFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userInfoJSON.json')
 };
 
@@ -129,5 +151,6 @@ module.exports = {
     getParsedDataByPath,
     fileSizes,
     initializeBasicFolders,
-    getFullPathOfFileFromSystemPath
+    getFullPathOfFileFromSystemPath,
+    getFfmpegPath
 }
