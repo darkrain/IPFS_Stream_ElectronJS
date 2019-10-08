@@ -8,7 +8,7 @@ class UserInfoPage extends PageBase{
     }
 
     subscribeToIpcEvents(ipc) {
-        ipc.on('openGlobalRoomPage',async (event, args) => {
+        ipc.on('openGlobalRoomPage', (event, args) => {
           super.goToGlobalPage();
         });
     }

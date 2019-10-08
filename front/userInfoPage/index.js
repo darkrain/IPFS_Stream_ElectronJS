@@ -20,46 +20,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const userNameInputText = document.getElementById('userName');
 	userNameInputText.addEventListener('change', () => {
         //TODO realize logic in client
+        currentUserInfo.name = userNameInputText.value;
     });
     
     const userNickNameInputText = document.getElementById('userNickName');
     userNickNameInputText.addEventListener('change', () => {
-        //TODO realize logic in client
+        currentUserInfo.nickname = userNickNameInputText.value;
     });
     
     const createAccountBtn = document.getElementById('createAccountBtn');
     createAccountBtn.addEventListener('click', () => {
         //TODO realize logic in client
-        const isReady = true; //TEST
-        if(isReady)
-            ipc.send('openGlobalRoomPage');
+        sendUserData(); //TEST
+        const isReady = false; //TEST
+        //ipc.send('openGlobalRoomPage');
     });
-    
+
+    function sendUserData() {
+        //TODO send object to local server
+        const requestUrl = 'http://localhost:4000/user/create';
+        $.post( requestUrl, currentUserInfo)
+            .done(function( data ) {
+                alert( "Data Loaded: " + JSON.stringify(data) );
+            })
+            .fail(function () {
+                alert("ERROR");
+            });
+    }
 });
 
-function sendUserData() {
-    //TODO send object to local server
-    const requestUrl = 'localhost:4000/user/create';
-    const userObj = {
-        name: document.getElementById('userName').value,
-        nickname: document.getElementById('userNickName').value,
-        binaryPhotoContent: '' // << Raw image data from browser
-    };
-}
-
-ipc.on('nameChanged', (event, args) => {
-    const userNameInputText = document.getElementById('userName');
-    userNameInputText.value = args;
-});
-
-ipc.on('nickNameChanged', (event, args) => {
-    const userNickNameInputText = document.getElementById('userNickName');
-    userNickNameInputText.value = args;
-});
-
-
-ipc.on('selected-userava-file', (event, args) => {
-    const avaImg = document.getElementById('userAvaImg');
-    const base64img = args;
-    avaImg.src = `data:image/png;base64,${base64img}`;
-});
