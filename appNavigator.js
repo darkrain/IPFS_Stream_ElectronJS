@@ -71,7 +71,6 @@ function InitializeApp() {
         })
         .then(() => {
           console.log("Try to initialize localServer");
-          localServer.setStaticPath('./');
           localServer.startLocalServer();
         })
         .catch((err) => {

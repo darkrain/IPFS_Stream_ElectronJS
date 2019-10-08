@@ -9,15 +9,14 @@ let _streamPath;
 function setStaticPath(streamPath) {
     _streamPath = streamPath;
     console.log(`Static path has been changed! ${_streamPath}`);
-}
-
-function startLocalServer() { 
     if(app != null) {
         //If server already started use middleware about new stream path
         //its necessary because when express.static already defined then not updated.
         app.use(express.static(_streamPath));
-        return;
     }
+}
+
+function startLocalServer() { 
 
     closed = false;
     app = express(); 
@@ -56,13 +55,12 @@ function startLocalServer() {
 
     //subscribe to global routing
     globalRoutes.useGlobalRouter(app);
-    app.use(express.static(_streamPath));
+    app.use(express.static('/'));
 
     const PORT = 4000;
 
     const server = app.listen(PORT, () => {
         console.log("SERVER RUNNING!");
-        console.log(`Your static path is: ${_streamPath}`);
     });
 
     app.on('close', () => {

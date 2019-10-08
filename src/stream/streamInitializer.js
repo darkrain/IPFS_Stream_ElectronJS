@@ -46,7 +46,6 @@ class StreamInitializer {
             this.isStreamStarted = true;
             this.stream.start(playListReadyCallBack, streamerInfo); 
             localServer.setStaticPath(this.fullVideoPath);
-            localServer.startLocalServer();       
         } catch(e) {
             throw e;
         }
