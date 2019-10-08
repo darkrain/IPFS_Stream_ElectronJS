@@ -1,10 +1,11 @@
-function createUser(userInfo) {
-  //TODO realize user creation
-  console.log("USER CREATED!");
-  //TODO realize creation result info
-  return {
-    status: 0
-  }
-}
+const express = require('express');
+const router = express.Router();
 
-module.exports = createUser;
+router.post('/create', (req, res, next) => {
+    const user = req.body;
+    user.succesed = true;
+    res.json(user);
+    next();
+});
+
+module.exports = router;
