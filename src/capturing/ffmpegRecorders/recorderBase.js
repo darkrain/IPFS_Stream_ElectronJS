@@ -2,7 +2,6 @@ const execFile = require('child_process').execFile;
 const KEYS = require('../commands').KEYS;
 class RecorderBase {
     constructor(ffmpegPath, outputPath, commandsToRun) {
-        console.log(`CREATE NEW RECORDER BASE INSTANCE WITH COMMANDS: \n ${commandsToRun}`); //TEST
         this.ffmpegPath = ffmpegPath;
         this.outputPath = outputPath;
         this.commandsToRun = commandsToRun.slice(); // << We need make copy of commands array with slice() becouse its a reference..
