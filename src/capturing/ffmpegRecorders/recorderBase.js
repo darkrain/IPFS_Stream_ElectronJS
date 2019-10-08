@@ -2,10 +2,11 @@ const execFile = require('child_process').execFile;
 const KEYS = require('../commands').KEYS;
 class RecorderBase {
     constructor(ffmpegPath, outputPath, commandsToRun) {
+        console.log(`CREATE NEW RECORDER BASE INSTANCE WITH COMMANDS: \n ${commandsToRun}`); //TEST
         this.ffmpegPath = ffmpegPath;
         this.outputPath = outputPath;
-        this.commandsToRun = commandsToRun;
-
+        this.commandsToRun = commandsToRun.slice(); // << We need make copy of commands array with slice() becouse its a reference..
+        this.keys = KEYS;
         //add output path as last args
         this.commandsToRun.push(this.outputPath);
 
@@ -34,8 +35,6 @@ class RecorderBase {
     }
 
     startRecord() {
-        if(this.cameraCommand === null)
-            throw new Error("No camera!");
         try {
             this.changeCameraBeforeRun();
             console.log(`Try to execute FFMPEG recorder with commands: \n ${this.commandsToRun}`);

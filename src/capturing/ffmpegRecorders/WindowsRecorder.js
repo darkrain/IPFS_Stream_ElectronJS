@@ -19,7 +19,7 @@ class WindowsRecorder extends RecorderBase {
 
     changeCameraBeforeRun() {
         //find camera key and change it
-        const index = this.commandsToRun.indexOf(KEYS.CAM_KEY);
+        const index = this.commandsToRun.indexOf(this.keys.CAM_KEY);
         if(~index) { //if z >= 0
             this.commandsToRun[index] = 'video=' + '"' + this.camera + '"' + ':' + 'audio='+'"'+this.audio+'"';
         } else {     

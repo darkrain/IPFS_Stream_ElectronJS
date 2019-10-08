@@ -9,7 +9,7 @@ const DeviceCommands = {
 const KEYS = {
     CAM_KEY: 'CAM',
     AUDIO_KEY: 'AUDIO'
-}
+};
 
 //DONT FORGET PUSH PATH TO PLAYLIST AFTER GET IT! In getters functions!
 function getSplittedLinuxCommand() {
@@ -34,7 +34,7 @@ function getWindowsDshowCommand() {
         '-pix_fmt', 'yuv420p', //to support 4:2:2 resoultion
         '-hls_time', '4', 
         '-hls_playlist_type', 'event', 
-    ]
+    ];
     return commands;
 }
 
@@ -43,10 +43,10 @@ const RecordCommands = {
     LINUX: getSplittedLinuxCommand(),
     WINDOWS: getWindowsDshowCommand(),
     MAC: [] //TODO complete MAC logic
-}
+};
 
 module.exports = {
     DeviceCommands,
     RecordCommands,
     KEYS
-}
+};
