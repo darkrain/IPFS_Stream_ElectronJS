@@ -1,7 +1,7 @@
 const express = require("express");
 const globalRoutes = require('./middlewares/globalRouter');
 const path = require('path');
-const fs = require('fs');
+const bodyParser = require('body-parser');
 const debug = true;
 let app = null;
 let closed = false;
@@ -23,6 +23,11 @@ function startLocalServer() {
     app = express(); 
     app.removeAllListeners();
     app.setMaxListeners(0);
+
+    // parse application/x-www-form-urlencoded
+    app.use(bodyParser.urlencoded({ extended: false }));
+    // parse application/json
+    app.use(bodyParser.json());
 
     if(debug) {
         //check which file being requested
