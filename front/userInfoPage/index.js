@@ -1,33 +1,51 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
-
+const currentUserInfo = { };
 document.addEventListener('DOMContentLoaded', () => {
-    const chooiseAvaBTN = document.getElementById('chooiseUserAvaBtn');
-    chooiseAvaBTN.addEventListener('click', () => {
-        ipc.send('open-user-ava');
-    });
+    const userAvaElement = document.getElementById('userAvaImg');
+    const chooiseAvaInput = document.getElementById('chooiseUserAvaBtn');
+    chooiseAvaInput.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            currentUserInfo.photoBase64 = reader.result.replace('data:image/png;base64,', ''); //remove unecessary data for user
+            userAvaElement.src = reader.result;
+        };
+        reader.onerror = (err) => {
+            //TODO handle error
+        }
+    };
 
     const userNameInputText = document.getElementById('userName');
 	userNameInputText.addEventListener('change', () => {
-		ipc.send('userNameChanged', userNameInputText.value);
+        //TODO realize logic in client
     });
     
     const userNickNameInputText = document.getElementById('userNickName');
     userNickNameInputText.addEventListener('change', () => {
-		ipc.send('userNicknameChanged', userNickNameInputText.value);
+        //TODO realize logic in client
     });
     
     const createAccountBtn = document.getElementById('createAccountBtn');
     createAccountBtn.addEventListener('click', () => {
-        const userValues = {
-            "nickName":userNickNameInputText.value,
-            "userName":userNameInputText.value
-        }
-        ipc.send('update-info', userValues);
-        ipc.send('openGlobalRoomPage');
+        //TODO realize logic in client
+        const isReady = true; //TEST
+        if(isReady)
+            ipc.send('openGlobalRoomPage');
     });
     
 });
+
+function sendUserData() {
+    //TODO send object to local server
+    const requestUrl = 'localhost:4000/user/create';
+    const userObj = {
+        name: document.getElementById('userName').value,
+        nickname: document.getElementById('userNickName').value,
+        binaryPhotoContent: '' // << Raw image data from browser
+    };
+}
 
 ipc.on('nameChanged', (event, args) => {
     const userNameInputText = document.getElementById('userName');
