@@ -54,7 +54,7 @@ class UserInfoPage extends PageBase{
             return;
           }
           super.goToGlobalPage();
-        })
+        });
 
         ipc.on('open-user-ava', async (event, args) => { 
             const maxUserAvaSize = appConfig.fileSizes.MAX_USER_AVA_KB_SIZE;

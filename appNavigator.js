@@ -8,6 +8,7 @@ const userInfoLoader = require('./src/data/userInfoLoader');
 const dialogErrorHelper = require('./src/helpers/dialogErrorHelper');
 const logger = require('./src/data/logger');
 const appConfig = require('./appFilesConfig');
+const localServer = require('./src/localServer/localServer');
 //pages scripts
 const StreamPage = require('./src/pages/streamPage.js');
 const UserInfoPage = require('./src/pages/userInfoPage.js');
@@ -67,6 +68,14 @@ function InitializeApp() {
             } catch(err) {
                 throw err;
             }
+        })
+        .then(() => {
+          console.log("Try to initialize localServer");
+          localServer.setStaticPath('./');
+          localServer.startLocalServer();
+        })
+        .catch((err) => {
+            throw err;
         })
         .then(() => {
             console.log("Try to initialize Electron...");

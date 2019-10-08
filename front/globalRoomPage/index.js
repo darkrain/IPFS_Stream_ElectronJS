@@ -8,7 +8,7 @@ $( document ).ready(function() {
         const args = {
             pageName: 'streamerInfoPage',
             pageArgs: 'none'
-        }
+        };
         ipc.send('goto-page', args);
     });
 
@@ -20,13 +20,13 @@ $( document ).ready(function() {
         for( i in window.listOfStreamers){
             let streamer = window.listOfStreamers[i];
 
-            if( streamer.hashOfStreamer == watchId){
+            if( streamer.hashOfStreamer == watchId) {
                 const streamWatchPage = 'streamWatchPage';
                 ipc.send('goto-page', {pageName: streamWatchPage, pageArgs: streamer});  
                 break;              
-            }
+            };
         }
-    })
+    });
 
     ipc.on('listOfStreamersUpdated', (event, args) => {
         window.listOfStreamers = args;
