@@ -10,7 +10,8 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "clean": "node devDataRemover.js",
-    "share": "electron-builder --dir && node buildScripts/copyBuild.js"
+    "share": "electron-builder --dir && node buildScripts/copyBuild.js",
+    "new-router": "node scripts/routerScaffolding.js"
   },
   "build": {
     "productName": "BorgStream",
