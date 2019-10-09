@@ -68,7 +68,14 @@ router.put('/', async (req,res) => {
 });
 
 router.delete('/', (req,res) => {
-
+    try {
+        fs.unlinkSync(STREAM_INFO_PATH);
+        RESULT_RESPONSE.body = 'File deleted';
+    } catch(err) {
+        RESULT_RESPONSE.body = err.message;
+    }
+    RESULT_RESPONSE.status = STATUS.SUCCESS;
+    res.json(RESULT_RESPONSE);
 });
 
 function checkStreamInfo(streamInfo) {
