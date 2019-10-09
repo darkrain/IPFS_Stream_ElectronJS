@@ -44,8 +44,27 @@ router.get('/', async (req,res) => {
     res.json(RESULT_RESPONSE);
 });
 
-router.put('/', (req,res) => {
+router.put('/', async (req,res) => {
+    const streamInfo = req.body;
+    const keys = Object.keys(streamInfo);
+    const values = Object.values(streamInfo);
 
+    try {
+        const streamInfoData = await appConfig.getParsedDataByPath(STREAM_INFO_PATH);
+        for(let i = 0; i < keys.length; i++) {
+            const key = keys[i];
+            streamInfoData[key] = values[i];
+        }
+
+        fs.writeFileSync(STREAM_INFO_PATH, JSON.stringify(streamInfoData), {encoding: 'utf8'});
+        RESULT_RESPONSE.status = STATUS.SUCCESS;
+        RESULT_RESPONSE.body = streamInfoData;
+    } catch(err) {
+        RESULT_RESPONSE.status = STATUS.FAILED;
+        RESULT_RESPONSE.body = err.message;
+    }
+
+    res.json(RESULT_RESPONSE);
 });
 
 router.delete('/', (req,res) => {
