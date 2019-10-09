@@ -4,7 +4,15 @@ const appConfig = require('../../../appFilesConfig');
 const fs = require('fs');
 const userInfoLoader = require('../../data/userInfoLoader');
 
-router.get('/', async (req, res, next) => {
+//CREATE
+router.post('/', async (req, res) => {
+    const userInfo = req.body;
+    const response = await checkUser(userInfo);
+    res.json(response);
+});
+
+//READ
+router.get('/', async (req, res) => {
     const errObj = {ERROR: 'undefined'};
     try {
         const userData = await userInfoLoader.getUserInfoData(appConfig.files.USERINFO_JSON_PATH);
@@ -18,15 +26,32 @@ router.get('/', async (req, res, next) => {
         errObj.ERROR = err.message;
         res.json(errObj);
     }
-    next();
 });
 
-router.post('/create', async (req, res, next) => {
+//UPDATE
+router.put('/', async (req, res) => {
     const userInfo = req.body;
-    const response = await checkUser(userInfo);
-    res.json(response);
-    next();
+    const resultObj = {status: 'UNDEFINED'};
+    try {
+        resultObj.status = await new Promise((resolve, rejected) => {
+            fs.writeFile(appConfig.files.USERINFO_JSON_PATH, JSON.stringify(userInfo), (err) => {
+                if(err)
+                    rejected(err);
+                resolve('SUCCESS');
+            });
+        });
+
+    } catch(err) {
+        resultObj.status = err.message;
+    }
+    res.json(resultObj);
 });
+
+//DELETE
+router.delete('/', async (req, res) => {
+
+});
+
 
 //Returns response code;
 function checkUser(userObj) {

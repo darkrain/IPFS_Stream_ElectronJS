@@ -33,4 +33,4 @@ function isUserDataReady() {
 module.exports = {
     getUserInfoData,
     isUserDataReady
-}
+};
