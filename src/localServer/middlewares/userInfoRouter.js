@@ -2,6 +2,24 @@ const express = require('express');
 const router = express.Router();
 const appConfig = require('../../../appFilesConfig');
 const fs = require('fs');
+const userInfoLoader = require('../../data/userInfoLoader');
+
+router.get('/', async (req, res, next) => {
+    const errObj = {ERROR: 'undefined'};
+    try {
+        const userData = await userInfoLoader.getUserInfoData(appConfig.files.USERINFO_JSON_PATH);
+        if(userData) {
+            res.json(userData);
+        } else {
+            errObj.ERROR = 'FILE_NOT_READY';
+            res.json(errObj);
+        }
+    } catch(err) {
+        errObj.ERROR = err.message;
+        res.json(errObj);
+    }
+    next();
+});
 
 router.post('/create', async (req, res, next) => {
     const userInfo = req.body;
@@ -38,5 +56,7 @@ function checkUser(userObj) {
         }
     });
 }
+
+
 
 module.exports = router;

@@ -1,7 +1,12 @@
-const createUser = require('./createUser');
+//Routes
+const userInfoRouter = require('./userInfoRouter');
+
+const URLS = {
+    USER: '/user'
+};
 
 function useGlobalRouter(expressApp) {
-    expressApp.use('/user', createUser);
+    expressApp.use(URLS.USER, userInfoRouter);
 }
 
 module.exports = {

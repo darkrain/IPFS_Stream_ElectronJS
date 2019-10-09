@@ -2,7 +2,7 @@ const express = require("express");
 const globalRoutes = require('./middlewares/globalRouter');
 const path = require('path');
 const bodyParser = require('body-parser');
-const debug = true;
+const debug = false;
 let app = null;
 let closed = false;
 let _streamPath;
@@ -23,10 +23,11 @@ function startLocalServer() {
     app.removeAllListeners();
     app.setMaxListeners(0);
 
+    //We need a specify
     // parse application/x-www-form-urlencoded
-    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.urlencoded({limit: '50mb', extended: false }));
     // parse application/json
-    app.use(bodyParser.json());
+    app.use(bodyParser.json({limit: '50mb'}));
 
     if(debug) {
         //check which file being requested
@@ -67,12 +68,10 @@ function startLocalServer() {
         console.log(" * * * CLOSE CONNECTION * * *");
         server.close();
         closed = true;
-        return;
     });
 }
 
-function stopLocalServer() 
-{
+function stopLocalServer() {
     if(app)
         app.emit('close', ()=> {});
     app = null;
