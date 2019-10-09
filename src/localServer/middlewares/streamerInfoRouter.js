@@ -82,7 +82,7 @@ function checkStreamInfo(streamInfo) {
     return new Promise((resolve, rejected) => {
         try {
             const streamKeys = Object.keys(streamInfo);
-            const necessaryKeys = ['streamName', 'avaBase64'];
+            const necessaryKeys = ['streamName', 'camera', 'audio', 'avaBase64'];
             let undefinedKeys;
             for(let i = 0; i < necessaryKeys.length; i++) {
                 const key = necessaryKeys[i];
