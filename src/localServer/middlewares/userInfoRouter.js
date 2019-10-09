@@ -7,7 +7,7 @@ const userInfoLoader = require('../../data/userInfoLoader');
 const STATUS = require('../data/apiData').STATUS;
 
 //create object once and only set fields afterwards
-const resultObj = {
+const RESULT_RESPONSE = {
     status: STATUS.UNDEFINED,
     body: STATUS.UNDEFINED
 };
@@ -16,13 +16,13 @@ const resultObj = {
 router.post('/', async (req, res) => {
     const userInfo = req.body;
     try {
-        resultObj.status = await checkUser(userInfo);
-        resultObj.body = userInfo;
+        RESULT_RESPONSE.status = await checkUser(userInfo);
+        RESULT_RESPONSE.body = userInfo;
     } catch(err) {
-        resultObj.status = STATUS.FAILED;
-        resultObj.body = err.message;
+        RESULT_RESPONSE.status = STATUS.FAILED;
+        RESULT_RESPONSE.body = err.message;
     }
-    res.json(resultObj);
+    res.json(RESULT_RESPONSE);
 });
 
 //READ
@@ -30,17 +30,17 @@ router.get('/', async (req, res) => {
     try {
         const userData = await userInfoLoader.getUserInfoData(appConfig.files.USERINFO_JSON_PATH);
         if(userData) {
-            resultObj.status = STATUS.SUCCESS;
-            resultObj.body = userData;
+            RESULT_RESPONSE.status = STATUS.SUCCESS;
+            RESULT_RESPONSE.body = userData;
         } else {
-            resultObj.status = STATUS.FAILED;
-            resultObj.body = 'FILE NOT EXISTS';
+            RESULT_RESPONSE.status = STATUS.FAILED;
+            RESULT_RESPONSE.body = 'FILE NOT EXISTS';
         }
     } catch(err) {
-        resultObj.status = STATUS.FAILED;
-        resultObj.body = err.message;
+        RESULT_RESPONSE.status = STATUS.FAILED;
+        RESULT_RESPONSE.body = err.message;
     }
-    res.json(resultObj);
+    res.json(RESULT_RESPONSE);
 });
 
 //UPDATE
@@ -56,25 +56,41 @@ router.put('/', async (req, res) => {
                 oldUser[key] = values[i];
             }
         }
-        resultObj.status = await new Promise((resolve, rejected) => {
+        RESULT_RESPONSE.status = await new Promise((resolve, rejected) => {
             fs.writeFile(appConfig.files.USERINFO_JSON_PATH, JSON.stringify(oldUser), (err) => {
                 if(err)
                     rejected(err);
                 resolve(STATUS.SUCCESS);
             });
         });
-        resultObj.body = oldUser;
+        RESULT_RESPONSE.body = oldUser;
 
     } catch(err) {
-        resultObj.status = STATUS.FAILED;
-        resultObj.body = err.message;
+        RESULT_RESPONSE.status = STATUS.FAILED;
+        RESULT_RESPONSE.body = err.message;
     }
-    res.json(resultObj);
+    res.json(RESULT_RESPONSE);
 });
 
 //DELETE
 router.delete('/', async (req, res) => {
+    try {
+        const existingUser = await userInfoLoader.getUserInfoData(appConfig.files.USERINFO_JSON_PATH);
+        if(existingUser) {
+            fs.unlinkSync(appConfig.files.USERINFO_JSON_PATH);
+            RESULT_RESPONSE.body = 'User file removed';
+        } else {
+            RESULT_RESPONSE.body = 'User file not exists!';
+        }
 
+        RESULT_RESPONSE.status = STATUS.SUCCESS;
+
+    } catch (err) {
+        RESULT_RESPONSE.status = STATUS.FAILED;
+        RESULT_RESPONSE.body = err.message;
+    }
+
+    res.json(RESULT_RESPONSE);
 });
 
 
