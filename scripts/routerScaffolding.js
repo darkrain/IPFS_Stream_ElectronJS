@@ -23,7 +23,7 @@ createRouter();
 function createRouter() {
     const fileData = `const express = require('express');
 const router = express.Router();
-        
+const STATUS = require('../data/apiData').STATUS;
 router.post('/', (req, res) => {
 
 });
