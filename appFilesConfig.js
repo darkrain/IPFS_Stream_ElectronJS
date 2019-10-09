@@ -93,7 +93,8 @@ function getFfmpegPath(currentOs = osDetector.getOs()) {
 
 const files = {
     FFMPEG : getFfmpegPath(),
-    USERINFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userInfoJSON.json')
+    USERINFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userInfoJSON.json'),
+    USER_STREAM_INFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userStreamInfo.json')
 };
 
 const folders = {

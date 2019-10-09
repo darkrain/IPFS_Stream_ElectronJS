@@ -32,8 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     createAccountBtn.addEventListener('click', () => {
         //TODO realize logic in client
         sendUserData(); //TEST
-        const isReady = false; //TEST
-        //ipc.send('openGlobalRoomPage');
     });
 
     function sendUserData() {
@@ -42,6 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
         $.post( requestUrl, currentUserInfo)
             .done(function( data ) {
                 alert( "Data Loaded: " + JSON.stringify(data) );
+                if(data.status === 'SUCCESS')
+                    ipc.send('openGlobalRoomPage');
             })
             .fail(function () {
                 alert("ERROR");
