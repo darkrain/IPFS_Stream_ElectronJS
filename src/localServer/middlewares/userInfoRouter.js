@@ -105,8 +105,8 @@ function checkUser(userObj) {
                 const key = necessaryKeys[i];
                 if(!userKeys.includes(key) || userObj[key] === '') {
                     if(!undefinedKeys)
-                        undefinedKeys = 'UNDEFINED KEYS: \n';
-                    undefinedKeys += `${key} \n`;
+                        undefinedKeys = 'UNDEFINED KEYS: ';
+                    undefinedKeys += `${key} ,`;
                 }
             }
 
