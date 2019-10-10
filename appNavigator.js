@@ -1,6 +1,5 @@
 //*** Imports ***
 const { app, BrowserWindow } = require('electron');
-console.log("AAAAAP ! " + app.getAppPath());
 const ipfsLoaderHelper = require('./src/helpers/ipfsLoaderHelper.js');
 const ipc = require('electron').ipcMain;
 const GlobalRoomListener = require('./src/helpers/globalRoomListener.js');
@@ -36,14 +35,16 @@ const STREAMERINFO_PAGE_LINK = getPageLinkByName('streamInfoPage');
 //*** End page links 
 
 //*** Named constants ***
-const USER_INFO_PAGE = 'userInfoPage';
-const STREAMING_PAGE = 'streamingPage';
-const GLOBAL_ROOM_PAGE = 'globalRoomPage';
-const STREAM_WATCH_PAGE = 'streamWatchPage';
-const STREAMER_INFO_PAGE = 'streamerInfoPage';
+const PAGES = {
+    USER_INFO_PAGE: 'userInfoPage',
+    STREAMING_PAGE: 'streamingPage',
+    GLOBAL_ROOM_PAGE: 'globalRoomPage',
+    STREAM_WATCH_PAGE: 'streamWatchPage',
+    STREAMER_INFO_PAGE: 'streamerInfoPage'
+};
 
 //По умолчанию должна стоять страница создания юзера, если юзер еще не создан, если создан- то главный рум.
-const DEFAULT_PAGE =  userInfoLoader.isUserDataReady() ? GLOBAL_ROOM_PAGE : USER_INFO_PAGE;
+const DEFAULT_PAGE =  userInfoLoader.isUserDataReady() ? PAGES.GLOBAL_ROOM_PAGE : PAGES.USER_INFO_PAGE;
 //*** End Named constants ***
 
 let IpfsInstance;
@@ -114,13 +115,13 @@ async function loadPageByName(pageName, args)  {
     console.log("Start loading page: " + pageName + "....");
     try{
         switch(pageName) {       
-            case USER_INFO_PAGE: {
+            case PAGES.USER_INFO_PAGE: {
                 createWindowAsync(USER_INFO_PAGE_LINK).then((win) => {
                     _currentPage = new UserInfoPage(ipc, win);
                 });
                 break;
             }
-            case STREAMING_PAGE: {
+            case PAGES.STREAMING_PAGE: {
                 const streamArgs = args;
                 const streamerInfo = args.streamerInfo;
                 const streamInitializer = args.streamInitializer;
@@ -135,20 +136,20 @@ async function loadPageByName(pageName, args)  {
                 });
                 break;
             }
-            case GLOBAL_ROOM_PAGE: {
+            case PAGES.GLOBAL_ROOM_PAGE: {
                 createWindowAsync(GLOBAL_ROOM_PAGE_LINK).then((win) => {
                     _currentPage = new GlobalRoomPage(IpfsInstance, ipc, win, globalRoomListener);
                 });
                 break;
             }
-            case STREAM_WATCH_PAGE: {
+            case PAGES.STREAM_WATCH_PAGE: {
                 createWindowAsync(STREAMWATCH_PAGE_LINK).then((win => {
                     const streamerInfo = args;
                     _currentPage = new StreamWatchPage(IpfsInstance, ipc, win, streamerInfo);
                 }));
                 break;
             }
-            case STREAMER_INFO_PAGE: {
+            case PAGES.STREAMER_INFO_PAGE: {
                 createWindowAsync(STREAMERINFO_PAGE_LINK).then((win) => {
                     _currentPage = new StreamerInfoPage(IpfsInstance, IpfsNodeID, ipc, win);
                 });
@@ -255,15 +256,6 @@ function clearAllIPCListeners() {
     ipc.removeAllListeners();
 }
 
-
-function isPromise(object){
-    if(Promise && Promise.resolve){ 
-      return Promise.resolve(object) == object;  
-    }else{
-      throw "Promise not supported in your environment"
-    } 
-  }
-
 //Handle uncaught exceptions
 process
     .on('unhandledRejection', (reason, p) => {
@@ -280,3 +272,4 @@ process.setMaxListeners(0);
 module.exports.loadPageByName = loadPageByName;
 module.exports.loadDefaultPage = loadDefaultPage;
 module.exports.getCurrentPage = getCurrentPage;
+module.exports.PAGES = PAGES;

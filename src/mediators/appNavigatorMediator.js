@@ -10,4 +10,4 @@ module.exports = {
     getCurrentPage: () => {
         return appNavigator.getCurrentPage();
     }
-}
+};
