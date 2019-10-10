@@ -6,5 +6,8 @@ module.exports = {
     },
     loadDefaultPage: () => {
         appNavigator.loadDefaultPage();
+    },
+    getCurrentPage: () => {
+        return appNavigator.getCurrentPage();
     }
 }
