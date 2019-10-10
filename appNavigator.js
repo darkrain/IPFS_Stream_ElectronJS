@@ -9,6 +9,10 @@ const dialogErrorHelper = require('./src/helpers/dialogErrorHelper');
 const logger = require('./src/data/logger');
 const appConfig = require('./appFilesConfig');
 const localServer = require('./src/localServer/localServer');
+
+//Tests
+const testRunner = require('./test/moduleDynamicTests/TestRunner');
+
 //pages scripts
 const StreamPage = require('./src/pages/streamPage.js');
 const UserInfoPage = require('./src/pages/userInfoPage.js');
@@ -46,7 +50,7 @@ let IpfsInstance;
 let IpfsNodeID;
 let currentWindow;
 let globalRoomListener;
-function InitializeApp() {
+function InitializeApp(debug = false) {
     //firstable initialize IPFS instance
     ipfsLoaderHelper.initializeIPFS_Async()
         .then((ipfsInstance, nodeID) => {
@@ -79,6 +83,11 @@ function InitializeApp() {
         .then(() => {
             console.log("Try to initialize Electron...");
             onAppInitialized();
+
+            if(debug === true) {
+                testRunner.startTests();
+            }
+
         }).catch(err => {
             throw err;
         });
@@ -155,6 +164,10 @@ async function loadPageByName(pageName, args)  {
     }
 }
 
+function getCurrentPage() {
+    return _currentPage;
+}
+
 function createWindowAsync(linkToPage) {
     return new Promise((resolve, rejected) => {
         // Создаём окно браузера.
@@ -192,7 +205,7 @@ function createWindowAsync(linkToPage) {
   
 app.on('ready', () => {
     try {
-        InitializeApp()
+        InitializeApp(false);
     } catch(err) {
         logger.printErr(err);
         dialogErrorHelper.showErorDialog("AppNavigator", `Cannot run application, coz: \n ${err.message} \n ${err.stack}`, true);
@@ -266,3 +279,4 @@ process.setMaxListeners(0);
 
 module.exports.loadPageByName = loadPageByName;
 module.exports.loadDefaultPage = loadDefaultPage;
+module.exports.getCurrentPage = getCurrentPage;
