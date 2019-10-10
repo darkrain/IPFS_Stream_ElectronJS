@@ -43,49 +43,12 @@ class StreamInfoPage extends PageBase{
       streamPageObj.streamInitializer.setAudioByName(audioText);
     });
 
-    ipc.on('open-file-dialog', async (event, args) => {
-        const maxStreamAvaSize = appConfig.fileSizes.MAX_STREAM_AVA_KB_SIZE;
-        while(true) { //loop to check if file correct, break if is true  
-          try {
-            const result = await dialog.showOpenDialog({
-              properties: ['openFile'],
-              filters: [
-                { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
-              ]
-            });
-
-            const file = result.filePaths[0];
-              if(file) {
-                if(!filesChecker.isFileWithCorrectSizeSync(file, maxStreamAvaSize)) {
-                  //go again if file not supported by size
-                  //say that file too largs
-                  await dialog.showMessageBox({type:'warning', title:'File size warning', message: `File size more than ${maxStreamAvaSize} KB!!`})
-                  continue;
-                }
-                try {
-                  const avaBase64 = await fileHandler.readFileAsBase64Async(file);
-                  event.sender.send('selected-file', avaBase64);
-                  streamPageObj.onAvaImageUploaded(file);
-                  break; //break loop if size is correct
-                } catch(err) {
-                    throw err;
-                }         
-
-              } else {
-                //break if file not checked
-                break;
-              }
-
-          } catch(err) {
-              console.error(`Cannot open stream ava file coz: \n${err.message} \n${err.stack}`);
-              throw err;
-          }
-        }
+    //Calling when all data is READY!
+    ipc.on('dataReady', async (event, args) => {
+        //const necessaryKeys = ['streamName', 'avaBase64']; << rules from API
+        this.onStreamerNameChanged(args.streamName);
+        this.onAvaImageUploaded(args.avaBase64);
     });
-
-    ipc.on('streamerNameChanged', (event, args) => {
-      streamPageObj.onStreamerNameChanged(args);
-    });  
     
     ipc.on('backBtnClicked', (event, args) => {
         super.goToGlobalPage();
@@ -102,27 +65,16 @@ class StreamInfoPage extends PageBase{
   } 
 
   //### Callbacks for Events's ###
-  onAvaImageUploaded = (filePath) => {
-    this.streamerImgPath = filePath;
+  onAvaImageUploaded = (fileContents) => {
+    this.streamerImgBase64 = fileContents;
     this.onStreamerDataUpdated();
-  }
-
-  onIpfsNodeIDGetted = (nodeID) => {
-    this.ipfsNodeID = nodeID;
-    this.onStreamerDataUpdated();
-  }
+  };
 
   onStreamerNameChanged = (name) => {
     this.streamerName = name;
     this.onStreamerDataUpdated();
-  }
+  };
 
-  onMainPageLoaded = () => {
-    console.log("MAIN PAGE LOADED!");
-    //checkData is ready first run
-    this.checkAllData();
-    this.onStreamerDataUpdated();
-  }
   //### END Callbacks for Event's ###
 
   //### Checking functions
@@ -131,13 +83,13 @@ class StreamInfoPage extends PageBase{
       this.ipfsNodeID = this.ipfs.id;
     console.log("Try update streamer data by values: " + JSON.stringify([
       this.streamerName,
-      this.streamerImgPath, 
+      this.streamerImgBase64,
       this.ipfsNodeID
     ]));
-    if(this.streamerName && this.streamerImgPath && this.ipfsNodeID) {
+    if(this.streamerName && this.streamerImgBase64 && this.ipfsNodeID) {
         this.streamInfoGenerator = new StreamInfoGenerator(this.ipfsNodeID,
            this.streamerName,
-            this.streamerImgPath);       
+            this.streamerImgBase64);
     }
     this.checkAllData();
   }
@@ -147,7 +99,7 @@ class StreamInfoPage extends PageBase{
 
     //update front page by streamer info array
     const streamerNameInfo = this.streamerName ? this.streamerName : "empty";
-    const streamerImgPathInfo = this.streamerImgPath ? this.streamerImgPath : "empty";
+    const streamerImgBase64Info = this.streamerImgBase64 ? this.streamerImgBase64 : "empty";
     const ipfsNodeIdInfo = this.ipfsNodeID ? this.ipfsNodeID : "empty";
 
     this.dataReadyHelper.checkDataIsReadyAsync(
@@ -159,7 +111,7 @@ class StreamInfoPage extends PageBase{
             console.log("Data checking... result: " + readyData.isDataReady);
             const streamInfoArray = {
               "StreamerName": streamerNameInfo,
-              "AvatarHash": streamerImgPathInfo,
+              "AvatarHash": streamerImgBase64Info,
               "IPFS_NodeID": ipfsNodeIdInfo
             };
             win.webContents.send('update-requirements', streamInfoArray);

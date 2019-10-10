@@ -1,6 +1,11 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
+let currentUserData = {
+	streamName: null,
+	avaBase64: null
+};
+
 let userRequirements = []; // data requirments for stream to show user when he tap on Start button
 document.addEventListener('DOMContentLoaded',function(){
 	//the property 'isControl' means that button cannot be pushed more than once...
@@ -62,7 +67,8 @@ document.addEventListener('DOMContentLoaded',function(){
 	});
 	
 	avaSelectBtn.addEventListener('click', () => {
-		ipc.send('open-file-dialog');
+		//TODO logic for open file
+		currentUserData.avaBase64 = 'FILE_CONTENTS_HERE';
 	});
 
 	cameraSelection.addEventListener('change', () => {
@@ -73,11 +79,11 @@ document.addEventListener('DOMContentLoaded',function(){
 	audioSelection.addEventListener('change', () => {
 		const text = audioSelection.options[audioSelection.selectedIndex].text;
 		ipc.send('audio-changed', text);	
-	})
+	});
 
 	const streamerNameInputText = document.getElementById('streamerNameInputText');
 	streamerNameInputText.addEventListener('change', () => {
-		ipc.send('streamerNameChanged', streamerNameInputText.value);
+		currentUserData.streamName = streamerNameInputText.value;
 	});
 
 	$('#backBtn').click(function(){
@@ -113,15 +119,8 @@ ipc.on('audio-list-update', (event, args) => {
 	});
 });
 
-//When user selected file for ava
-ipc.on('selected-file', (event, args) => {
-	const avaImg = document.getElementById('streamerAvaImg');
-    const base64img = args;
-    avaImg.src = `data:image/png;base64,${base64img}`;
-});
-
 ipc.on('update-requirements', (event, args) => {
 	userRequirements = args; //empty list firstable
-})
+});
 
 
