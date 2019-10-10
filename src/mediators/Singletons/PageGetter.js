@@ -31,13 +31,14 @@ class PageGetter {
             }
         }
     }
-    static getPageByType(pageType ) {
+    static getCurrentPageWithType(pageType ) {
         const explicitPage = require('../../../appNavigator').getCurrentPage();
         if(!explicitPage || explicitPage.constructor.name !== this.getConstructorName(pageType)) {
             console.error(`Unable to get page with type: ${pageType} , current page is ${explicitPage}`);
-            return;
+            return null;
         }
         console.log(`Get page by type ${pageType} succefull!`);
+        return explicitPage;
     }
 }
 

@@ -269,7 +269,9 @@ process
     });
 process.setMaxListeners(0);
 
-module.exports.loadPageByName = loadPageByName;
-module.exports.loadDefaultPage = loadDefaultPage;
-module.exports.getCurrentPage = getCurrentPage;
-module.exports.PAGES = PAGES;
+module.exports = {
+    loadPageByName,
+    loadDefaultPage,
+    getCurrentPage,
+    PAGES
+};
