@@ -1,8 +1,10 @@
-const express = require('express');
-const router = express.Router();
 const fs = require('fs');
 const appConfig = require('../../../appFilesConfig');
 const STATUS = require('../data/apiData').STATUS;
+const express = require('express');
+const PageGetter = require('../../mediators/Singletons/PageGetter');
+
+const router = express.Router();
 
 const STREAM_INFO_PATH = appConfig.files.USER_STREAM_INFO_JSON_PATH;
 const RESULT_RESPONSE = {
@@ -15,6 +17,7 @@ router.post('/', async (req, res) => {
     try {
         RESULT_RESPONSE.status = await checkStreamInfo(streamInfo);
         RESULT_RESPONSE.body = streamInfo;
+        onDataChanged(streamInfo);
     } catch(err) {
         RESULT_RESPONSE.status = STATUS.FAILED;
         RESULT_RESPONSE.body = err.message;
@@ -59,6 +62,7 @@ router.put('/', async (req,res) => {
         fs.writeFileSync(STREAM_INFO_PATH, JSON.stringify(streamInfoData), {encoding: 'utf8'});
         RESULT_RESPONSE.status = STATUS.SUCCESS;
         RESULT_RESPONSE.body = streamInfoData;
+        onDataChanged(streamInfo);
     } catch(err) {
         RESULT_RESPONSE.status = STATUS.FAILED;
         RESULT_RESPONSE.body = err.message;
@@ -103,6 +107,13 @@ function checkStreamInfo(streamInfo) {
             rejected(err);
         }
     });
+}
+
+function onDataChanged(streamerInfo) {
+    const currentPage = PageGetter.getCurrentPageWithType(PageGetter.PageTypes.STREAMER_INFO_PAGE);
+    if(!currentPage) {
+        throw new Error(`Cannot get StreamInfoPage!`);
+    }
 }
 
 
