@@ -18,9 +18,12 @@ document.addEventListener('DOMContentLoaded',function(){
 	const cameraSelection = document.getElementById('cameraSelection');
 	const audioSelection = document.getElementById('audioSelection');
 	const streamAvaImage = document.getElementById('streamerAvaImg');
+	const streamerNameInputText = document.getElementById('streamerNameInputText');
 
+	//Default values:
 	initializeBasicValuesForOptions(cameraSelection);
 	initializeBasicValuesForOptions(audioSelection);
+	currentUserData.streamName = streamerNameInputText.value;
 
 	function getRequirements() {
 		let prettyViewReq = [];
@@ -106,7 +109,6 @@ document.addEventListener('DOMContentLoaded',function(){
 		currentUserData.audio = text;
     });
 
-	const streamerNameInputText = document.getElementById('streamerNameInputText');
 	streamerNameInputText.addEventListener('change', () => {
 		currentUserData.streamName = streamerNameInputText.value;
 		console.log(`Stream name updated! ${currentUserData.streamName}`);
