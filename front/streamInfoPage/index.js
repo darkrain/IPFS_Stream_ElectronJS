@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded',function(){
         onDataUpdated();
 
         //TODO handle next page opening
-		//ipc.send('goToStream');
+		ipc.send('goToStream');
 	});
 	
 	avaSelectBtn.onchange = e => {

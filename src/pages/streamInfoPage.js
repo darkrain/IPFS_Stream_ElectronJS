@@ -47,11 +47,11 @@ class StreamInfoPage extends PageBase{
         const argsForStream = {
             streamerInfo: streamerInfo,
             streamInitializer: streamPageObj.streamInitializer 
-        }
+        };
         super.goToPage('streamingPage', argsForStream);
     });
     //### END IPC calls ###
-  }
+  };
 
   //### Callbacks for Events's ###
   setAudioByName(audioName) {
@@ -78,7 +78,6 @@ class StreamInfoPage extends PageBase{
       this.ipfsNodeID = this.ipfs.id;
     console.log("Try update streamer data by values: " + JSON.stringify([
       this.streamerName,
-      this.streamerImgBase64,
       this.ipfsNodeID
     ]));
     if(this.streamerName && this.streamerImgBase64 && this.ipfsNodeID) {
@@ -111,7 +110,7 @@ class StreamInfoPage extends PageBase{
             };
             if(readyData.isDataReady) {
                 streamerInfo = readyData.streamInfo;    
-                console.log("Streamer info updated! : \n" + JSON.stringify(streamerInfo));
+                console.log("Streamer info updated!");
             }
     }).catch(err => {
       throw err;
