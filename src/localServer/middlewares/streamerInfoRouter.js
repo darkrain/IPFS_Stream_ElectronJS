@@ -12,6 +12,11 @@ const RESULT_RESPONSE = {
     body: STATUS.UNDEFINED
 };
 
+function resetResult() {
+    RESULT_RESPONSE.status = STATUS.UNDEFINED;
+    RESULT_RESPONSE.body = STATUS.UNDEFINED;
+}
+
 router.post('/', async (req, res) => {
     const streamInfo = req.body;
     try {
@@ -24,6 +29,7 @@ router.post('/', async (req, res) => {
     }
 
     res.json(RESULT_RESPONSE);
+    resetResult();
 });
 
 router.get('/', async (req,res) => {
@@ -45,6 +51,7 @@ router.get('/', async (req,res) => {
     }
 
     res.json(RESULT_RESPONSE);
+    resetResult();
 });
 
 router.put('/', async (req,res) => {
@@ -69,6 +76,7 @@ router.put('/', async (req,res) => {
     }
 
     res.json(RESULT_RESPONSE);
+    resetResult();
 });
 
 router.delete('/', (req,res) => {
@@ -80,6 +88,7 @@ router.delete('/', (req,res) => {
     }
     RESULT_RESPONSE.status = STATUS.SUCCESS;
     res.json(RESULT_RESPONSE);
+    resetResult();
 });
 
 function checkStreamInfo(streamInfo) {
