@@ -19,11 +19,14 @@ document.addEventListener('DOMContentLoaded',function(){
 	const audioSelection = document.getElementById('audioSelection');
 	const streamAvaImage = document.getElementById('streamerAvaImg');
 
+	initializeBasicValuesForOptions(cameraSelection);
+	initializeBasicValuesForOptions(audioSelection);
+
 	function getRequirements() {
 		let prettyViewReq = [];
 
 		for (let [key, value] of Object.entries(currentUserData)) {
-			if(value === '' || !value) {
+			if(value === '' || value === 'NONE' || !value) {
 				const translatedKey = getPrettyViewByRequirementKey(key);
 				prettyViewReq.push(`${translatedKey} - нет данных.`)
 			}
@@ -85,7 +88,6 @@ document.addEventListener('DOMContentLoaded',function(){
 		reader.onload = () => {
 			currentUserData.avaBase64 = reader.result; //remove unecessary data for user
 			streamAvaImage.src = reader.result;
-            onDataUpdated();
         };
 		reader.onerror = (err) => {
 			//TODO handle error
@@ -124,32 +126,45 @@ document.addEventListener('DOMContentLoaded',function(){
 		ipc.send('backBtnClicked');
 	});
 
+	ipc.on('camera-list-update', (event, args) => {
+		const selectionID = '#cameraSelection';
+		const firstValue = initializeSelectionData(selectionID, args);
+		currentUserData.camera = firstValue;
+	});
+
+	ipc.on('audio-list-update', (event, args) => {
+		const selectionID = '#audioSelection';
+		const firstValue = initializeSelectionData(selectionID, args);
+		currentUserData.audio = firstValue;
+	});
+
+	function initializeSelectionData(selectionID, valuesArr) {
+		$(selectionID).empty();
+		if(valuesArr.length <= 0) {
+			valuesArr.unshift('NONE'); // << should add some item to access 'change' event;
+		}
+		$.each(valuesArr, function(key, value) {
+			$(selectionID)
+				.append($("<option></option>")
+					.attr("value",value)
+					.text(value));
+		});
+
+		return valuesArr[0];
+	}
+
+	function initializeBasicValuesForOptions(selection) {
+		const baseOption = 'NONE';
+		$(selection)
+			.append($("<option></option>")
+				.attr("value",baseOption)
+				.text(baseOption));
+	}
 });
 
 // ### Client event subscriber handlers ###
-ipc.on('camera-list-update', (event, args) => {
-	const camData = args;	
-	$('#cameraSelection').empty();
-	if(camData.length === 1) {
-		camData.push('NOTHING'); // << should add some item to access 'change' event;
-	}
-	$.each(camData, function(key, value) {   
-		$('#cameraSelection')
-			.append($("<option></option>")
-						.attr("value",value)
-						.text(value)); 
-	});
-});
 
-ipc.on('audio-list-update', (event, args) => {
-	const audioData = args;
-	$('#audioSelection').empty();
-	$.each(audioData, function(key, value) {   
-		$('#audioSelection')
-			.append($("<option></option>")
-						.attr("value",value)
-						.text(value)); 
-	});
-});
+
+
 
 

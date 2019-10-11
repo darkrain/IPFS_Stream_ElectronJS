@@ -24,7 +24,7 @@ class PageGetter {
                 return 'StreamWatchPage';
             }
             case this.PageTypes.STREAMER_INFO_PAGE: {
-                return 'StreamerInfoPage';
+                return 'StreamInfoPage';
             }
             default: {
                 return null;

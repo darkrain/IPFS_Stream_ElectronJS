@@ -134,7 +134,6 @@ function onDataChanged(streamerInfo) {
     currentPage.onStreamerNameChanged(streamerInfo.streamName);
     currentPage.onAvaImageUploaded(streamerInfo.avaBase64);
     currentPage.onStreamerDataUpdated();
-    console.log(`Stream info updated with values! \n ${JSON.stringify(currentPage)}`);
 }
 
 
