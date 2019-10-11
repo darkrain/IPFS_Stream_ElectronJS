@@ -6,8 +6,7 @@ const PageBase = require('./pageBase');
 const fileHandler = require('../data/fileHandling');
 const DataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
 const StreamInfoGenerator = require('../data/StreamerInfoGenerator.js');
-const appConfig = require('../../appFilesConfig');
-const filesChecker = require('../data/fileCheking');
+const jsonHelper = require('../helpers/JSONHelpers');
 
 let streamerInfo = [];
 
@@ -109,8 +108,9 @@ class StreamInfoPage extends PageBase{
               "IPFS_NodeID": ipfsNodeIdInfo
             };
             if(readyData.isDataReady) {
-                streamerInfo = readyData.streamInfo;    
-                console.log("Streamer info updated!");
+                streamerInfo = readyData.streamInfo;
+                const streamInfoDecorated = jsonHelper.simplifyStringifyValue(streamInfoArray);
+                console.log(`Streamer info updated! Values: \n ${streamInfoDecorated}`);
             }
     }).catch(err => {
       throw err;
