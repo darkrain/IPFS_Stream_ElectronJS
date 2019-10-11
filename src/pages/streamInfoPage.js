@@ -33,16 +33,6 @@ class StreamInfoPage extends PageBase{
     let win = this.pageWindow;
     //### IPC calls ###
 
-    ipc.on('camera-changed', (event, args) => {
-      const camText = args;
-      streamPageObj.streamInitializer.setCameraByName(camText);
-    });
-    
-    ipc.on('audio-changed', (event, args) => {
-      const audioText = args;
-      streamPageObj.streamInitializer.setAudioByName(audioText);
-    });
-
     //Calling when all data is READY!
     ipc.on('dataReady', async (event, args) => {
         //const necessaryKeys = ['streamName', 'avaBase64']; << rules from API
@@ -62,9 +52,17 @@ class StreamInfoPage extends PageBase{
         super.goToPage('streamingPage', argsForStream);
     });
     //### END IPC calls ###
-  } 
+  }
 
   //### Callbacks for Events's ###
+  setAudioByName(audioName) {
+     this.streamInitializer.setAudioByName(audioName);
+  }
+
+  setCameraByName(videoName) {
+      this.streamInitializer.setCameraByName(videoName);
+  }
+
   onAvaImageUploaded = (fileContents) => {
     this.streamerImgBase64 = fileContents;
     this.onStreamerDataUpdated();

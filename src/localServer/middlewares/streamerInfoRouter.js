@@ -9,19 +9,20 @@ const router = express.Router();
 const STREAM_INFO_PATH = appConfig.files.USER_STREAM_INFO_JSON_PATH;
 const RESULT_RESPONSE = {
     status: STATUS.UNDEFINED,
+    code: STATUS.UNDEFINED,
     body: STATUS.UNDEFINED
 };
 
 function resetResult() {
     RESULT_RESPONSE.status = STATUS.UNDEFINED;
     RESULT_RESPONSE.body = STATUS.UNDEFINED;
+    RESULT_RESPONSE.code = STATUS.UNDEFINED;
 }
 
 router.post('/', async (req, res) => {
     const streamInfo = req.body;
     try {
-        RESULT_RESPONSE.status = await checkStreamInfo(streamInfo);
-        RESULT_RESPONSE.body = streamInfo;
+        await checkStreamInfo(streamInfo);
         onDataChanged(streamInfo);
     } catch(err) {
         RESULT_RESPONSE.status = STATUS.FAILED;
@@ -96,22 +97,25 @@ function checkStreamInfo(streamInfo) {
         try {
             const streamKeys = Object.keys(streamInfo);
             const necessaryKeys = ['streamName', 'camera', 'audio', 'avaBase64'];
-            let undefinedKeys;
+            let undefinedKeys = [];
             for(let i = 0; i < necessaryKeys.length; i++) {
                 const key = necessaryKeys[i];
                 if(!streamKeys.includes(key) || streamKeys[key] === '') {
-                    if(!undefinedKeys)
-                        undefinedKeys = 'UNDEFINED KEYS: ';
-                    undefinedKeys += `${key} ,`;
+                    undefinedKeys.push(key);
                 }
             }
 
-            if(undefinedKeys) {
-                throw new Error(undefinedKeys);
+            if(undefinedKeys.length > 0) {
+                RESULT_RESPONSE.status = STATUS.FAILED;
+                RESULT_RESPONSE.code = 'No keys!';
+                RESULT_RESPONSE.body = undefinedKeys;
+                resolve();
+            } else {
+                fs.writeFileSync(STREAM_INFO_PATH, JSON.stringify(streamInfo));
+                RESULT_RESPONSE.status = STATUS.SUCCESS;
+                RESULT_RESPONSE.body = streamInfo;
+                resolve();
             }
-
-            fs.writeFileSync(STREAM_INFO_PATH, JSON.stringify(streamInfo));
-            resolve(STATUS.SUCCESS);
         } catch(err) {
             rejected(err);
         }
@@ -121,8 +125,15 @@ function checkStreamInfo(streamInfo) {
 function onDataChanged(streamerInfo) {
     const currentPage = PageGetter.getCurrentPageWithType(PageGetter.PageTypes.STREAMER_INFO_PAGE);
     if(!currentPage) {
-        throw new Error(`Cannot get StreamInfoPage!`);
+        console.error(`Cannot get streamer page!`);
+        return;
     }
+
+    currentPage.setAudioByName(streamerInfo.audio);
+    currentPage.setCameraByName(streamerInfo.camera);
+    currentPage.onStreamerNameChanged(streamerInfo.streamName);
+    currentPage.onAvaImageUploaded(streamerInfo.avaBase64);
+    console.log(`Stream info updated with values! \n ${JSON.stringify(currentPage)}`);
 }
 
 
