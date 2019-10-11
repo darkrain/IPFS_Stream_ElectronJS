@@ -1,6 +1,7 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 const currentUserInfo = { };
+const requestUrl = 'http://localhost:4000/user';
 document.addEventListener('DOMContentLoaded', () => {
     const userAvaElement = document.getElementById('userAvaImg');
     const chooiseAvaInput = document.getElementById('chooiseUserAvaBtn');
@@ -36,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function sendUserData() {
         //TODO send object to local server
-        const requestUrl = 'http://localhost:4000/user';
         $.post( requestUrl, currentUserInfo)
             .done(function( data ) {
                 alert( "Data Loaded: " + JSON.stringify(data) );

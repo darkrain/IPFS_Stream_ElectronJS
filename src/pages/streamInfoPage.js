@@ -15,7 +15,6 @@ class StreamInfoPage extends PageBase{
   constructor(ipfs, ipfsNodeID, electronIPC, pageWindow) {
       super();
       //initialize class mebmers:
-      this.base64Ava = '';
       this.ipfs = ipfs;
       this.ipfsNodeID = ipfsNodeID;
       this.electronIPC = electronIPC;
@@ -65,12 +64,10 @@ class StreamInfoPage extends PageBase{
 
   onAvaImageUploaded = (fileContents) => {
     this.streamerImgBase64 = fileContents;
-    this.onStreamerDataUpdated();
   };
 
   onStreamerNameChanged = (name) => {
     this.streamerName = name;
-    this.onStreamerDataUpdated();
   };
 
   //### END Callbacks for Event's ###
@@ -112,8 +109,6 @@ class StreamInfoPage extends PageBase{
               "AvatarHash": streamerImgBase64Info,
               "IPFS_NodeID": ipfsNodeIdInfo
             };
-            win.webContents.send('update-requirements', streamInfoArray);
-
             if(readyData.isDataReady) {
                 streamerInfo = readyData.streamInfo;    
                 console.log("Streamer info updated! : \n" + JSON.stringify(streamerInfo));
