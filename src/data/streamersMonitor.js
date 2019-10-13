@@ -41,8 +41,8 @@ async function generateDataForStreamerAsync(streamerObj, ipfs) {
         fs.mkdirSync(streamerFolder);
     }
     
-    const streamAvaBase64 = await fileHandling.readFileFromIpfsAsBase64Async(ipfs ,streamerObj.imgAvaHash);
-    const userAvaBase64 = await fileHandling.readFileFromIpfsAsBase64Async(ipfs ,streamerObj.userAvatarHash);
+    const streamAvaBase64 = await fileHandling.readTextFromIpfsAsync(ipfs ,streamerObj.imgAvaHash);
+    const userAvaBase64 = await fileHandling.readTextFromIpfsAsync(ipfs ,streamerObj.userAvatarHash);
 
     const streamData = {
         streamerName: streamerObj.nameOfStream,
