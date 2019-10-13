@@ -13,6 +13,13 @@ function uploadDataAsBase64Async(ipfsInstance, data, opt = {}) {
     });
 }
 
+async function uploadTextDataAsync(ipfsInstance, data) {
+    const bufferedData = new Buffer(data);
+    const results = await ipfsInstance.add(bufferedData);
+    return results[0].hash;
+}
+
 module.exports = {
-    uploadDataAsBase64Async
+    uploadDataAsBase64Async,
+    uploadTextDataAsync
 };

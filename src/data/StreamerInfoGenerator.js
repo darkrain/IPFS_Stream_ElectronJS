@@ -22,7 +22,7 @@ class StreamerInfoGenerator {
             //upload userAvatar image
             const userInfoObject = await appConfig.getParsedDataByPath(appConfig.files.USERINFO_JSON_PATH);
             const userAvaBase64 = userInfoObject.photoBase64;           
-            userAvaHash = await ipfsUploader.uploadDataAsBase64Async(ipfsInstance, userAvaBase64);
+            userAvaHash = await ipfsUploader.uploadTextDataAsync(ipfsInstance, userAvaBase64);
         } catch (err) {
             errorDialog.showErorDialog('StreamerInfoGenerator', `Cannot upload user avatar in ipfs! \n ${err.message} \n${err.stack}`, true);
         }
@@ -30,7 +30,7 @@ class StreamerInfoGenerator {
         const AVA_IMG_NOHASH_ERR_KEY = "NOTHING";
         let uploadedAvaHash = null;
         try {
-            uploadedAvaHash = await ipfsUploader.uploadDataAsBase64Async(ipfsInstance, streamerImg64);
+            uploadedAvaHash = await ipfsUploader.uploadTextDataAsync(ipfsInstance, streamerImg64);
         } catch(err) {
             errorDialog.showErorDialog('StreamerInfoGenerator', `cannot add stream view image in ipfs! \n ${err.message} \n ${err.stack}`, true);
         }

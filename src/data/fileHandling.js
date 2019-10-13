@@ -24,7 +24,14 @@ function readFileFromIpfsAsBase64Async(ipfsInstance, hashIpfs) {
         }
     });
 }
+
+async function readTextFromIpfsAsync(ipfsInstance, hashIpfs) {
+    const fileText = await ipfsInstance.cat(hashIpfs);
+    return fileText.toString('utf8');
+}
+
 module.exports =  {
     readFileAsBase64Async,
-    readFileFromIpfsAsBase64Async
+    readFileFromIpfsAsBase64Async,
+    readTextFromIpfsAsync
 };
