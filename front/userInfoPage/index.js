@@ -7,20 +7,21 @@ $( document ).ready(function() {
 
     $('#userAvaImg').click(() => {
         $('#chooiseUserAvaBtn').click()
-    })
+    });
 
     $('#chooiseUserAvaBtn').change((event) => {
         const file = event.target.files[0];
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
+            console.log(`image data loaded! : ${reader.result.substr(0, 35)}`);
             $('#userAvaImg').attr('src', reader.result)
             $('[name="photoBase64"]').val( reader.result ); //remove unecessary data for user
         };
         reader.onerror = (err) => {
             //TODO handle error
         }
-    })
+    });
 
 
     $('form').submit((event) => {
