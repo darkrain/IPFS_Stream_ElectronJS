@@ -81,7 +81,9 @@ document.addEventListener('DOMContentLoaded',function(){
         onDataUpdated();
 
         //TODO handle next page opening
+		console.log("GO TO STREAM!");
 		ipc.send('goToStream');
+		startStreamBtn.disabled = true; //Disable button after click! To avoid multiply calls
 	});
 	
 	avaSelectBtn.onchange = e => {
