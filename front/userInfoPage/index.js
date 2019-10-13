@@ -30,7 +30,7 @@ $( document ).ready(function() {
         let form = $(event.target);
         let formData = getFormData(form);
 
-        sendUserData(formData, (result) => {
+        sendFormData(requestUrl, formData, (result) => {
             if(result.status === 'SUCCESS'){
                 ipc.send('openGlobalRoomPage');
             }else{
@@ -45,25 +45,3 @@ $( document ).ready(function() {
     })
 
 })
-
-
-function getFormData(form){
-    var data = {};
-
-    form.serializeArray().forEach(function(item){
-        data[item.name] = item.value;
-    })
-
-    return data;
-}
-
-function sendUserData(formData, callback) {    
-    $.post( requestUrl, formData)
-        .done(function( data ) {
-            console.log({request: formData, response: data })
-            callback(data)
-        })
-        .fail(function () {
-            alert("ERROR");
-        });
-}
