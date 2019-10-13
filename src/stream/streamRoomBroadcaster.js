@@ -1,7 +1,7 @@
 const Room = require('ipfs-pubsub-room');
 const RoomCounter = require('../helpers/roomCounterModule');
 const EventEmitter = require('events');
-
+const userInfoLoader = require('../data/userInfoLoader');
 const BROADCAST_INTERVAL = 10000; //ms
 const GLOBAL_ROOM_NAME = 'borgStream';
 
@@ -14,6 +14,18 @@ class StreamRoomBroadcaster {
         this.watchersCount = 0;
         this.broadcastEvent = new BroadcastEvent();
         this.initializeRooms(streamerInfo);
+        this.userData = {
+            userName: 'UNKNOWN_NAME',
+            nickName: 'UNKNOWN_NICKNAME'
+        };
+        if(userInfoLoader.isUserDataReady()) {
+            userInfoLoader.getUserInfoData().then(data => {
+                this.userData.userName = data.name;
+                this.userData.nickName = data.nickname;
+            }).catch((err) => {
+                throw err;
+            })
+        }
     }
 
     initializeRooms(streamerInfo) {
@@ -48,6 +60,8 @@ class StreamRoomBroadcaster {
             try {
                 const countOfwarchers = roomBroadcasterObj.roomCounter.getAllPeers();
                 streamerInfo.watchersCount = countOfwarchers;
+                streamerInfo.userName = this.userData.userName;
+                streamerInfo.nickname = this.userData.nickName;
 
                 console.log("Count of users sended: " +  streamerInfo.watchersCount);
 
