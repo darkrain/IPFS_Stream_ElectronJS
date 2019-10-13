@@ -4,6 +4,7 @@ const EventEmitter = require('events');
 const userInfoLoader = require('../data/userInfoLoader');
 const BROADCAST_INTERVAL = 10000; //ms
 const GLOBAL_ROOM_NAME = 'borgStream';
+const appConfig = require('../../appFilesConfig');
 
 class BroadcastEvent extends EventEmitter {}
 
@@ -19,9 +20,11 @@ class StreamRoomBroadcaster {
             nickName: 'UNKNOWN_NICKNAME'
         };
         if(userInfoLoader.isUserDataReady()) {
-            userInfoLoader.getUserInfoData().then(data => {
-                this.userData.userName = data.name;
-                this.userData.nickName = data.nickname;
+            userInfoLoader.getUserInfoData(appConfig.files.USERINFO_JSON_PATH).then(data => {
+                if(data) {
+                    this.userData.userName = data.name;
+                    this.userData.nickName = data.nickname;
+                }
             }).catch((err) => {
                 throw err;
             })
