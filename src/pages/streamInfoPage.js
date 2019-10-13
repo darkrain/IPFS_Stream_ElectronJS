@@ -6,22 +6,19 @@ const PageBase = require('./pageBase');
 const fileHandler = require('../data/fileHandling');
 const DataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
 const StreamInfoGenerator = require('../data/StreamerInfoGenerator.js');
-const appConfig = require('../../appFilesConfig');
-const filesChecker = require('../data/fileCheking');
-
-let streamerInfo = [];
+const jsonHelper = require('../helpers/JSONHelpers');
 
 class StreamInfoPage extends PageBase{
   constructor(ipfs, ipfsNodeID, electronIPC, pageWindow) {
       super();
       //initialize class mebmers:
-      this.base64Ava = '';
       this.ipfs = ipfs;
       this.ipfsNodeID = ipfsNodeID;
       this.electronIPC = electronIPC;
       this.pageWindow = pageWindow;
       this.dataReadyHelper = new DataReadyHelper();
-      this.streamInitializer = new StreamInitializer(this.ipfs); 
+      this.streamInitializer = new StreamInitializer(this.ipfs);
+      this.streamerInfo = null;
       this.subscribeToIpcEvents(this.electronIPC);      
       
       //refresh firstable
@@ -32,16 +29,6 @@ class StreamInfoPage extends PageBase{
     let streamPageObj = this;
     let win = this.pageWindow;
     //### IPC calls ###
-
-    ipc.on('camera-changed', (event, args) => {
-      const camText = args;
-      streamPageObj.streamInitializer.setCameraByName(camText);
-    });
-    
-    ipc.on('audio-changed', (event, args) => {
-      const audioText = args;
-      streamPageObj.streamInitializer.setAudioByName(audioText);
-    });
 
     //Calling when all data is READY!
     ipc.on('dataReady', async (event, args) => {
@@ -55,24 +42,40 @@ class StreamInfoPage extends PageBase{
     });
     ipc.on('goToStream', (event, args) => {
         //незабываем передавать в аргументах необходимые ссылки, для работы StreamerPage.
-        const argsForStream = {
-            streamerInfo: streamerInfo,
-            streamInitializer: streamPageObj.streamInitializer 
-        }
-        super.goToPage('streamingPage', argsForStream);
+        //we need to wait about streamerInfo object, so make transition in the interval.
+        const timeToWait = 1000;
+        const transitionInterval = setInterval(() => {
+            if(this.streamerInfo) {
+                clearInterval(transitionInterval);
+                const argsForStream = {
+                    streamerInfo: this.streamerInfo,
+                    streamInitializer: streamPageObj.streamInitializer
+                };
+                console.log(`Transition to streamingPage !!!`);
+                super.goToPage('streamingPage', argsForStream);
+            }
+        }, timeToWait);
+
+
     });
     //### END IPC calls ###
-  } 
+  };
 
   //### Callbacks for Events's ###
+  setAudioByName(audioName) {
+     this.streamInitializer.setAudioByName(audioName);
+  }
+
+  setCameraByName(videoName) {
+      this.streamInitializer.setCameraByName(videoName);
+  }
+
   onAvaImageUploaded = (fileContents) => {
     this.streamerImgBase64 = fileContents;
-    this.onStreamerDataUpdated();
   };
 
   onStreamerNameChanged = (name) => {
     this.streamerName = name;
-    this.onStreamerDataUpdated();
   };
 
   //### END Callbacks for Event's ###
@@ -83,7 +86,6 @@ class StreamInfoPage extends PageBase{
       this.ipfsNodeID = this.ipfs.id;
     console.log("Try update streamer data by values: " + JSON.stringify([
       this.streamerName,
-      this.streamerImgBase64,
       this.ipfsNodeID
     ]));
     if(this.streamerName && this.streamerImgBase64 && this.ipfsNodeID) {
@@ -114,16 +116,16 @@ class StreamInfoPage extends PageBase{
               "AvatarHash": streamerImgBase64Info,
               "IPFS_NodeID": ipfsNodeIdInfo
             };
-            win.webContents.send('update-requirements', streamInfoArray);
-
             if(readyData.isDataReady) {
-                streamerInfo = readyData.streamInfo;    
-                console.log("Streamer info updated! : \n" + JSON.stringify(streamerInfo));
+                this.streamerInfo = readyData.streamInfo;
+                console.log(`Ready streamer info: \n ${JSON.stringify(this.streamerInfo)}`);
+                const streamInfoDecorated = jsonHelper.simplifyStringifyValue(streamInfoArray);
+                console.log(`Streamer info updated! Values: \n ${streamInfoDecorated}`);
             }
     }).catch(err => {
       throw err;
     })
-  }
+  };
 
   stop() {
     const streamInfoPageObj = this;

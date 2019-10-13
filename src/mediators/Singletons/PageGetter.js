@@ -24,20 +24,22 @@ class PageGetter {
                 return 'StreamWatchPage';
             }
             case this.PageTypes.STREAMER_INFO_PAGE: {
-                return 'StreamerInfoPage';
+                return 'StreamInfoPage';
             }
             default: {
                 return null;
             }
         }
     }
-    static getPageByType(pageType ) {
+    static getCurrentPageWithType(pageType ) {
         const explicitPage = require('../../../appNavigator').getCurrentPage();
-        if(!explicitPage || explicitPage.constructor.name !== this.getConstructorName(pageType)) {
-            console.error(`Unable to get page with type: ${pageType} , current page is ${explicitPage}`);
-            return;
+        const constructorName = this.getConstructorName(pageType);
+        if(!explicitPage || explicitPage.constructor.name !== constructorName) {
+            console.error(`Unable to get page with type: ${constructorName} , current page is ${explicitPage.constructor.name}`);
+            return null;
         }
         console.log(`Get page by type ${pageType} succefull!`);
+        return explicitPage;
     }
 }
 

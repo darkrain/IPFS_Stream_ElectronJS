@@ -1,23 +1,35 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
-let currentUserData = {
-	streamName: null,
-	avaBase64: null
+const currentUserData = {
+	streamName: '',
+	camera: '',
+	audio: '',
+	avaBase64: ''
 };
+
+const requestUrl = 'http://localhost:4000/streamInfo';
 
 let userRequirements = []; // data requirments for stream to show user when he tap on Start button
 document.addEventListener('DOMContentLoaded',function(){
 	//the property 'isControl' means that button cannot be pushed more than once...
 	const startStreamBtn = document.getElementById('openStreamBtn');
-	const avaSelectBtn = document.getElementById('loadImgBtn');
+	const avaSelectBtn = document.getElementById('chooiseUserAvaBtn');
 	const cameraSelection = document.getElementById('cameraSelection');
 	const audioSelection = document.getElementById('audioSelection');
+	const streamAvaImage = document.getElementById('streamerAvaImg');
+	const streamerNameInputText = document.getElementById('streamerNameInputText');
+
+	//Default values:
+	initializeBasicValuesForOptions(cameraSelection);
+	initializeBasicValuesForOptions(audioSelection);
+	currentUserData.streamName = streamerNameInputText.value;
 
 	function getRequirements() {
 		let prettyViewReq = [];
-		for (let [key, value] of Object.entries(userRequirements)) { 
-			if(value.includes('empty')) {
+
+		for (let [key, value] of Object.entries(currentUserData)) {
+			if(value === '' || value === 'NONE' || !value) {
 				const translatedKey = getPrettyViewByRequirementKey(key);
 				prettyViewReq.push(`${translatedKey} - нет данных.`)
 			}
@@ -33,14 +45,17 @@ document.addEventListener('DOMContentLoaded',function(){
 
 	function getPrettyViewByRequirementKey(reqKey) {
 		switch(reqKey) {
-			case "StreamerName": {
+			case "streamName": {
 				return 'Название стрима'
 			}
-			case "AvatarHash": {
+			case "avaBase64": {
 				return 'Наличие фотографии'
 			}
-			case "IPFS_NodeID": {
-				return 'Подключение к сети'			
+			case "camera": {
+				return 'Видео устройство'
+			}
+			case "audio": {
+				return 'Аудио устройство'
 			}
 			default : {		
 				return '?НЕИЗВЕСТНО?';
@@ -63,64 +78,97 @@ document.addEventListener('DOMContentLoaded',function(){
 		}
 
 		//Если все прошло ок, вызываем из обработчика загрузку след страницы:
+        onDataUpdated();
+
+        //TODO handle next page opening
+		console.log("GO TO STREAM!");
 		ipc.send('goToStream');
+		startStreamBtn.disabled = true; //Disable button after click! To avoid multiply calls
 	});
 	
-	avaSelectBtn.addEventListener('click', () => {
-		//TODO logic for open file
-		currentUserData.avaBase64 = 'FILE_CONTENTS_HERE';
-	});
+	avaSelectBtn.onchange = e => {
+		const file = e.target.files[0];
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = () => {
+			currentUserData.avaBase64 = reader.result; //remove unecessary data for user
+			streamAvaImage.src = reader.result;
+        };
+		reader.onerror = (err) => {
+			//TODO handle error
+		}
+	};
 
 	cameraSelection.addEventListener('change', () => {
 		const text = cameraSelection.options[cameraSelection.selectedIndex].text;
-		ipc.send('camera-changed', text);
-	});	
+		console.log(`Cam updated! ${text}`);
+		currentUserData.camera = text;
+    });
 
 	audioSelection.addEventListener('change', () => {
 		const text = audioSelection.options[audioSelection.selectedIndex].text;
-		ipc.send('audio-changed', text);	
-	});
+		console.log(`Audio updated! ${text}`);
+		currentUserData.audio = text;
+    });
 
-	const streamerNameInputText = document.getElementById('streamerNameInputText');
 	streamerNameInputText.addEventListener('change', () => {
 		currentUserData.streamName = streamerNameInputText.value;
+		console.log(`Stream name updated! ${currentUserData.streamName}`);
 	});
+
+	function onDataUpdated() {
+		$.post( requestUrl, currentUserData)
+			.done(function( data ) {
+				console.log( "Data Loaded: " + JSON.stringify(data) );
+			})
+			.fail(function () {
+                console.log("ERROR");
+			});
+	}
 
 	$('#backBtn').click(function(){
 		ipc.send('backBtnClicked');
 	});
-	//at start send default value from inputText
-	const delayToUpdateDefaultValue = 1000;
-	setTimeout(() => {	
-		ipc.send('streamerNameChanged', streamerNameInputText.value);	
-	}, delayToUpdateDefaultValue)
+
+	ipc.on('camera-list-update', (event, args) => {
+		const selectionID = '#cameraSelection';
+		const firstValue = initializeSelectionData(selectionID, args);
+		currentUserData.camera = firstValue;
+	});
+
+	ipc.on('audio-list-update', (event, args) => {
+		const selectionID = '#audioSelection';
+		const firstValue = initializeSelectionData(selectionID, args);
+		currentUserData.audio = firstValue;
+	});
+
+	function initializeSelectionData(selectionID, valuesArr) {
+		$(selectionID).empty();
+		if(valuesArr.length <= 0) {
+			valuesArr.unshift('NONE'); // << should add some item to access 'change' event;
+		}
+		$.each(valuesArr, function(key, value) {
+			$(selectionID)
+				.append($("<option></option>")
+					.attr("value",value)
+					.text(value));
+		});
+
+		return valuesArr[0];
+	}
+
+	function initializeBasicValuesForOptions(selection) {
+		const baseOption = 'NONE';
+		$(selection)
+			.append($("<option></option>")
+				.attr("value",baseOption)
+				.text(baseOption));
+	}
 });
 
 // ### Client event subscriber handlers ###
-ipc.on('camera-list-update', (event, args) => {
-	const camData = args;	
-	$('#cameraSelection').empty();
-	$.each(camData, function(key, value) {   
-		$('#cameraSelection')
-			.append($("<option></option>")
-						.attr("value",value)
-						.text(value)); 
-	});
-});
 
-ipc.on('audio-list-update', (event, args) => {
-	const audioData = args;
-	$('#audioSelection').empty();
-	$.each(audioData, function(key, value) {   
-		$('#audioSelection')
-			.append($("<option></option>")
-						.attr("value",value)
-						.text(value)); 
-	});
-});
 
-ipc.on('update-requirements', (event, args) => {
-	userRequirements = args; //empty list firstable
-});
+
 
 

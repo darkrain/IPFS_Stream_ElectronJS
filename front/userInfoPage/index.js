@@ -5,7 +5,6 @@ const requestUrl = 'http://localhost:4000/user';
 
 $( document ).ready(function() {
 
-
     $('#userAvaImg').click(() => {
         $('#chooiseUserAvaBtn').click()
     })
@@ -56,7 +55,6 @@ function getFormData(form){
 
     return data;
 }
-
 
 function sendUserData(formData, callback) {    
     $.post( requestUrl, formData)

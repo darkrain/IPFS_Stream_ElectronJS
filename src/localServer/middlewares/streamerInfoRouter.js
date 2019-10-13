@@ -1,26 +1,36 @@
-const express = require('express');
-const router = express.Router();
 const fs = require('fs');
 const appConfig = require('../../../appFilesConfig');
 const STATUS = require('../data/apiData').STATUS;
+const express = require('express');
+const PageGetter = require('../../mediators/Singletons/PageGetter');
+
+const router = express.Router();
 
 const STREAM_INFO_PATH = appConfig.files.USER_STREAM_INFO_JSON_PATH;
 const RESULT_RESPONSE = {
     status: STATUS.UNDEFINED,
+    code: STATUS.UNDEFINED,
     body: STATUS.UNDEFINED
 };
+
+function resetResult() {
+    RESULT_RESPONSE.status = STATUS.UNDEFINED;
+    RESULT_RESPONSE.body = STATUS.UNDEFINED;
+    RESULT_RESPONSE.code = STATUS.UNDEFINED;
+}
 
 router.post('/', async (req, res) => {
     const streamInfo = req.body;
     try {
-        RESULT_RESPONSE.status = await checkStreamInfo(streamInfo);
-        RESULT_RESPONSE.body = streamInfo;
+        await checkStreamInfo(streamInfo);
+        onDataChanged(streamInfo);
     } catch(err) {
         RESULT_RESPONSE.status = STATUS.FAILED;
         RESULT_RESPONSE.body = err.message;
     }
 
     res.json(RESULT_RESPONSE);
+    resetResult();
 });
 
 router.get('/', async (req,res) => {
@@ -42,6 +52,7 @@ router.get('/', async (req,res) => {
     }
 
     res.json(RESULT_RESPONSE);
+    resetResult();
 });
 
 router.put('/', async (req,res) => {
@@ -59,12 +70,14 @@ router.put('/', async (req,res) => {
         fs.writeFileSync(STREAM_INFO_PATH, JSON.stringify(streamInfoData), {encoding: 'utf8'});
         RESULT_RESPONSE.status = STATUS.SUCCESS;
         RESULT_RESPONSE.body = streamInfoData;
+        onDataChanged(streamInfo);
     } catch(err) {
         RESULT_RESPONSE.status = STATUS.FAILED;
         RESULT_RESPONSE.body = err.message;
     }
 
     res.json(RESULT_RESPONSE);
+    resetResult();
 });
 
 router.delete('/', (req,res) => {
@@ -76,6 +89,7 @@ router.delete('/', (req,res) => {
     }
     RESULT_RESPONSE.status = STATUS.SUCCESS;
     res.json(RESULT_RESPONSE);
+    resetResult();
 });
 
 function checkStreamInfo(streamInfo) {
@@ -83,26 +97,43 @@ function checkStreamInfo(streamInfo) {
         try {
             const streamKeys = Object.keys(streamInfo);
             const necessaryKeys = ['streamName', 'camera', 'audio', 'avaBase64'];
-            let undefinedKeys;
+            let undefinedKeys = [];
             for(let i = 0; i < necessaryKeys.length; i++) {
                 const key = necessaryKeys[i];
                 if(!streamKeys.includes(key) || streamKeys[key] === '') {
-                    if(!undefinedKeys)
-                        undefinedKeys = 'UNDEFINED KEYS: ';
-                    undefinedKeys += `${key} ,`;
+                    undefinedKeys.push(key);
                 }
             }
 
-            if(undefinedKeys) {
-                throw new Error(undefinedKeys);
+            if(undefinedKeys.length > 0) {
+                RESULT_RESPONSE.status = STATUS.FAILED;
+                RESULT_RESPONSE.code = 'No keys!';
+                RESULT_RESPONSE.body = undefinedKeys;
+                resolve();
+            } else {
+                fs.writeFileSync(STREAM_INFO_PATH, JSON.stringify(streamInfo));
+                RESULT_RESPONSE.status = STATUS.SUCCESS;
+                RESULT_RESPONSE.body = streamInfo;
+                resolve();
             }
-
-            fs.writeFileSync(STREAM_INFO_PATH, JSON.stringify(streamInfo));
-            resolve(STATUS.SUCCESS);
         } catch(err) {
             rejected(err);
         }
     });
+}
+
+function onDataChanged(streamerInfo) {
+    const currentPage = PageGetter.getCurrentPageWithType(PageGetter.PageTypes.STREAMER_INFO_PAGE);
+    if(!currentPage) {
+        console.error(`Cannot get streamer page!`);
+        return;
+    }
+
+    currentPage.setAudioByName(streamerInfo.audio);
+    currentPage.setCameraByName(streamerInfo.camera);
+    currentPage.onStreamerNameChanged(streamerInfo.streamName);
+    currentPage.onAvaImageUploaded(streamerInfo.avaBase64);
+    currentPage.onStreamerDataUpdated();
 }
 
 

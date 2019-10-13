@@ -21,6 +21,7 @@ class StreamRoomBroadcaster {
         let ipfs = this.ipfs;      
         this.currentStreamerInfo = streamerInfo;
         const streamerHash = this.currentStreamerInfo.hashOfStreamer;
+        //TODO why streamer hash is UNDEFINED?
         console.log("Room broadcaster of streamer with name: " + streamerHash);
 
         //setup rooms
