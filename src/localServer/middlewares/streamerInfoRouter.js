@@ -96,18 +96,18 @@ function checkStreamInfo(streamInfo) {
     return new Promise((resolve, rejected) => {
         try {
             const streamKeys = Object.keys(streamInfo);
-            const necessaryKeys = ['streamName', 'camera', 'audio', 'avaBase64'];
+            const necessaryKeys = [{key:'streamName', name: "Название трасляции"}, {key:'camera', name: 'Камера'}, {key:'audio', name:"Микрофон"}, {key:'avaBase64', name:"Обложка"} ];
             let undefinedKeys = [];
             for(let i = 0; i < necessaryKeys.length; i++) {
-                const key = necessaryKeys[i];
-                if(!streamKeys.includes(key) || streamKeys[key] === '') {
-                    undefinedKeys.push(key);
+                const field = necessaryKeys[i];
+                if(!streamKeys.includes(field.key) || streamInfo[field.key] === '') {
+                    undefinedKeys.push(field);
                 }
             }
 
             if(undefinedKeys.length > 0) {
                 RESULT_RESPONSE.status = STATUS.FAILED;
-                RESULT_RESPONSE.code = 'No keys!';
+                RESULT_RESPONSE.code = 'fields_error';
                 RESULT_RESPONSE.body = undefinedKeys;
                 resolve();
             } else {
