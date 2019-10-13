@@ -12,17 +12,25 @@ const RESULT_RESPONSE = {
     body: STATUS.UNDEFINED
 };
 
+function resetResult() {
+    RESULT_RESPONSE.status = STATUS.UNDEFINED;
+    RESULT_RESPONSE.body = STATUS.UNDEFINED;
+    RESULT_RESPONSE.code = STATUS.UNDEFINED;
+}
+
 //CREATE
 router.post('/', async (req, res) => {
     const userInfo = req.body;
+    
     try {
-        RESULT_RESPONSE.status = await checkUser(userInfo);
-        RESULT_RESPONSE.body = userInfo;
+        await checkUser(userInfo);
     } catch(err) {
         RESULT_RESPONSE.status = STATUS.FAILED;
         RESULT_RESPONSE.body = err.message;
     }
+
     res.json(RESULT_RESPONSE);
+    resetResult()
 });
 
 //READ
@@ -97,25 +105,30 @@ router.delete('/', async (req, res) => {
 //Returns response code;
 function checkUser(userObj) {
     return new Promise((resolve, rejected) => {
+        console.log('USER OBJECT: \n' + JSON.stringify(userObj));
         try {
             const userKeys = Object.keys(userObj);
-            const necessaryKeys = ['name', 'nickname', 'photoBase64'];
-            let undefinedKeys;
+            const necessaryKeys = [{key:'name', name: "Имя"}, {key:'nickname', name: 'Ник'} , {key: 'photoBase64', name:'Аватар' }];
+            let undefinedKeys = [];
             for(let i = 0; i < necessaryKeys.length; i++) {
-                const key = necessaryKeys[i];
-                if(!userKeys.includes(key) || userObj[key] === '') {
-                    if(!undefinedKeys)
-                        undefinedKeys = 'UNDEFINED KEYS: ';
-                    undefinedKeys += `${key} ,`;
+                const field = necessaryKeys[i];
+                if(!userKeys.includes(field.key) || userObj[field.key] === '') {
+                    undefinedKeys.push(field);
                 }
             }
 
-            if(undefinedKeys) {
-                throw new Error(undefinedKeys);
+            
+            if(undefinedKeys.length > 0) {
+                RESULT_RESPONSE.status = STATUS.FAILED;
+                RESULT_RESPONSE.code = 'check_fields';
+                RESULT_RESPONSE.body = undefinedKeys;
+                resolve();
+            }else{
+                fs.writeFileSync(appConfig.files.USERINFO_JSON_PATH, JSON.stringify(userObj));
+                RESULT_RESPONSE.status = STATUS.SUCCESS;
+                RESULT_RESPONSE.body = userObj
+                resolve();
             }
-
-            fs.writeFileSync(appConfig.files.USERINFO_JSON_PATH, JSON.stringify(userObj));
-            resolve(STATUS.SUCCESS);
         } catch(err) {
             rejected(err);
         }

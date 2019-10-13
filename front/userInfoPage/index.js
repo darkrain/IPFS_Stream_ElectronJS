@@ -1,51 +1,70 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
-const currentUserInfo = { };
-document.addEventListener('DOMContentLoaded', () => {
-    const userAvaElement = document.getElementById('userAvaImg');
-    const chooiseAvaInput = document.getElementById('chooiseUserAvaBtn');
-    chooiseAvaInput.onchange = e => {
-        const file = e.target.files[0];
+const requestUrl = 'http://localhost:4000/user';
+
+
+$( document ).ready(function() {
+
+
+    $('#userAvaImg').click(() => {
+        $('#chooiseUserAvaBtn').click()
+    })
+
+    $('#chooiseUserAvaBtn').change((event) => {
+        const file = event.target.files[0];
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
-            currentUserInfo.photoBase64 = reader.result.replace('data:image/png;base64,', ''); //remove unecessary data for user
-            userAvaElement.src = reader.result;
+            $('#userAvaImg').attr('src', reader.result)
+            $('[name="photoBase64"]').val( reader.result ); //remove unecessary data for user
         };
         reader.onerror = (err) => {
             //TODO handle error
         }
-    };
+    })
 
-    const userNameInputText = document.getElementById('userName');
-	userNameInputText.addEventListener('change', () => {
-        //TODO realize logic in client
-        currentUserInfo.name = userNameInputText.value;
-    });
-    
-    const userNickNameInputText = document.getElementById('userNickName');
-    userNickNameInputText.addEventListener('change', () => {
-        currentUserInfo.nickname = userNickNameInputText.value;
-    });
-    
-    const createAccountBtn = document.getElementById('createAccountBtn');
-    createAccountBtn.addEventListener('click', () => {
-        //TODO realize logic in client
-        sendUserData(); //TEST
-    });
 
-    function sendUserData() {
-        //TODO send object to local server
-        const requestUrl = 'http://localhost:4000/user';
-        $.post( requestUrl, currentUserInfo)
-            .done(function( data ) {
-                alert( "Data Loaded: " + JSON.stringify(data) );
-                if(data.status === 'SUCCESS')
-                    ipc.send('openGlobalRoomPage');
-            })
-            .fail(function () {
-                alert("ERROR");
-            });
-    }
-});
+    $('form').submit((event) => {
+        event.preventDefault();
 
+        let form = $(event.target);
+        let formData = getFormData(form);
+
+        sendUserData(formData, (result) => {
+            if(result.status === 'SUCCESS'){
+                ipc.send('openGlobalRoomPage');
+            }else{
+                let textErr = '';
+                for( i in result.body ){
+                    textErr += result.body[i].name+", ";
+                }
+                toastr["error"](textErr, "Не заполнены поля")
+            }
+                
+        });
+    })
+
+})
+
+
+function getFormData(form){
+    var data = {};
+
+    form.serializeArray().forEach(function(item){
+        data[item.name] = item.value;
+    })
+
+    return data;
+}
+
+
+function sendUserData(formData, callback) {    
+    $.post( requestUrl, formData)
+        .done(function( data ) {
+            console.log({request: formData, response: data })
+            callback(data)
+        })
+        .fail(function () {
+            alert("ERROR");
+        });
+}

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../vendor/fontawesome/css/font-awesome.css"/>
     <link rel="stylesheet" href="../vendor/animate.css/animate.css"/>
     <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" href="../vendor/toastr/toastr.min.css"/>
 
     <!-- App styles -->
     <link rel="stylesheet" href="../styles/pe-icons/pe-icon-7-stroke.css"/>
@@ -45,17 +46,17 @@
                     <form  novalidate>
                         <div id="ava" class="text-center">
                             <img id="userAvaImg" src="./img/defaultAvatar.png" class="rounded-circle " width="200px" height="200px">
-                            
                         </div>
-                        <input id="chooiseUserAvaBtn" type="file" name="input" value="BbI6epu IMAGE">
+                        <input id="chooiseUserAvaBtn" type="file" name="input" value="BbI6epu IMAGE" class="d-none">
+                        <input  type="hidden" name="photoBase64" value="">
                         <div class="form-group">
                             <label class="col-form-label" for="username">Имя</label>
-                            <input type="text" placeholder="Володя" title="" required="" value="" name="userName" id="userName" class="form-control">
+                            <input type="text" placeholder="Володя" title="" required="" value="" name="name" id="userName" class="form-control">
                             <span class="form-text small">Пример: Володя или Эльвира</span>
                         </div>
                         <div class="form-group">
                             <label class="col-form-label" for="password">Ник</label>
-                            <input type="text" title="@funnyman" placeholder="@funnyman" required="" value="" name="userNickName" id="userNickName" class="form-control">
+                            <input type="text" title="@funnyman" placeholder="@funnyman" required="" value="" name="nickname" id="userNickName" class="form-control">
                             <span class="form-text small">Пример: @funnyman</span>
                         </div>
                         <div class="text-center">
@@ -75,6 +76,7 @@
 <script src="../vendor/pacejs/pace.min.js"></script>
 <script src="../vendor/jquery/jquery.min.js"></script>
 <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="../vendor/toastr/toastr.min.js"></script>
 <script src="index.js"> </script> 
 <!-- App scripts -->
 <script>if (window.module) module = window.module;</script>
