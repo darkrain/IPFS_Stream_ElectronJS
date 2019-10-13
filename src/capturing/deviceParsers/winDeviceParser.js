@@ -1,5 +1,6 @@
 const FfmpegParserBase = require('./parserBase');
 const parsingCommands = require('../commands').DeviceCommands.WINDOWS;
+const crypto = require('crypto');
 
 class WinDeviceParser extends FfmpegParserBase {
     constructor(ffmpegPath) {
@@ -31,7 +32,11 @@ class WinDeviceParser extends FfmpegParserBase {
                 continue;
             if(isAudioDevicesDesribed) {
                 const audioName = this.getAudioName(line);
-                audioNames.push(audioName);
+                const audioBuffer = new Buffer(audioName);
+                audioNames.push({
+                    name: audioName,
+                    key: audioBuffer.toString('base64')
+                });
             }
         }
         console.log(`Audio names: \n ${JSON.stringify(audioNames)}`);
@@ -69,7 +74,11 @@ class WinDeviceParser extends FfmpegParserBase {
                 continue;
             if(isVideoDevicesDesribed) {
                 const camName = this.getCamName(line);
-                camNames.push(camName);
+                const camNameBuffer = new Buffer(camName);
+                camNames.push({
+                    name: camName,
+                    key: camNameBuffer.toString('base64')
+                });
             }
         }
         console.log(`CAM NAMES: \n ${JSON.stringify(camNames)}`);

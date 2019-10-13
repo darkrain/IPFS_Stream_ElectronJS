@@ -25,7 +25,7 @@ function initializeSelectionData(selectionID, valuesArr) {
 	$.each(valuesArr, function(key, value) {
 		$(selectionID)
 			.append($("<option></option>")
-				.attr("value",value)
-				.text(value));
+				.attr("value",value.key)
+				.text(value.name));
 	});
 }

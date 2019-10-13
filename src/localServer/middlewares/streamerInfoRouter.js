@@ -128,9 +128,11 @@ function onDataChanged(streamerInfo) {
         console.error(`Cannot get streamer page!`);
         return;
     }
-
-    currentPage.setAudioByName(streamerInfo.audio);
-    currentPage.setCameraByName(streamerInfo.camera);
+    const encodedAudio = new Buffer(streamerInfo.audio, 'base64').toString();
+    const encodedCamera = new Buffer(streamerInfo.camera, 'base64').toString();
+    console.log(`INITIALIZE WITH A/V: \n ${encodedAudio} \n ZZZ${encodedCamera}$$$`);
+    currentPage.setAudioByName(encodedAudio);
+    currentPage.setCameraByName(encodedCamera);
     currentPage.onStreamerNameChanged(streamerInfo.streamName);
     currentPage.onAvaImageUploaded(streamerInfo.avaBase64);
     currentPage.onStreamerDataUpdated();

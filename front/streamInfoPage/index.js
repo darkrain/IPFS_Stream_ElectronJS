@@ -27,6 +27,7 @@ $( document ).ready(function() {
 	})
 	
 	ipc.on('camera-list-update', (event, args) => {
+	    console.log(`CAMERAS GETTED: \n ${args}`);
 		initializeSelectionData('#cameraSelection', args);
 	});
 
