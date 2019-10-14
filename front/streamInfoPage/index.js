@@ -4,7 +4,12 @@ const requestUrl = 'http://localhost:4000/streamInfo';
 
 
 $( document ).ready(function() {
-
+    const imageOpts = {
+        width: 350,
+        height: 250,
+        aspectRatio: 16 / 9
+    };
+    let currentImageCropper = null;
 	$('#backBtn').click(function(){
 		ipc.send('backBtnClicked');
 	});
@@ -20,6 +25,7 @@ $( document ).ready(function() {
         reader.onload = () => {
             $('#upload').attr('src', reader.result)
             $('[name="avaBase64"]').val( reader.result ); //remove unecessary data for user
+            currentImageCropper = initializeImageCropper('upload', imageOpts);
         };
         reader.onerror = (err) => {
             //TODO handle error
@@ -38,6 +44,10 @@ $( document ).ready(function() {
 
     $('form').submit((event) => {
         event.preventDefault();
+        if(currentImageCropper) {
+            const croppedData = currentImageCropper.getCroppedCanvas().toDataURL('image/jpeg');
+            $('[name="avaBase64"]').val(croppedData);
+        }
 
         let form = $(event.target);
         let formData = getFormData(form);
