@@ -42,9 +42,6 @@ class StreamersDataHandler {
     initializeListenersForRooms() {
         try {
             this.globalRoomListener.getOnStreamDataRecievedEvent().on('message_recieved', (msg) => {
-                if(!super.isEnabled()) {
-                    return;
-                }
                 const messageStr = msg.data.toString();
                 console.log(`Message getted: \n from: ${msg.from} \n `);
                 this.onStreamerInfoMessageGetted(messageStr)
