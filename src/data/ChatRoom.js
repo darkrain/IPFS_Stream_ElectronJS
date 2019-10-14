@@ -16,19 +16,22 @@ class ChatRoom {
         this.chatRoomEvent = new ChatRoomEvent();
 
         this.chatRoom.on('message', (msg) => {
-            const messageFrom = msg.from;
-            const messageContent = msg.data.toString();
-            const msgData = {
-                from: messageFrom,
-                message: messageContent
-            };
-            this.chatRoomEvent.emit('onMessage', msgData);
+            const messageBase64Content = msg.data;
+            const buffer = new Buffer(messageBase64Content, 'base64');
+            try {
+                const messageData = JSON.parse(buffer.toString());
+                this.chatRoomEvent.emit('onMessage', messageData);
+            } catch(err) {
+                console.error(`Cannot get message from chat! Coz: ${err.message}`);
+            }
+            
         });
 
     }
 
-    sendMessage(messageStr) {
-        this.chatRoom.broadcast(messageStr);
+    sendMessage(messageObj) {
+        const buffer = new Buffer(JSON.stringify(messageObj));
+        this.chatRoom.broadcast(buffer.toString('base64'));
     }
 
     getChatRoomname() {

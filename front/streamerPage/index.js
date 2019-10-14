@@ -1,17 +1,26 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
-
+const chatItem = $.templates("#chatItem");
 $(document).ready(function() {
 	$('#backBtn').click(function(){
 		ipc.send('backBtnClicked');
 	});
 
 	ipc.on('chatMessageGetted', (event, args) => {
-		addMessageToChat(args);
+		let chatBody = $('#chatBody');
+		if( $('.nobodywrite', chatBody).length ){
+			$('.nobodywrite', chatBody).remove()
+		}
+
+		let messageHtml = chatItem.render(args);
+		$('tbody',chatBody).append(messageHtml)
 	});
 
 	$('#sendMsgBtn').click(function () {
 		const messageInput = document.getElementById('messageInput');
+
+		if( messageInput.value === '')
+			return false;
 		ipc.send('onMessageSend', messageInput.value);
 		messageInput.value = '';
 	});
@@ -35,7 +44,7 @@ ipc.on('video-playlist-path-changed', (event, args) => {
 ipc.on('watcher-count-update', (event, args) => {
 	const watchersCount = args;
 	const textCounter = document.getElementById('countOfWatchers');
-	textCounter.textContent = `Count of watchers: ${watchersCount}`;
+	textCounter.textContent = watchersCount;
 });
 
 // ### END Client event subscriber handlers ###
