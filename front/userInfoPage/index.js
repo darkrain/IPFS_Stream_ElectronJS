@@ -4,6 +4,7 @@ const requestUrl = 'http://localhost:4000/user';
 
 
 $( document ).ready(function() {
+    let currentImageCropper = null;
     const imageOpts = {
         width: 200,
         height: 200,
@@ -21,7 +22,7 @@ $( document ).ready(function() {
             console.log(`image data loaded! : ${reader.result.substr(0, 35)}`);
             $('#userAvaImg').attr('src', reader.result)
             $('[name="photoBase64"]').val( reader.result ); //remove unecessary data for user
-            initializeImageCropper('userAvaImg', imageOpts);
+            currentImageCropper = initializeImageCropper('userAvaImg', imageOpts);
         };
         reader.onerror = (err) => {
             //TODO handle error
@@ -31,10 +32,13 @@ $( document ).ready(function() {
 
     $('form').submit((event) => {
         event.preventDefault();
-
         let form = $(event.target);
         let formData = getFormData(form);
-
+        if(currentImageCropper) {
+            const croppedData = currentImageCropper.getCroppedCanvas().toDataURL('image/jpeg');
+            console.log(`Cropped data: \n ${croppedData.substr(0,50)}`);
+            $('#userAvaImg').attr('src', croppedData);
+        }
         sendFormData(requestUrl, formData, (result) => {
             if(result.status === 'SUCCESS'){
                 ipc.send('openGlobalRoomPage');
