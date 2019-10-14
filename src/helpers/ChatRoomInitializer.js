@@ -1,5 +1,6 @@
 const ChatRoom = require('../data/ChatRoom');
 const userInfoLoader = require('../data/userInfoLoader');
+const appConfig = require('../../appFilesConfig');
 
 class ChatRoomInitializer {
     constructor(ipfs, ipc, win,streamerInfo) {
@@ -9,8 +10,8 @@ class ChatRoomInitializer {
         this.streamerInfo = streamerInfo;
         this.userName = 'UNKNOWN_NAME';
         
-        userInfoLoader.getUserInfoData.then((data) => {
-            this.userName = data.nickname;
+        userInfoLoader.getUserInfoData(appConfig.files.USERINFO_JSON_PATH).then((data) => {
+            this.userName = data ? data : 'XXX';
         })
             .catch((err) => {
                 console.error(`Unable to get USER Name!: ${err.message}`);
