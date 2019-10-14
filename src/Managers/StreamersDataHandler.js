@@ -123,7 +123,8 @@ class StreamersDataHandler {
                         if(founded) {
                             //check watchersCount fields was changed, if true so no need to update file..
                             if(founded.watchersCount === streamerInfoJson.watchersCount) {
-                                resolve();
+                                console.log("Streamer not changed with watchersCount...");
+                                return resolve();
                             }
 
                             founded.watchersCount = streamerInfoJson.watchersCount;
