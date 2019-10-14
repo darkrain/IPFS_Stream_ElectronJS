@@ -1,3 +1,6 @@
-#userAvaImg {cursor: pointer}
+#userAvaImg {
+    cursor: pointer;
+    max-width: 100%; /* This rule is very important for Cropper, please do not ignore this! */
+}
 #chooiseUserAvaBtn {margin-left: 107px;margin-top: 20px;}
 .container-center {margin: 1% auto 0;}

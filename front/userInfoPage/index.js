@@ -17,6 +17,7 @@ $( document ).ready(function() {
             console.log(`image data loaded! : ${reader.result.substr(0, 35)}`);
             $('#userAvaImg').attr('src', reader.result)
             $('[name="photoBase64"]').val( reader.result ); //remove unecessary data for user
+            initializeImageCropper('#userAvaImg');
         };
         reader.onerror = (err) => {
             //TODO handle error
@@ -42,6 +43,5 @@ $( document ).ready(function() {
             }
                 
         });
-    })
-
-})
+    });
+});
