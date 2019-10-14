@@ -32,13 +32,15 @@ $( document ).ready(function() {
 
     $('form').submit((event) => {
         event.preventDefault();
-        let form = $(event.target);
-        let formData = getFormData(form);
+
         if(currentImageCropper) {
             const croppedData = currentImageCropper.getCroppedCanvas().toDataURL('image/jpeg');
             console.log(`Cropped data: \n ${croppedData.substr(0,50)}`);
-            $('#userAvaImg').attr('src', croppedData);
+            $('[name="photoBase64"]').val( croppedData );
         }
+
+        let form = $(event.target);
+        let formData = getFormData(form);
         sendFormData(requestUrl, formData, (result) => {
             if(result.status === 'SUCCESS'){
                 ipc.send('openGlobalRoomPage');
