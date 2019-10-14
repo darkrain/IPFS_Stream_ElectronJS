@@ -34,7 +34,7 @@ $( document ).ready(function() {
         event.preventDefault();
 
         if(currentImageCropper) {
-            const croppedData = currentImageCropper.getCroppedCanvas().toDataURL('image/jpeg');
+            const croppedData = currentImageCropper.getCroppedCanvas({maxWidth: imageOpts.width, maxHeight: imageOpts.height}).toDataURL('image/jpeg');
             console.log(`Cropped data: \n ${croppedData.substr(0,50)}`);
             $('[name="photoBase64"]').val( croppedData );
         }

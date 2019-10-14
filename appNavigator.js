@@ -8,6 +8,7 @@ const dialogErrorHelper = require('./src/helpers/dialogErrorHelper');
 const logger = require('./src/data/logger');
 const appConfig = require('./appFilesConfig');
 const localServer = require('./src/localServer/localServer');
+const StreamersDataHandler = require('./src/Managers/StreamersDataHandler');
 
 //Tests
 const testRunner = require('./test/moduleDynamicTests/TestRunner');
@@ -51,6 +52,7 @@ let IpfsInstance;
 let IpfsNodeID;
 let currentWindow;
 let globalRoomListener;
+let streamersDataHandler;
 function InitializeApp(debug = false) {
     //firstable initialize IPFS instance
     ipfsLoaderHelper.initializeIPFS_Async()
@@ -59,6 +61,7 @@ function InitializeApp(debug = false) {
             IpfsInstance = ipfsInstance;
             IpfsNodeID = nodeID;    
             globalRoomListener = new GlobalRoomListener(IpfsInstance);
+            streamersDataHandler = new StreamersDataHandler(IpfsInstance, globalRoomListener);
         })
         .catch((error) => {
             if(error) {
@@ -138,7 +141,7 @@ async function loadPageByName(pageName, args)  {
             }
             case PAGES.GLOBAL_ROOM_PAGE: {
                 createWindowAsync(GLOBAL_ROOM_PAGE_LINK).then((win) => {
-                    _currentPage = new GlobalRoomPage(IpfsInstance, ipc, win, globalRoomListener);
+                    _currentPage = new GlobalRoomPage(IpfsInstance, ipc, win, streamersDataHandler);
                 });
                 break;
             }
