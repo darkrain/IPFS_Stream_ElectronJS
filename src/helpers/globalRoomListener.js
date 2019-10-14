@@ -11,7 +11,7 @@ class GlobalRoomListener {
         this.globalRoom = Room(this.ipfs, GLOBAL_ROOM_NAME);
         this.globalRoom.setMaxListeners(0);
         this.globalRoom.removeAllListeners();     
-
+        console.log("Start listening global ROOM!");
         this.subscribeToGlobalRoom();
     }
 

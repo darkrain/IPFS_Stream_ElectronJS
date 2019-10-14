@@ -66,7 +66,7 @@ class GlobalRoomPage extends PageBase {
                         globalRoomPageObj.updatePageAboutStreamers();      
                     })
                     .catch((err) => {
-                        console.log(`Unable parse streamer message: ${messageStr.substr(0, 50)} to JSON!`);
+                        console.log(`Unable parse streamer message: ${messageStr.substr(0, 50)} to JSON! ERROR: \n ${err.message}`);
                     });
             });
         } catch(err) {
@@ -77,21 +77,17 @@ class GlobalRoomPage extends PageBase {
     onStreamerInfoMessageGetted(streamerMessage) {
         //save stream info in JSON file data
         const globalRoomPageObj = this;
-        return new Promise((resolve, rejected) => {
-            const streamerInfoObj = globalRoomPageObj.tryParseStreamerInfo(streamerMessage);          
+        try {
+            const streamerInfoObj = globalRoomPageObj.tryParseStreamerInfo(streamerMessage);
             if(streamerInfoObj != null) {
-                globalRoomPageObj.saveStreamerInfoInLocalFileIfItNotExistsAsync(streamerInfoObj)
-                    .then(() => {
-                        resolve(streamerInfoObj);
-                    }).catch((err) => {
-                        rejected(err);
-                    });
+                return globalRoomPageObj.saveStreamerInfoInLocalFileIfItNotExistsAsync(streamerInfoObj);
             } else {
-                rejected(new Error("unable to handle streamer with message " + streamerMessage.substr(0, 25) + " is null!"));
+                console.err("unable to handle streamer with message " + streamerMessage.substr(0, 25) + " is null!");
             }
-        });
+        } catch(err){
+            console.err(`Unable handle streamer message! : ${err.message}`);
+        }
     }
-
     tryParseStreamerInfo(infoMsgEncoded) {
         try {
             const parsed = dataConverter.convertBase64DataToObject(infoMsgEncoded);          
