@@ -8,7 +8,7 @@ $( document ).ready(function() {
     const imageOpts = {
         width: 200,
         height: 200,
-        aspectRatio: 4 / 3
+        aspectRatio: 4 / 4
     };
     $('#userAvaImg').click(() => {
         $('#chooiseUserAvaBtn').click()
