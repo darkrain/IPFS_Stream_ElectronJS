@@ -5,6 +5,22 @@ const _HOME_ = require('os').homedir();
 const _SEP_ = require('path').sep;
 const _APPHOME_ = `${_HOME_}${_SEP_}.borgStream${_SEP_}`;
 
+const USER_FOLDERS = [
+    'bin',
+    'user',
+    'user/userData',
+    'user/userData/streamers',
+    'user/img',
+    'user/img/photo',
+    'videos'
+];
+
+const APP_USER_FOLDER_PATHS = {
+    BIN: getFullPathOfFileFromSystemPath('bin'),
+    USER: getFullPathOfFileFromSystemPath('user'),
+    VIDEOS: getFullPathOfFileFromSystemPath('videos')
+};
+
 //in app folder
 function getFullPathOfFile(relativePath) {
     return path.join(__dirname, relativePath);
@@ -17,21 +33,12 @@ function getFullPathOfFileFromSystemPath(relativePath) {
 }
 
 async function initializeBasicFolders() {
-    const folders = [
-        'bin',
-        'user',
-        'user/userData',
-        'user/userData/streamers',
-        'user/img',
-        'user/img/photo',
-        'videos'
-    ]
     await new Promise((resolve, rejected) => {
         try {
             if(!fs.existsSync(_APPHOME_))
                 fs.mkdirSync(_APPHOME_); //firstable appData folder       
-            for(const index in folders) {
-                const folderPath = path.join(_APPHOME_, folders[index]);
+            for(const index in USER_FOLDERS) {
+                const folderPath = path.join(_APPHOME_, USER_FOLDERS[index]);
                 if(!fs.existsSync(folderPath))
                     fs.mkdirSync(folderPath);
             }
@@ -145,6 +152,8 @@ function getFirstFileInFolder(path) {
 }
 
 module.exports = {
+    HOME: _APPHOME_,
+    APP_USER_FOLDER_PATHS,
     files,
     folders,
     getFirstFileInFolder,
@@ -154,4 +163,4 @@ module.exports = {
     initializeBasicFolders,
     getFullPathOfFileFromSystemPath,
     getFfmpegPath
-}
+};
