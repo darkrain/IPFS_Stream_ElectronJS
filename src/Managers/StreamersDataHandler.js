@@ -2,6 +2,7 @@ const appConfig = require('../../appFilesConfig');
 const dataConverter = require('../helpers/dataConverters.js');
 const fsExtra = require('fs-extra');
 const EventEmitter = require('events').EventEmitter;
+const pathModule = require('path');
 
 //constants
 const USER_DATA_PATH = appConfig.folders.USER_DATA_PATH;
@@ -123,7 +124,7 @@ class StreamersDataHandler {
 
                         if(founded) {
                             //check watchersCount fields was changed, if true so no need to update file..
-                            if(founded.watchersCount == streamerInfoJson.watchersCount) {
+                            if(founded.watchersCount === streamerInfoJson.watchersCount) {
                                 resolve();
                             }
 
@@ -132,6 +133,7 @@ class StreamersDataHandler {
                             fs.writeFile(STREAMERS_DATA_PATH, JSON.stringify(streamersArray), (err) => {
                                 if(err)
                                     rejected(err);
+                                this.dataEvent.emit('dataChanged');
                                 resolve();
                             });
                         }
@@ -148,6 +150,7 @@ class StreamersDataHandler {
                             rejected(err);
                         }
                         console.log("Streamer saved in file!");
+                        this.dataEvent.emit('dataChanged');
                         resolve();
                     });
                 }
