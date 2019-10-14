@@ -3,6 +3,7 @@ const dataConverter = require('../helpers/dataConverters.js');
 const fsExtra = require('fs-extra');
 const EventEmitter = require('events').EventEmitter;
 const pathModule = require('path');
+const fs = require('fs');
 
 //constants
 const USER_DATA_PATH = appConfig.folders.USER_DATA_PATH;
