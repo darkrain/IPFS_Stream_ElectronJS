@@ -66,11 +66,11 @@ class GlobalRoomPage extends PageBase {
                         globalRoomPageObj.updatePageAboutStreamers();      
                     })
                     .catch((err) => {
-                        throw err;
+                        console.log(`Unable parse streamer message: ${messageStr.substr(0, 50)} to JSON!`);
                     });
             });
         } catch(err) {
-            throw err;
+            console.error(`Error when listeners initialized! ${err.message}`);
         }      
     }
 
@@ -87,7 +87,7 @@ class GlobalRoomPage extends PageBase {
                         rejected(err);
                     });
             } else {
-                rejected(new Error("unable to handle streamer with message " + streamerMessage + " is null..."));
+                rejected(new Error("unable to handle streamer with message " + streamerMessage.substr(0, 25) + " is null!"));
             }
         });
     }

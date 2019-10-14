@@ -30,7 +30,7 @@ function initializeSelectionData(selectionID, valuesArr) {
 	});
 }
 
-function initializeImageCropper(imageID, opts = {width: Infinity, height: Infinity, aspectRatio: 16/9}) {
+function initializeImageCropper(imageID, opts = {aspectRatio: 16/9}) {
 
     const image = document.getElementById(imageID);
     const cropper = new Cropper(image, {
@@ -43,9 +43,7 @@ function initializeImageCropper(imageID, opts = {width: Infinity, height: Infini
             //console.log(event.detail.rotate);
             //console.log(event.detail.scaleX);
             //console.log(event.detail.scaleY);
-        },
-        maxWidth: opts.width,
-        maxHeight: opts.height
+        }
     });
     return cropper;
 }
