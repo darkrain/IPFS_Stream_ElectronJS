@@ -4,7 +4,11 @@ const requestUrl = 'http://localhost:4000/user';
 
 
 $( document ).ready(function() {
-
+    const imageOpts = {
+        width: 200,
+        height: 200,
+        aspectRatio: 4 / 3
+    };
     $('#userAvaImg').click(() => {
         $('#chooiseUserAvaBtn').click()
     });
@@ -17,7 +21,7 @@ $( document ).ready(function() {
             console.log(`image data loaded! : ${reader.result.substr(0, 35)}`);
             $('#userAvaImg').attr('src', reader.result)
             $('[name="photoBase64"]').val( reader.result ); //remove unecessary data for user
-            initializeImageCropper('userAvaImg');
+            initializeImageCropper('userAvaImg', imageOpts);
         };
         reader.onerror = (err) => {
             //TODO handle error
