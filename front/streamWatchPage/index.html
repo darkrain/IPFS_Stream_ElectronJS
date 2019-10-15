@@ -1,54 +1,108 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Stream watch</title>
-        <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
-        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> <!--HLS-->
-        <script src="../js/jquery-3.4.1.js"> </script>
-        <script src="index.js"> </script>
-        <script src="../additionals/chatFunc.js"></script>
-        <script>if (window.module) module = window.module;</script>
-        <link rel="stylesheet" type="text/css" href="index.css" />
-    </head>
-    <body>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Page title -->
+    <title>BorgStream</title>
 
-    <section class="container">
-        <div class="leftSide">
-            <div>
-                <h1 id='streamerNameBlock'></h1>
+    <!-- Vendor styles -->
+    <link rel="stylesheet" href="../vendor/fontawesome/css/font-awesome.css"/>
+    <link rel="stylesheet" href="../vendor/animate.css/animate.css"/>
+    <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.css"/>
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="../styles/pe-icons/pe-icon-7-stroke.css"/>
+    <link rel="stylesheet" href="../styles/pe-icons/helper.css"/>
+    <link rel="stylesheet" href="../styles/stroke-icons/style.css"/>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" type="text/css" href="index.css" />
+</head>
+
+<script id="chatItem" type="text/x-jsrender">
+    <tr>
+        <td><h6>{{if isMyMessage }} <strong class="text-success">Вы:</strong> {{else}}{{:userName}}{{/if}} <small>{{:message}}</small></h6></td>
+    </tr> 
+</script>
+
+<body>
+
+<!-- Wrapper-->
+<div class="wrapper">
+
+
+    <section class="content" style="margin:0;">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="view-header">
+                        <div class="pull-right">
+                            <button class="btn btn-w-md btn-success btn-squared"  id="createStreamBtn">Создать трансляцию</button>
+                            <button class="btn btn-w-md btn-danger btn-squared"  id="backBtn">Закрыть</button>
+                        </div>
+                        <div class="header-icon">
+                            <i class="pe page-header-icon pe-7s-display1"></i>
+                        </div>
+                        <div class="header-title">
+                            <h3 id="streamerNameBlock"></h3>
+
+                            <small>
+                                Трансляцию смотрят: <span id="countOfWatchers">0</span> человек
+                            </small>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
             </div>
 
-            <div class="videoPlayerContainer">
-                <video id="video-player" width="700" height="450" controls>
+            <div class="row">
+                <video id="video-player" width="100%" controls>
                 </video>
             </div>
-            <div>
-                <p id="countOfWatchers">Count of watchers: 0</p>
-            </div>
-            <div>
-                <button id="createStreamBtn" type="button">Create your own stream!</button>
-            </div>
-            <div>
-                <button id="backBtn" type="button">Back to streams list</button>
-            </div>
-        </div>
-        <div class="rightSide">
-            <div>
-                <p>Stream chat:</p>
-            </div>
-            <div id="chatBody">
+
+            <div class="row">
+                    <div class="panel panel-filled" style="width:100%">
+                        <div class="panel-heading">
+                            <h3>Чат</h3>
+                        </div>
+                        <div class="panel-body" style="overflow-x:auto; max-height:300px">
+
+                            <table class="table" id="chatBody" >
+                                <tbody>                             
+                                <tr class="nobodywrite">
+                                    <td>Здесь еще никто не писал</td>
+                                </tr>                                
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div id="chatControls" style=" padding: 20px;" class="modal-content">
+                            <textarea  class="form-control" rows="3"  id="messageInput"  placeholder="Сообщение"></textarea>
+                            <div>
+                                <button id="sendMsgBtn" style="margin-top:20px;" class="btn btn-w-md btn-success btn-squared">Отправить сообщение</button>
+                            </div>
+                        </div>
+                    </div>
 
             </div>
-            <div id="chatControls">
-                <div>
-                    <input id="messageInput" type="text" placeholder="Your message">
-                </div>
-                <div>
-                    <button id="sendMsgBtn" type="button" >Send message</button>
-                </div>
-            </div>
+
         </div>
     </section>
-    </body>
+</div>
+<!-- End wrapper-->
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+<!-- Vendor scripts -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="../vendor/pacejs/pace.min.js"></script>
+<script src="../vendor/jquery/jquery.min.js"></script>
+<script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="../../node_modules/jsrender/jsrender.min.js"></script>
+<script src="index.js"> </script> 
+<!-- App scripts -->
+<script>if (window.module) module = window.module;</script>
+
+</body>
+
 </html>
