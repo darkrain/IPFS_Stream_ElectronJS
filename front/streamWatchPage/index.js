@@ -1,5 +1,6 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
+const chatItem = $.templates("#chatItem");
 
 $(document).ready(function() {
 	ipc.on('streamerDataGetted', (event, args) => {
@@ -18,11 +19,17 @@ $(document).ready(function() {
 	});
 
 	ipc.on('countOfWatchers-updated', (event, args) => {
-		$('#countOfWatchers').text(`Count of watchers: ${args}`);
+		$('#countOfWatchers').text(args);
 	});
 
 	ipc.on('chatMessageGetted', (event, args) => {
-		addMessageToChat(args);
+		let chatBody = $('#chatBody');
+		if( $('.nobodywrite', chatBody).length ){
+			$('.nobodywrite', chatBody).remove()
+		}
+
+		let messageHtml = chatItem.render(args);
+		$('tbody',chatBody).append(messageHtml)
 	});
 
 	$('#sendMsgBtn').click(function () {
