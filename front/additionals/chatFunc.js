@@ -1,4 +1,5 @@
 function addMessageToChat(msgData) {
+    console.log(`MSG_DATA Getted! ${JSON.stringify(msgData)}`);
     const isMyMessage = msgData.isMyMessage;
     const from = isMyMessage ? "YOU" : msgData.from;
     const message = msgData.message;
