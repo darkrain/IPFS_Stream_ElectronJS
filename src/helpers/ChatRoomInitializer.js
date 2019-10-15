@@ -11,7 +11,7 @@ class ChatRoomInitializer {
         this.userName = 'UNKNOWN_NAME';
         
         userInfoLoader.getUserInfoData(appConfig.files.USERINFO_JSON_PATH).then((data) => {
-            this.userName = data ? data : 'XXX';
+            this.userName = data && data.nickname ? data.nickname : 'UNKNOWN_USER';
         })
             .catch((err) => {
                 console.error(`Unable to get USER Name!: ${err.message}`);
@@ -27,7 +27,7 @@ class ChatRoomInitializer {
                     resolve(res.id);
                 });
             });
-            const isMyMessage = messageData.from === ipfsID;
+            const isMyMessage = messageData.from === this.ipfsID;
             messageData.isMyMessage = isMyMessage;
             chatRoomInitializerObj.win.webContents.send('chatMessageGetted', messageData);
         });
