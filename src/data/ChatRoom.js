@@ -17,10 +17,11 @@ class ChatRoom {
 
         this.chatRoom.on('message', (msg) => {
             const messageBase64Content = msg.data.toString();
-            console.log(`Message from CHAAT: ${JSON.stringify(msg)}`);
             const buffer = new Buffer(messageBase64Content, 'base64');
+            const rawData = buffer.toString();
+            console.log(`Message from CHAAT: ${JSON.stringify(rawData)}`);
             try {
-                const messageData = JSON.parse(buffer.toString());
+                const messageData = JSON.parse(rawData);
                 this.chatRoomEvent.emit('onMessage', messageData);
             } catch(err) {
                 console.error(`Cannot get message from chat! Coz: ${err.message}`);
