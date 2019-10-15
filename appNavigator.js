@@ -56,7 +56,9 @@ let streamersDataHandler;
 function InitializeApp(debug = false) {
     //firstable initialize IPFS instance
     ipfsLoaderHelper.initializeIPFS_Async()
-        .then((ipfsInstance, nodeID) => {
+        .then(data => {
+            const nodeID = data.id;
+            const ipfsInstance = data.ipfsInstance;
             console.log("Try to initialize IPFS instance...");
             IpfsInstance = ipfsInstance;
             IpfsNodeID = nodeID;    
