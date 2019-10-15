@@ -8,6 +8,7 @@ const localServer = require('../localServer/localServer.js');
 const PageBase = require('./pageBase');
 const appConfig = require('../../appFilesConfig');
 const STREAMERS_DATA_PATH = pathModule.join(appConfig.folders.USER_DATA_PATH ,'streamers');
+const fsExtra = require('fs-extra');
 
 class StreamWatchPage extends PageBase{
     constructor(ipfs, ipc, win, streamerInfo){  
@@ -75,7 +76,11 @@ class StreamWatchPage extends PageBase{
     createTranslationFolder(streamerPath) {
         this.streamerVideoFolder = pathModule.join(streamerPath, 'streamChunks');
         try{
-            fs.mkdirSync(this.streamerVideoFolder);
+            if(!fs.existsSync(this.streamerVideoFolder)) {
+                fs.mkdirSync(this.streamerVideoFolder);
+            } else {
+               fsExtra.emptyDir(this.streamerVideoFolder);
+            }
         } catch(err) {
             console.error("Cannot create translation folder ! Coz: \n" + err.toString());
             throw err;
