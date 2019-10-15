@@ -21,10 +21,16 @@ class StreamersDataHandler {
         this.dataEvent.setMaxListeners(0);
 
         //clear data firstable
-        this.clearStreamersData().then(() => {
+        this.clearStreamersData().then( async () => {
             this.createUserFilesIfNotExists();
             this.initializeListenersForRooms();
         });
+    }
+
+    async isMyStreamAsync(nodeIdToEqual) {
+        const peerIdenty = await this.ipfs.id();
+        this.myID = peerIdenty.id;
+        return this.myID === nodeIdToEqual;
     }
 
     createUserFilesIfNotExists() {
@@ -41,9 +47,14 @@ class StreamersDataHandler {
 
     initializeListenersForRooms() {
         try {
-            this.globalRoomListener.getOnStreamDataRecievedEvent().on('message_recieved', (msg) => {
+            this.globalRoomListener.getOnStreamDataRecievedEvent().on('message_recieved',async (msg) => {
                 const messageStr = msg.data.toString();
                 console.log(`Message getted: \n from: ${msg.from} \n `);
+                const isMyStream = await this.isMyStreamAsync(msg.from);
+                if(isMyStream === true) {
+                    console.log(`Skip your stream to adding in streamersData...`);
+                    return;
+                }
                 this.onStreamerInfoMessageGetted(messageStr)
                     .then((streamerInfoObj) => {
                         //Do something with streamer when it saved.
