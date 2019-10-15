@@ -16,7 +16,7 @@ class ChatRoom {
         this.chatRoomEvent = new ChatRoomEvent();
 
         this.chatRoom.on('message', (msg) => {
-            const messageBase64Content = msg.data;
+            const messageBase64Content = msg.data.toString();
             console.log(`Message from CHAAT: ${JSON.stringify(msg)}`);
             const buffer = new Buffer(messageBase64Content, 'base64');
             try {
