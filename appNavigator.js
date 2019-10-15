@@ -65,7 +65,7 @@ function InitializeApp(debug = false) {
         })
         .catch((error) => {
             if(error) {
-                console.error("Unable initialize IPFS! \n" + error);
+                console.error("Unable initialize IPFS! \n");
                 logger.printErr(error);
                 throw error;
             }
