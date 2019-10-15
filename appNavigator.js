@@ -19,6 +19,7 @@ const UserInfoPage = require('./src/pages/userInfoPage.js');
 const GlobalRoomPage = require('./src/pages/globalRoomPage.js');
 const StreamWatchPage = require('./src/pages/streamWatchPage.js');
 const StreamerInfoPage = require('./src/pages/streamInfoPage.js');
+const LoadingPage = require('./src/pages/loadingPage');
 //*** End Imports ***
 
 //*** Page links ***
@@ -33,7 +34,8 @@ const GLOBAL_ROOM_PAGE_LINK = getPageLinkByName('globalRoomPage');
 const STREAM_PAGE_LINK = getPageLinkByName('streamerPage');
 const STREAMWATCH_PAGE_LINK = getPageLinkByName('streamWatchPage');
 const STREAMERINFO_PAGE_LINK = getPageLinkByName('streamInfoPage');
-//*** End page links 
+const LOADING_PAGE_LINK = getPageLinkByName('loadingPage');
+//*** End page links
 
 //*** Named constants ***
 const PAGES = {
@@ -41,7 +43,8 @@ const PAGES = {
     STREAMING_PAGE: 'streamingPage',
     GLOBAL_ROOM_PAGE: 'globalRoomPage',
     STREAM_WATCH_PAGE: 'streamWatchPage',
-    STREAMER_INFO_PAGE: 'streamerInfoPage'
+    STREAMER_INFO_PAGE: 'streamerInfoPage',
+    LOADING_PAGE: 'loadingPage'
 };
 
 //По умолчанию должна стоять страница создания юзера, если юзер еще не создан, если создан- то главный рум.
@@ -54,49 +57,53 @@ let currentWindow;
 let globalRoomListener;
 let streamersDataHandler;
 function InitializeApp(debug = false) {
+
+    //Loading page first
+    loadPageByName(PAGES.LOADING_PAGE).then(() => {
     //firstable initialize IPFS instance
-    ipfsLoaderHelper.initializeIPFS_Async()
-        .then(data => {
-            const nodeID = data.id;
-            const ipfsInstance = data.ipfsInstance;
-            console.log("Try to initialize IPFS instance...");
-            IpfsInstance = ipfsInstance;
-            IpfsNodeID = nodeID;    
-            globalRoomListener = new GlobalRoomListener(IpfsInstance);
-            streamersDataHandler = new StreamersDataHandler(IpfsInstance, globalRoomListener);
-        })
-        .catch((error) => {
-            if(error) {
-                console.error("Unable initialize IPFS! \n");
-                logger.printErr(error);
-                throw error;
-            }
-        })
-        .then(async () => {
-            try {
-                await appConfig.initializeBasicFolders();
-            } catch(err) {
+        ipfsLoaderHelper.initializeIPFS_Async()
+            .then(data => {
+                const nodeID = data.id;
+                const ipfsInstance = data.ipfsInstance;
+                console.log("Try to initialize IPFS instance...");
+                IpfsInstance = ipfsInstance;
+                IpfsNodeID = nodeID;
+                globalRoomListener = new GlobalRoomListener(IpfsInstance);
+                streamersDataHandler = new StreamersDataHandler(IpfsInstance, globalRoomListener);
+            })
+            .catch((error) => {
+                if(error) {
+                    console.error("Unable initialize IPFS! \n");
+                    logger.printErr(error);
+                    throw error;
+                }
+            })
+            .then(async () => {
+                try {
+                    await appConfig.initializeBasicFolders();
+                } catch(err) {
+                    throw err;
+                }
+            })
+            .then(() => {
+                console.log("Try to initialize localServer");
+                localServer.startLocalServer();
+            })
+            .catch((err) => {
                 throw err;
-            }
-        })
-        .then(() => {
-          console.log("Try to initialize localServer");
-          localServer.startLocalServer();
-        })
-        .catch((err) => {
-            throw err;
-        })
-        .then(() => {
-            console.log("Try to initialize Electron...");
-            onAppInitialized();
+            })
+            .then(() => {
+                console.log("Try to initialize Electron...");
+                onAppInitialized();
 
-            if(debug === true) {
-                testRunner.startTests();
-            }
+                if(debug === true) {
+                    testRunner.startTests();
+                }
 
-        }).catch(err => {
+            }).catch(err => {
             throw err;
         });
+    });
 }
 
 //Calls when the app and dependencies already initialized
@@ -157,6 +164,12 @@ async function loadPageByName(pageName, args)  {
             case PAGES.STREAMER_INFO_PAGE: {
                 createWindowAsync(STREAMERINFO_PAGE_LINK).then((win) => {
                     _currentPage = new StreamerInfoPage(IpfsInstance, IpfsNodeID, ipc, win);
+                });
+                break;
+            }
+            case PAGES.LOADING_PAGE: {
+                createWindowAsync(LOADING_PAGE_LINK).then((win) => {
+                    _currentPage = new LoadingPage(win);
                 });
                 break;
             }
