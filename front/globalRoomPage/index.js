@@ -1,8 +1,22 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 const streamersLoop = $.templates("#streamersLoop");
+const requestUrl = 'http://localhost:4000/user';
 $( document ).ready(function() {
     console.log( "ready!" );
+
+    $.get( requestUrl )
+        .done(function( data ) {
+            if(data.status == 'SUCCESS'){
+                $('#userProfileNick').text(data.body.nickname);
+                $('#userProfileName').text(data.body.name);
+                $('#userProfileAvatar').attr('src', data.body.photoBase64)
+            }
+        })
+        .fail(function () {
+            alert("ERROR");
+        });
+
 
     $('#CreateStreamButton').click(function(){
         const args = {
