@@ -113,6 +113,7 @@ class StreamWatchPage extends PageBase{
                 streamWatchPageObj.win.webContents.send('countOfWatchers-updated', data.streamBlock.streamWatchCount);
                 this.updateM3UFile(data.lastChunkData).then(() => {
                     console.log(`M3U8 File updated by block!`);
+                    this.initializeStartingStreamIfNotYet();
                 })
             })
             .catch((err) => {
@@ -148,7 +149,6 @@ class StreamWatchPage extends PageBase{
                     });
                 });
             });
-            this.initializeStartingStreamIfNotYet();
             streamWatchPageObj.lastBlockIndex++;
             return {streamBlock: streamBlock, lastChunkData: lastChunkData};
         } catch(err) {
