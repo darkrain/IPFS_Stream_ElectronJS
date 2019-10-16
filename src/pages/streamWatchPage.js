@@ -107,14 +107,16 @@ class StreamWatchPage extends PageBase{
             }
             const messageStr = msg.data.toString();
             console.log("Getted message from streamer: " + messageStr);
-            streamWatchPageObj.onStreamDataGetted(messageStr).then((streamBlock) => {
+            streamWatchPageObj.onStreamDataGetted(messageStr).then((data) => {
                 console.log("Chunk created!");
-
                 //Actions when data has get
-                streamWatchPageObj.win.webContents.send('countOfWatchers-updated', streamBlock.streamWatchCount);
-
-            }).catch((err) => {
-                console.error("Chunk cannot be created! ERROR!" + err.toString());
+                streamWatchPageObj.win.webContents.send('countOfWatchers-updated', data.streamBlock.streamWatchCount);
+                this.updateM3UFile(data.lastChunkData).then(() => {
+                    console.log(`M3U8 File updated by block!`);
+                })
+            })
+            .catch((err) => {
+            console.error("Chunk cannot be created! ERROR!" + err.toString());
             })
         });
     }
@@ -146,13 +148,11 @@ class StreamWatchPage extends PageBase{
                     });
                 });
             });
-
-            await this.updateM3UFile(lastChunkData);
             this.initializeStartingStreamIfNotYet();
             streamWatchPageObj.lastBlockIndex++;
-            return streamBlock;
+            return {streamBlock: streamBlock, lastChunkData: lastChunkData};
         } catch(err) {
-            console.error("Unable handle stream data: \n" + err.toString());
+            console.error("Unable handle stream data: \n" + err.message);
             throw  err;
         }
     }
