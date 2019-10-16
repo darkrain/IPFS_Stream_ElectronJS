@@ -2,7 +2,7 @@ const express = require("express");
 const globalRoutes = require('./middlewares/globalRouter');
 const path = require('path');
 const bodyParser = require('body-parser');
-const debug = false;
+const debug = true;
 let app = null;
 let closed = false;
 let _streamPath;
@@ -40,7 +40,7 @@ function startLocalServer() {
             const fileName = path.basename(req.url);
             const extension = path.extname(fileName);
 
-            if(extension == '.m3u8' || extension == '.ts') {
+            if(extension === '.m3u8' || extension === '.ts') {
                 const date = new Date();
                 const correctTime = `${date.getHours()}h:${date.getMinutes()}m:${date.getSeconds()}s`;
                 console.log(`File ${fileName} was requested at ${correctTime}`);
