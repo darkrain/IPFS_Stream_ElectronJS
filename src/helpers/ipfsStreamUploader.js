@@ -24,7 +24,7 @@ class IpfsStreamUploader {
         let block = new StreamBlock(blockData);
         let blockJsonData = block.getBlockData();
         const prevBlockHash = this.getPreviousBlockHash();
-        if(prevBlockHash != null && prevBlockHash != '') {
+        if(prevBlockHash !== null && prevBlockHash !== '') {
             blockJsonData.link = {
                 "/" : prevBlockHash
             };
