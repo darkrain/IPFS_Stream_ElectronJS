@@ -131,6 +131,7 @@ class StreamWatchPage extends PageBase{
             console.log(`STREAM DATA CHUNK GETTED WITH CID: ${blockCID}`);
             if(this.preloaderInitialized === false) {
                 await this.downloadLastChunksIfExists(streamBlock, 2);
+                return;
             }
             const lastChunkData = await this.loadChunkAsync(streamBlock);
 
