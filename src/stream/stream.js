@@ -166,7 +166,7 @@ class Stream {
 			const videoInfo = await getVideoInfo(filePath);
 			const videoDuration = videoInfo.format.duration;
 			const chunkData = {
-				EXTINF: `EXTINF:${videoDuration},`,
+				EXTINF: `EXTINF:${videoDuration}`,
 				FILE_NAME: fileName
 			};
 
