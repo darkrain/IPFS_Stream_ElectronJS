@@ -130,7 +130,7 @@ class Stream {
 	streamWatcher(onPlaylistChangedCallback) {
 		let isStreamInitialized = this.isPlalistInitialized;
 		const streamObj = this.getInstance();
-		streamObj.watcherPID = watch(this.keepPath, (evt, name) => {
+		streamObj.watcherPID = fs.watch(this.keepPath, (evt, name) => {
 			const fileName = fsPath.basename(name);
 			const playlistName = 'master.m3u8';
 			let isPlaylist = fileName === playlistName;
@@ -143,7 +143,7 @@ class Stream {
 			}	
 
 			if(evt === 'change') {
-				this.handleVideoChunkAsync.then(() => {
+				this.handleVideoChunkAsync(name).then(() => {
 					console.log(`${name}: Video chunk has handled !`);
 				});
 			}
