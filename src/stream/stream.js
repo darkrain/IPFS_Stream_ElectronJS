@@ -143,9 +143,7 @@ class Stream {
 			}	
 
 			if(evt === 'change') {
-				this.handleVideoChunkAsync(name).then(() => {
-					console.log(`${name}: Video chunk has handled !`);
-				});
+				this.handleVideoChunkAsync(name);
 			}
 		});
 		streamObj.watcherPID.setMaxListeners(0);

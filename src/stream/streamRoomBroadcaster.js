@@ -66,8 +66,6 @@ class StreamRoomBroadcaster {
                 streamerInfo.userName = this.userData.userName;
                 streamerInfo.nickname = this.userData.nickName;
 
-                console.log("Count of users sended: " +  streamerInfo.watchersCount);
-
                 const jsonSTR = JSON.stringify(streamerInfo);
                 const encoded64Data = roomBroadcasterObj.getEncodedData(jsonSTR);
     
@@ -79,7 +77,7 @@ class StreamRoomBroadcaster {
                 //emit each time
                 const dataObject = {
                     watchCount: roomBroadcasterObj.watchersCount
-                }
+                };
                 roomBroadcasterObj.broadcastEvent.emit('onStreamBroadcasted', dataObject);
             } catch(err) {
                 throw err;

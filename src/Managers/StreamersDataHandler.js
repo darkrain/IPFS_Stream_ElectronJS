@@ -52,7 +52,6 @@ class StreamersDataHandler {
                 console.log(`Message getted: \n from: ${msg.from} \n `);
                 const isMyStream = await this.isMyStreamAsync(msg.from);
                 if(isMyStream === true) {
-                    console.log(`Skip your stream to adding in streamersData...`);
                     return;
                 }
                 this.onStreamerInfoMessageGetted(messageStr)

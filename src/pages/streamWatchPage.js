@@ -128,6 +128,7 @@ class StreamWatchPage extends PageBase{
         try {
             const streamBlock = dataConverter.convertBase64DataToObject(streamData);
             const blockCID = streamBlock.dagCID;
+            console.log(`STREAM DATA CHUNK GETTED WITH CID: ${blockCID}`);
             if(this.preloaderInitialized === false) {
                 await this.downloadLastChunksIfExists(streamBlock, 2);
             }

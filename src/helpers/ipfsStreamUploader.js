@@ -36,12 +36,10 @@ class IpfsStreamUploader {
                     reject(err);
                 }
                 const cidEcnoded = cid.toBaseEncodedString();
-                console.log("Stream block uploaded to DAG with data \n " + JSON.stringify(blockJsonData));
-                console.log("Hash of this block: " + cidEcnoded);
-
                 blockJsonData.dagCID = cidEcnoded;
                 streamUpdater.setPreviousBlockHash(cidEcnoded);
-
+                console.log("Stream block uploaded to DAG with data \n " + JSON.stringify(blockJsonData));
+                console.log("Hash of this block: " + cidEcnoded);
                 resolve(blockJsonData);
               });
         });
