@@ -241,8 +241,8 @@ class StreamWatchPage extends PageBase{
             for(let i = 0; i < chunks.length; i++) {
                 const chunkData = chunks[i];
                 await new Promise((resolve, rejected) => {
-                    const extInf = `#${chunkData.extInf},\r\n`;
-                    const chunkName = chunkData.fileName + '\r\n';
+                    const extInf = `#${chunkData.EXTINF},\r\n`;
+                    const chunkName = chunkData.FILE_NAME + '\r\n';
                     try {
                         fs.appendFileSync(m3uPath, extInf);
                         fs.appendFileSync(m3uPath, chunkName);
