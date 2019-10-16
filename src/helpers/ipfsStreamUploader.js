@@ -38,8 +38,21 @@ class IpfsStreamUploader {
                 const cidEcnoded = cid.toBaseEncodedString();
                 console.log("Stream block uploaded to DAG with data \n " + JSON.stringify(blockJsonData));
                 console.log("Hash of this block: " + cidEcnoded);
-    
+
+                //* TEST *
+                /*if(prevBlockHash) {
+                    this.ipfs.dag.get(`${cid}/link`, (err, result) => {
+                        if(err) {
+                            console.error(`Cannot get last block hash! ${err.message}`);
+                            return;
+                        }
+                        console.log(`PREV BLOCK LINK RESULT, CHUNK_HASH: ${result.value.FILE_NAME} ${result.value.VIDEO_CHUNK_HASH}`);
+                    });
+                }*/
+                //END TEST
+                blockJsonData.dagCID = cidEcnoded;
                 streamUpdater.setPreviousBlockHash(cidEcnoded);
+
                 resolve(blockJsonData);
               });
         });

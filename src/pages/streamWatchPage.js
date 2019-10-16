@@ -117,7 +117,7 @@ class StreamWatchPage extends PageBase{
                 })
             })
             .catch((err) => {
-            console.error("Chunk cannot be created! ERROR!" + err.toString());
+                console.error("Chunk cannot be created! ERROR!" + err.toString());
             })
         });
     }
@@ -126,34 +126,82 @@ class StreamWatchPage extends PageBase{
         const streamWatchPageObj = this;
         try {
             const streamBlock = dataConverter.convertBase64DataToObject(streamData);
-            const chunkHash = streamBlock.VIDEO_CHUNK_HASH;
-            const extInf = streamBlock.EXTINF;
-            const lastChunkData = await new Promise((resolve, rejected) => {
-                streamWatchPageObj.ipfs.get(chunkHash, (err, files) => {
-                    if(err) {
-                        rejected(err);
-                    }
-                    const chunkName = 'master' + streamWatchPageObj.lastBlockIndex + '.ts';
-                    const chunkPath = pathModule.join(streamWatchPageObj.streamerVideoFolder, chunkName);
-                    const file = files[0];
-                    const buffer = file.content;
-                    fs.writeFile(chunkPath,buffer, (err) => {
-                        if(err) {
-                            rejected(err);
-                        }
-                        const chunkData = {
-                            fileName: chunkName,
-                            extInf: extInf
-                        };
-                        resolve(chunkData);
-                    });
-                });
-            });
-            streamWatchPageObj.lastBlockIndex++;
+            const blockCID = streamBlock.dagCID;
+            if(this.isStreamInitialized === false) {
+                await this.downloadLastChunksIfExists(streamBlock, 2);
+            }
+            const lastChunkData = await this.loadChunkAsync(streamBlock);
+
             return {streamBlock: streamBlock, lastChunkData: lastChunkData};
         } catch(err) {
             console.error("Unable handle stream data: \n" + err.message);
             throw  err;
+        }
+    }
+
+    async loadChunkAsync(streamBlock) {
+        const chunkHash = streamBlock.VIDEO_CHUNK_HASH;
+        const extInf = streamBlock.EXTINF;
+        const chunkData = {
+            fileName: 'UNKNOWN_FILE',
+            extInf: "UNKNOWN_EXT"
+        };
+        await new Promise((resolve, rejected) => {
+            this.ipfs.get(chunkHash, (err, files) => {
+                if(err) {
+                    rejected(err);
+                }
+                const chunkName = 'master' + this.lastBlockIndex + '.ts';
+                const chunkPath = pathModule.join(this.streamerVideoFolder, chunkName);
+                const file = files[0];
+                const buffer = file.content;
+                fs.writeFile(chunkPath,buffer, (err) => {
+                    if(err) {
+                        rejected(err);
+                    }
+                    chunkData.fileName = chunkName;
+                    chunkData.extInf = extInf;
+                    resolve();
+                });
+            });
+        });
+        this.lastBlockIndex++;
+        return chunkData;
+    }
+
+    async downloadLastChunksIfExists(currentBlock, countOfChunks) {
+        try{
+            let lastStreamBlocks = [];
+            let lastBlockCid = currentBlock.dagCID;
+            for(let i = 0; i < countOfChunks; i++) {
+                try {
+                    if(!lastBlockCid)
+                        break;
+
+                    await new Promise((resolve, rejected) => {
+                        this.ipfs.dag.get(`${lastBlockCid}/link`, (err, result) => {
+                            if(err)
+                                rejected(err);
+                            lastStreamBlocks.unshift(result.value);
+                            lastBlockCid = result.value.dagCID;
+                            resolve();
+                        })
+                    });
+                } catch(err) {
+                    console.error(`Cannot donwload all stream block chain! Stop donwloading! ${err.message}`);
+                    break;
+                }
+            }
+
+            //download all chunks:
+            for(let i = 0; i < lastStreamBlocks.length; i++) {
+                const block = lastStreamBlocks[i];
+                await this.loadChunkAsync(block);
+            }
+
+            this.createM3UFileIfNotExistsAsync(lastStreamBlocks);
+        } catch(err) {
+            throw err;
         }
     }
 
@@ -168,23 +216,45 @@ class StreamWatchPage extends PageBase{
         this.win.webContents.send('stream-loaded');
     }
 
+    async createM3UFileIfNotExistsAsync(chunks = null) {
+        const m3uPath = pathModule.join(this.streamerVideoFolder, 'master.m3u8');
+        await new Promise((resolve, rejected) => {
+            if(!fs.existsSync(m3uPath)) {
+                const baseContent = `#EXTM3U\r\n#EXT-X-VERSION:3\r\n#EXT-X-TARGETDURATION:8\r\n#EXT-X-MEDIA-SEQUENCE:0\r\n#EXT-X-PLAYLIST-TYPE:EVENT\r\n`;
+                try{
+                    fs.appendFileSync(m3uPath, baseContent);
+                    resolve();
+                }catch(err) {
+                    rejected(err);
+                }
+            } else {
+                resolve();
+            }
+        });
+
+        if(chunks) {
+            for(let i = 0; i < chunks.length; i++) {
+                const chunkData = chunks[i];
+                await new Promise((resolve, rejected) => {
+                    const extInf = `#${chunkData.extInf},\r\n`;
+                    const chunkName = chunkData.fileName + '\r\n';
+                    try {
+                        fs.appendFileSync(m3uPath, extInf);
+                        fs.appendFileSync(m3uPath, chunkName);
+                        resolve();
+                    } catch(err) {
+                        rejected(err);
+                    }
+                });
+            }
+        }
+    }
+
     async updateM3UFile(chunkData) {
         const streamWatchPageObj = this;
         const m3uPath = pathModule.join(streamWatchPageObj.streamerVideoFolder, 'master.m3u8');
         try {
-            await new Promise((resolve, rejected) => {                            
-                if(!fs.existsSync(m3uPath)) {
-                    const baseContent = `#EXTM3U\r\n#EXT-X-VERSION:3\r\n#EXT-X-TARGETDURATION:8\r\n#EXT-X-MEDIA-SEQUENCE:0\r\n#EXT-X-PLAYLIST-TYPE:EVENT\r\n`;
-                        try{
-                            fs.appendFileSync(m3uPath, baseContent);
-                            resolve();
-                        }catch(err) {
-                            rejected(err);
-                        }                                          
-                } else {
-                    resolve();
-                }
-            });
+            await this.createM3UFileIfNotExistsAsync();
             await new Promise((resolve, rejected) => {              
                 const extInf = `#${chunkData.extInf},\r\n`;
                 const chunkName = chunkData.fileName + '\r\n';
