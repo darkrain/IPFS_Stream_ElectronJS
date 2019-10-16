@@ -19,6 +19,7 @@ class StreamWatchPage extends PageBase{
         this.streamerInfo = streamerInfo;
         this.lastBlockIndex = 0;
         this.isStreamInitialized = false;
+        this.preloaderInitialized = false;
         const streamWatchPageObj = this;
 
         this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.ipc, this.win, this.streamerInfo);
@@ -127,7 +128,7 @@ class StreamWatchPage extends PageBase{
         try {
             const streamBlock = dataConverter.convertBase64DataToObject(streamData);
             const blockCID = streamBlock.dagCID;
-            if(this.isStreamInitialized === false) {
+            if(this.preloaderInitialized === false) {
                 await this.downloadLastChunksIfExists(streamBlock, 2);
             }
             const lastChunkData = await this.loadChunkAsync(streamBlock);
@@ -170,6 +171,7 @@ class StreamWatchPage extends PageBase{
     }
 
     async downloadLastChunksIfExists(currentBlock, countOfChunks) {
+        this.preloaderInitialized = true;
         try{
             let lastStreamBlocks = [];
             let lastBlockCid = currentBlock.dagCID;
@@ -184,6 +186,7 @@ class StreamWatchPage extends PageBase{
                                 rejected(err);
                             lastStreamBlocks.unshift(result.value);
                             lastBlockCid = result.value.dagCID;
+                            console.log(`Getting result from DAG preloader from streamer! \n ${JSON.stringify(result)}`);
                             resolve();
                         })
                     });
@@ -233,6 +236,7 @@ class StreamWatchPage extends PageBase{
         });
 
         if(chunks) {
+            console.log(`Preload chunks data!: ${JSON.stringify(chunks)}`);
             for(let i = 0; i < chunks.length; i++) {
                 const chunkData = chunks[i];
                 await new Promise((resolve, rejected) => {

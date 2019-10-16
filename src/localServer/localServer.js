@@ -2,7 +2,7 @@ const express = require("express");
 const globalRoutes = require('./middlewares/globalRouter');
 const path = require('path');
 const bodyParser = require('body-parser');
-const debug = true;
+const debug = false;
 let app = null;
 let closed = false;
 let _streamPath;
