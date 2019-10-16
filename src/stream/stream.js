@@ -6,6 +6,7 @@ const IpfsStreamUploader = require('../helpers/ipfsStreamUploader.js');
 const StreamRoomBroadcaster = require('../stream/streamRoomBroadcaster.js');
 const dialogErrorHelper = require('../helpers/dialogErrorHelper');
 const pathModule = require('path');
+const getVideoInfo = require('get-video-info');
 class Stream {
 
 	constructor(ipfs, nameOfStreem, path, ffmpegRecorder) {
@@ -22,7 +23,9 @@ class Stream {
 		this.m3u8IPFS = pathModule.join(this.keepPath, 'streamIPFS.m3u8');
 		this.isPlalistInitialized = false;
 		this.ffmpegRecorder = ffmpegRecorder;		
-		
+
+		this.currentVideoChunkID = 0;
+
 		if (!fs.existsSync(this.keepPath))
 			fs.mkdirSync(this.keepPath);		    
 		
@@ -127,63 +130,64 @@ class Stream {
 	streamWatcher(onPlaylistChangedCallback) {
 		let isStreamInitialized = this.isPlalistInitialized;
 		const streamObj = this.getInstance();
-		streamObj.watcherPID = watch(this.keepPath, function(evt, name) {
+		streamObj.watcherPID = watch(this.keepPath, (evt, name) => {
 			const fileName = fsPath.basename(name);
 			const playlistName = 'master.m3u8';
 			let isPlaylist = fileName === playlistName;
 
 			if(isPlaylist && isStreamInitialized === false) {
-				console.log("Playlist updated!")
+				console.log("Playlist updated!");
 				if(onPlaylistChangedCallback)
 					onPlaylistChangedCallback();
 				isStreamInitialized = true;
 			}	
 
-			if(evt == 'update' && fileName == playlistName) {
-				fs.readFile(streamObj.keep, 'utf8', (err, contents) => {
-					let playListContents = contents.split('#');
-
-				    for (var i = 0; i < playListContents.length; i++) {
-				    	let element = playListContents[i];
-
-						//cheks if is the chunk
-				    	if( element.includes('EXTINF') ) { 
-							const chunkValuesArray = element.split(',');
-							const chunkExtInf = chunkValuesArray[0];
-							const chunkFileName = chunkValuesArray[1].trim();							
-
-							//if chunk with filename not already exist
-							var exists = streamObj.blocks.find(x => x.FILE_NAME === chunkFileName) != null;
-							if(exists === false) {
-								console.log(`CHunk ${chunkFileName} is not exits, try to upload its...`);
-								const chunkData = {
-									"EXTINF" : chunkExtInf,
-									"FILE_NAME": chunkFileName
-								}
-
-								streamObj.blocks.push(chunkData);
-								const filePath = pathModule.join(streamObj.keepPath, chunkFileName);
-								streamObj.ipfs.addFromFs((filePath), (err, result) => {
-									if (err) { throw err }
-									const chunkHash = result[0].hash;
-									console.log(`Chunk ${streamObj.keep + chunkData.FILE_NAME} is uploaded to ipfs! \n hash: ${chunkHash}`);
-									//create block in DAG
-									streamObj.ipfsStreamUploader.addChunkToIpfsDAGAsync(chunkFileName,chunkExtInf,chunkHash)
-										.then((streamBlock) => {
-											streamObj.roomBroadcaster.startBroadcastAboutSteramBlock(streamBlock);
-										})	
-										.catch((err) => {
-											console.error("ERROR! In upload stream blocks!" + err)
-										});
-								});
-							}
-						}		
-							
-				    }
+			if(evt === 'change') {
+				this.handleVideoChunkAsync.then(() => {
+					console.log(`${name}: Video chunk has handled !`);
 				});
 			}
 		});
 		streamObj.watcherPID.setMaxListeners(0);
+	}
+
+	async handleVideoChunkAsync(fileName) {
+		try {
+			if(!fileName.includes('.ts')) //Handle only video chunks
+				return;
+			const baseName = fileName.replace('master', '');
+			const numberStr = baseName.replace('.ts', '');
+			const number = Number(numberStr);
+			if(this.currentVideoChunkID !== number) {
+				console.log(`Chunk with id ${number} not defined in currentVideoChunkID! Return from handle chunk...`);
+				return;
+			}
+			const filePath = pathModule.join(this.keepPath, fileName);
+			const videoInfo = await getVideoInfo(filePath);
+			const videoDuration = videoInfo.format.duration;
+			const chunkData = {
+				EXTINF: `#EXTINF:${videoDuration},`,
+				FILE_NAME: fileName
+			};
+
+			this.ipfs.addFromFs((filePath), (err, result) => {
+				if (err) { throw err }
+				const chunkHash = result[0].hash;
+				//create block in DAG
+				this.ipfsStreamUploader.addChunkToIpfsDAGAsync(fileName,chunkData.EXTINF,chunkHash)
+					.then((streamBlock) => {
+						this.roomBroadcaster.startBroadcastAboutSteramBlock(streamBlock);
+					})
+					.catch((err) => {
+						throw err;
+					});
+			});
+
+			this.currentVideoChunkID++;
+
+		} catch(err) {
+			console.error(`Unable handle chunk upload from stream: ${err.message}`);
+		}
 	}
 
 	stop() {
