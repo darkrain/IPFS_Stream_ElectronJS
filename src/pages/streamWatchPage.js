@@ -19,7 +19,7 @@ class StreamWatchPage extends PageBase{
         this.streamerInfo = streamerInfo;
         this.lastBlockIndex = 0;
         this.isStreamInitialized = false;
-        this.preloaderInitialized = false;
+        this.isPreloaderInitialized = false;
         const streamWatchPageObj = this;
 
         this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.ipc, this.win, this.streamerInfo);
@@ -101,9 +101,20 @@ class StreamWatchPage extends PageBase{
         this.streamerRoom.on('subscribed', () => {
             console.log(`Subscribed to ${streamHash} room!`);
         });
+
+        this.streamerRoom.once('message', async (msg) => {
+            const messageStr = msg.data.toString();
+            const streamBlock = dataConverter.convertBase64DataToObject(messageStr);
+            await this.downloadLastChunksIfExists(streamBlock, 2);
+            this.isPreloaderInitialized = true;
+        });
+
         this.streamerRoom.on('message', (msg) => {
             if(!super.isEnabled()) {
                 streamWatchPageObj.streamerRoom.removeAllListeners();
+                return;
+            }
+            if(this.isPreloaderInitialized === false) {
                 return;
             }
             const messageStr = msg.data.toString();
@@ -129,10 +140,7 @@ class StreamWatchPage extends PageBase{
             const streamBlock = dataConverter.convertBase64DataToObject(streamData);
             const blockCID = streamBlock.dagCID;
             console.log(`STREAM DATA CHUNK GETTED WITH CID: ${blockCID}`);
-            if(this.preloaderInitialized === false) {
-                await this.downloadLastChunksIfExists(streamBlock, 2);
-                return;
-            }
+
             const lastChunkData = await this.loadChunkAsync(streamBlock);
 
             return {streamBlock: streamBlock, lastChunkData: lastChunkData};
@@ -173,7 +181,6 @@ class StreamWatchPage extends PageBase{
     }
 
     async downloadLastChunksIfExists(currentBlock, countOfChunks) {
-        this.preloaderInitialized = true;
         try{
             let lastStreamBlocks = [];
             let lastBlockCid = currentBlock.dagCID;
@@ -204,7 +211,8 @@ class StreamWatchPage extends PageBase{
                 await this.loadChunkAsync(block);
             }
 
-            this.createM3UFileIfNotExistsAsync(lastStreamBlocks);
+            await this.createM3UFileIfNotExistsAsync(lastStreamBlocks);
+
         } catch(err) {
             throw err;
         }
