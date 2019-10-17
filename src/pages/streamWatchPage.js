@@ -258,7 +258,7 @@ class StreamWatchPage extends PageBase{
 
     async handleChunksQueueLoop() {
         const delayOfHandle = 1000;
-        while (this.isEnabled()) {
+        while (super.isEnabled()) {
             if(this.rawBlocksQueue.size <= 0) {
                 await this.delayAsync(delayOfHandle);
                 continue;
