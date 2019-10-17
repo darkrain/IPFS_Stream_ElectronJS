@@ -12,7 +12,8 @@ const fsExtra = require('fs-extra');
 
 class StreamWatchPage extends PageBase{
     constructor(ipfs, ipc, win, streamerInfo){  
-        super();     
+        super();
+        this.rawBlocksQueue = new Set();
         this.ipfs = ipfs;
         this.ipc = ipc;
         this.win = win;
@@ -33,6 +34,9 @@ class StreamWatchPage extends PageBase{
             streamWatchPageObj.subscribeToStreamerRoom(streamWatchPageObj.streamerInfo);
             localServer.setStaticPath(streamWatchPageObj.streamerVideoFolder);
             streamWatchPageObj.win.webContents.send('countOfWatchers-updated', streamerInfo.streamWatchCount);
+            this.handleChunksQueueLoop().then(() => {
+                console.log(`Chunks Handling ENDED!`);
+            });
         }).catch((err) => {
             console.error("Cannot initialize streamer path: \n" + err.toString())
         });
@@ -43,6 +47,34 @@ class StreamWatchPage extends PageBase{
         this.ipc.on('gotoGlobalPage', async (event, args) => {
             this.onExit();
             super.goToGlobalPage();
+        });
+    }
+
+    subscribeToStreamerRoom(streamerInfo) {
+        const streamWatchPageObj = this;
+        const streamHash = streamerInfo.hashOfStreamer;
+        console.log("Subscribe to streamer room name: " + streamHash);
+        this.streamerRoom = Room(this.ipfs, streamHash);
+        //setup streamer room
+        this.streamerRoom.setMaxListeners(0);
+        this.streamerRoom.removeAllListeners();
+
+        console.log("**** Try to subscribe room with hash: " + streamHash);
+        this.streamerRoom.on('subscribed', () => {
+            console.log(`Subscribed to ${streamHash} room!`);
+        });
+
+        this.streamerRoom.on('message', (msg) => {
+            if(!super.isEnabled()) {
+                streamWatchPageObj.streamerRoom.removeAllListeners();
+                return;
+            }
+            const messageStr = msg.data.toString();
+            this.rawBlocksQueue.add(messageStr);
+            if(this.lastBlockIndex > 2) {
+                this.initializeStartingStreamIfNotYet();
+            }
+            console.log("Getted message from streamer: " + messageStr);
         });
     }
 
@@ -86,68 +118,6 @@ class StreamWatchPage extends PageBase{
             console.error("Cannot create translation folder ! Coz: \n" + err.toString());
             throw err;
         }       
-    }
-
-    subscribeToStreamerRoom(streamerInfo) {
-        const streamWatchPageObj = this;
-        const streamHash = streamerInfo.hashOfStreamer;
-        console.log("Subscribe to streamer room name: " + streamHash);
-        this.streamerRoom = Room(this.ipfs, streamHash);
-        //setup streamer room
-        this.streamerRoom.setMaxListeners(0);
-        this.streamerRoom.removeAllListeners();
-    
-        console.log("**** Try to subscribe room with hash: " + streamHash);
-        this.streamerRoom.on('subscribed', () => {
-            console.log(`Subscribed to ${streamHash} room!`);
-        });
-
-        this.streamerRoom.once('message', async (msg) => {
-            const messageStr = msg.data.toString();
-            const streamBlock = dataConverter.convertBase64DataToObject(messageStr);
-            await this.downloadLastChunksIfExists(streamBlock, 2);
-            this.isPreloaderInitialized = true;
-        });
-
-        this.streamerRoom.on('message', (msg) => {
-            if(!super.isEnabled()) {
-                streamWatchPageObj.streamerRoom.removeAllListeners();
-                return;
-            }
-            if(this.isPreloaderInitialized === false) {
-                return;
-            }
-            const messageStr = msg.data.toString();
-            console.log("Getted message from streamer: " + messageStr);
-            streamWatchPageObj.onStreamDataGetted(messageStr).then((data) => {
-                console.log("Chunk created!");
-                //Actions when data has get
-                streamWatchPageObj.win.webContents.send('countOfWatchers-updated', data.streamBlock.streamWatchCount);
-                this.updateM3UFile(data.lastChunkData).then(() => {
-                    console.log(`M3U8 File updated by block!`);
-                    this.initializeStartingStreamIfNotYet();
-                })
-            })
-            .catch((err) => {
-                console.error("Chunk cannot be created! ERROR!" + err.toString());
-            })
-        });
-    }
-
-    async onStreamDataGetted(streamData) {
-        const streamWatchPageObj = this;
-        try {
-            const streamBlock = dataConverter.convertBase64DataToObject(streamData);
-            const blockCID = streamBlock.dagCID;
-            console.log(`STREAM DATA CHUNK GETTED WITH CID: ${blockCID}`);
-
-            const lastChunkData = await this.loadChunkAsync(streamBlock);
-
-            return {streamBlock: streamBlock, lastChunkData: lastChunkData};
-        } catch(err) {
-            console.error("Unable handle stream data: \n" + err.message);
-            throw  err;
-        }
     }
 
     async loadChunkAsync(streamBlock) {
@@ -285,7 +255,32 @@ class StreamWatchPage extends PageBase{
             throw err;
         }            
     }
-    
+
+    async handleChunksQueueLoop() {
+        const delayOfHandle = 1000;
+        while (this.isEnabled()) {
+            if(this.rawBlocksQueue.size <= 0) {
+                await this.delayAsync(delayOfHandle);
+                continue;
+            }
+            try {
+                for(let rawBlockMessage of this.rawBlocksQueue) {
+                    const streamBlock = dataConverter.convertBase64DataToObject(rawBlockMessage);
+                    const chunkData = await this.loadChunkAsync(streamBlock);
+                    this.win.webContents.send('countOfWatchers-updated', streamBlock.streamWatchCount);
+                    await this.updateM3UFile(chunkData);
+                    this.rawBlocksQueue.delete(rawBlockMessage);
+                }
+            } catch(err) {
+                console.error(`Error in handling chunks! ${err.message}`);
+                await this.delayAsync(delayOfHandle);
+            }
+        }
+    }
+
+    delayAsync(delay) {
+        return new Promise(resolve => setTimeout(resolve, delay));
+    }
 }
 
 module.exports = StreamWatchPage;
