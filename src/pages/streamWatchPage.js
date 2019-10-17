@@ -64,6 +64,7 @@ class StreamWatchPage extends PageBase{
             console.log(`Subscribed to ${streamHash} room!`);
         });
 
+        const countOfChunksToReady = 2;
         this.streamerRoom.on('message', (msg) => {
             if(!super.isEnabled()) {
                 streamWatchPageObj.streamerRoom.removeAllListeners();
@@ -71,7 +72,8 @@ class StreamWatchPage extends PageBase{
             }
             const messageStr = msg.data.toString();
             this.rawBlocksQueue.add(messageStr);
-            if(this.lastBlockIndex > 2) {
+
+            if(this.lastBlockIndex >= countOfChunksToReady) { //Update front page after 2 chunks is ready
                 this.initializeStartingStreamIfNotYet();
             }
             console.log("Getted message from streamer: " + messageStr);
