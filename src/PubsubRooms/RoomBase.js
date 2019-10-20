@@ -1,5 +1,6 @@
 const Room = require('ipfs-pubsub-room');
 const dataConverter = require('../helpers/dataConverters');
+
 class RoomBase {
     constructor(ipfsInstance, roomName) {
         this.roomName = roomName;
