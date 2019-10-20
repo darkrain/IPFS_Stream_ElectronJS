@@ -6,6 +6,10 @@ $(document).ready(function() {
 		ipc.send('backBtnClicked');
 	});
 
+	$('#saveStreamBtn').click(() => {
+		ipc.send('saveStreamClicked');
+	});
+
 	ipc.on('chatMessageGetted', (event, args) => {
 		let chatBody = $('#chatBody');
 		if( $('.nobodywrite', chatBody).length ){

@@ -1,9 +1,12 @@
-const pathModule = require('path');
 const StreamBlock = require('../data/streamBlock');
-const STREAMINFO_UPDATE_DELAY = 10000;
 class IpfsStreamUploader {
     constructor(ipfs) {
+        this.lastBlock = null;
         this.ipfs = ipfs;
+    }
+
+    getLastSteamBlock() {
+        return this.lastBlock;
     }
 
     setPreviousBlockHash(prevBlockHash) {
@@ -40,6 +43,7 @@ class IpfsStreamUploader {
                 streamUpdater.setPreviousBlockHash(cidEcnoded);
                 console.log("Stream block uploaded to DAG with data \n " + JSON.stringify(blockJsonData));
                 console.log("Hash of this block: " + cidEcnoded);
+                this.lastBlock = blockJsonData;
                 resolve(blockJsonData);
               });
         });

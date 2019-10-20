@@ -51,7 +51,9 @@ class StreamInitializer {
         }
         
     };
-
+    getStreamUploader() {
+        return this.stream.ipfsStreamUploader;
+    }
     stopStream() {
         this.isStreamStarted = false;
         this.stream.stop();
