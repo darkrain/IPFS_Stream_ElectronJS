@@ -1,6 +1,5 @@
 class StreamSaver {
     constructor(ipfsInstance, lastStreamBlock, streamerInfo) {
-
         this.ipfs = ipfsInstance;
         this.lastStreamBlock = lastStreamBlock;
         this.streamerInfo = streamerInfo;

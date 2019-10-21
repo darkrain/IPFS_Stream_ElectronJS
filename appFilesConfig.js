@@ -15,6 +15,10 @@ const USER_FOLDERS = [
     'videos'
 ];
 
+const ROOMS = {
+    SAVE_GLOBAL_ROOM: "SaveGlobalRoom"
+};
+
 const APP_USER_FOLDER_PATHS = {
     BIN: getFullPathOfFileFromSystemPath('bin'),
     USER: getFullPathOfFileFromSystemPath('user'),
@@ -108,12 +112,12 @@ const folders = {
     USER_PAGE: getFullPathOfFile('front/userInfoPage'),
     USER_DATA_PATH: getFullPathOfFileFromSystemPath('user/userData'),
     USER_PHOTO_PATH: getFullPathOfFileFromSystemPath('img/photo')
-}
+};
 
 const fileSizes = {
     MAX_USER_AVA_KB_SIZE: 200,
     MAX_STREAM_AVA_KB_SIZE: 500
-}
+};
 
 function getParsedDataByPath(path) {
     return new Promise((resolve, rejected) => {
@@ -162,5 +166,6 @@ module.exports = {
     fileSizes,
     initializeBasicFolders,
     getFullPathOfFileFromSystemPath,
-    getFfmpegPath
+    getFfmpegPath,
+    ROOMS
 };
