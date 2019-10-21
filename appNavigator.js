@@ -20,6 +20,7 @@ const GlobalRoomPage = require('./src/pages/globalRoomPage.js');
 const StreamWatchPage = require('./src/pages/streamWatchPage.js');
 const StreamerInfoPage = require('./src/pages/streamInfoPage.js');
 const LoadingPage = require('./src/pages/loadingPage');
+const WatchSavedStreamPage = require('./src/pages/watchSavedStreamPage');
 //*** End Imports ***
 
 //*** Page links ***
@@ -35,6 +36,7 @@ const STREAM_PAGE_LINK = getPageLinkByName('streamerPage');
 const STREAMWATCH_PAGE_LINK = getPageLinkByName('streamWatchPage');
 const STREAMERINFO_PAGE_LINK = getPageLinkByName('streamInfoPage');
 const LOADING_PAGE_LINK = getPageLinkByName('loadingPage');
+const WATCH_SAVED_STREAM_PAGE_LINK = getPageLinkByName('watchSavedStreamPage');
 //*** End page links
 
 //*** Named constants ***
@@ -44,7 +46,8 @@ const PAGES = {
     GLOBAL_ROOM_PAGE: 'globalRoomPage',
     STREAM_WATCH_PAGE: 'streamWatchPage',
     STREAMER_INFO_PAGE: 'streamerInfoPage',
-    LOADING_PAGE: 'loadingPage'
+    LOADING_PAGE: 'loadingPage',
+    WATCH_SAVED_STREAM_PAGE: 'watchSavedStreamPage'
 };
 
 //По умолчанию должна стоять страница создания юзера, если юзер еще не создан, если создан- то главный рум.
@@ -172,6 +175,11 @@ async function loadPageByName(pageName, args)  {
                     _currentPage = new LoadingPage(win);
                 });
                 break;
+            }
+            case PAGES.WATCH_SAVED_STREAM_PAGE: {
+                createWindowAsync(WATCH_SAVED_STREAM_PAGE_LINK).then((win) => {
+                   _currentPage = new WatchSavedStreamPage();
+                });
             }
             default: {
                 throw new Error(`FATAL_ERROR! \n Page ${pageName} in not EXISTS!`);
