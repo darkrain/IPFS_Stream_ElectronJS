@@ -50,6 +50,7 @@ $( document ).ready(function() {
 
     ipc.on(`savedStreamsUpdated`, (event, args) =>{
         window.savedStreams = args;
+        console.log(args)
         $('#listOfSavedStreams').html(savedStreamsLoop.render({streamerInfo:args}))
     });
 });

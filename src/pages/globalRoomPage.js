@@ -43,12 +43,12 @@ class GlobalRoomPage extends PageBase {
             return savedStreamData.streamerInfo;
         });
 
-        const convertedStreamersInfo = await streamerInfoArray.map(async (streamerInfo) => {
+        const convertedStreamersInfo = await Promise.all(streamerInfoArray.map(async (streamerInfo) => {
             const generatedData = await streamersMonitor.generateDataForStreamerAsync(streamerInfo, this.ipfs);
             generatedData.date = streamerInfo.date;
             return generatedData;
-        });
-
+        }));
+        console.log(`SENDED DATA: \n ${JSON.stringify(convertedStreamersInfo)}`);
         this.win.webContents.send(`savedStreamsUpdated`, convertedStreamersInfo);
     }
 }
