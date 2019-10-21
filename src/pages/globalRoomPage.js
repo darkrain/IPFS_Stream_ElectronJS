@@ -1,6 +1,7 @@
 const streamersMonitor = require('../data/streamersMonitor.js');
 const PageBase = require('./pageBase');
 const StreamersDataHandler = require('../Managers/StreamersDataHandler');
+const SavedStreamsDataHandler = require('../DataHandlers/SavedStreamsDataHandler');
 
 class GlobalRoomPage extends PageBase {
     constructor(ipfs, ipc, win, streamersDataHandler) {
@@ -9,6 +10,7 @@ class GlobalRoomPage extends PageBase {
         this.ipc = ipc;
         this.win = win;
         this.streamersDataHandler = streamersDataHandler;
+        this.savedStreamsDataHandler = new SavedStreamsDataHandler();
 
         //Call at start
         this.updatePageAboutStreamers();
@@ -17,6 +19,10 @@ class GlobalRoomPage extends PageBase {
         this.streamersDataHandler.dataEvent.on('dataChanged', () => {
             console.log("!!!UPDATING STREAMER PAGE EMITTED!!!");
             this.updatePageAboutStreamers();
+        });
+
+        this.updatePageAboutSavedStreams().then(() => {
+            console.log(`!!!Saved streams updated!!!!`);
         });
     }
 
@@ -27,6 +33,23 @@ class GlobalRoomPage extends PageBase {
         }).catch(err => {
             throw err;
         });
+    }
+
+    async updatePageAboutSavedStreams() {
+        const streamersData = await this.savedStreamsDataHandler.readDataAsync();
+
+        //get only streamerInfo from data
+        const streamerInfoArray = streamersData.map((savedStreamData) => {
+            return savedStreamData.streamerInfo;
+        });
+
+        const convertedStreamersInfo = await streamerInfoArray.map(async (streamerInfo) => {
+            const generatedData = await streamersMonitor.generateDataForStreamerAsync(streamerInfo, this.ipfs);
+            generatedData.date = streamerInfo.date;
+            return generatedData;
+        });
+
+        this.win.webContents.send(`savedStreamsUpdated`, convertedStreamersInfo);
     }
 }
 

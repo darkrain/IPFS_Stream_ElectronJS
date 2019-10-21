@@ -74,5 +74,6 @@ async function getStreamersDataAsync(ipfs) {
 }
 
 module.exports = {
-    getStreamersDataAsync
-}
+    getStreamersDataAsync,
+    generateDataForStreamerAsync
+};

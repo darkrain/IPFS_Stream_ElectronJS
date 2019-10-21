@@ -10,6 +10,10 @@ class StreamSaver {
     }
 
     async getAllSavedStreamData() {
+        //get date
+        const date = new Date();
+        const currentDate = `${date.getDay()}.${date.getMonth()}.${date.getFullYear()}`;
+        this.savedData.streamerInfo.date = currentDate;
         this.savedData.chunksHashes = await this.downloadAllHashes();
         return this.savedData;
     }

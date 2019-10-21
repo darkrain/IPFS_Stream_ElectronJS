@@ -14,7 +14,6 @@ class SavedGlobalRoomListener extends RoomListener {
             //TODO realize save streams data locally
         });
     }
-
 }
 
 module.exports = SavedGlobalRoomListener;

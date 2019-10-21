@@ -1,6 +1,7 @@
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 const streamersLoop = $.templates("#streamersLoop");
+const savedStreamsLoop = $.templates(`#savedStreamsLoop`);
 const requestUrl = 'http://localhost:4000/user';
 $( document ).ready(function() {
     console.log( "ready!" );
@@ -45,6 +46,11 @@ $( document ).ready(function() {
     ipc.on('listOfStreamersUpdated', (event, args) => {
         window.listOfStreamers = args;
         $('#listOfStreamers').html(streamersLoop.render({streamerInfo:args}))
+    });
+
+    ipc.on(`savedStreamsUpdated`, (event, args) =>{
+        window.savedStreams = args;
+        $('#listOfSavedStreams').html(savedStreamsLoop.render({streamerInfo:args}))
     });
 });
 

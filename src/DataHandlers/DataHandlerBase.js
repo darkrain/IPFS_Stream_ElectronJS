@@ -49,6 +49,9 @@ class DataHandlerBase {
     }
 
     async readDataAsync() {
+        if(!fs.existsSync(this.filePath)) {
+            return [];
+        }
         const fileDataArray = await new Promise((resolve, rejected) => {
             fs.readFile(this.filePath, {encoding: 'utf8'}, (err, data) => {
                 if(err) {
