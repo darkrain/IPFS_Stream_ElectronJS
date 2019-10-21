@@ -3,7 +3,6 @@ class StreamSaver {
         this.ipfs = ipfsInstance;
         this.lastStreamBlock = lastStreamBlock;
         this.streamerInfo = streamerInfo;
-
         this.savedData = {
             streamerInfo: this.streamerInfo,
             chunksHashes: []

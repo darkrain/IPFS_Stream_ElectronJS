@@ -10,6 +10,10 @@ const appConfig = require('./appFilesConfig');
 const localServer = require('./src/localServer/localServer');
 const StreamersDataHandler = require('./src/Managers/StreamersDataHandler');
 
+//ROOMS
+const SavedGlobalRoomListener = require('./src/PubsubRooms/SavedGlobalRoomListener');
+const SavedGlobalRoom = require('./src/PubsubRooms/SavedGlobalRoom');
+
 //Tests
 const testRunner = require('./test/moduleDynamicTests/TestRunner');
 
@@ -54,11 +58,13 @@ const PAGES = {
 const DEFAULT_PAGE =  userInfoLoader.isUserDataReady() ? PAGES.GLOBAL_ROOM_PAGE : PAGES.USER_INFO_PAGE;
 //*** End Named constants ***
 
+//Necessary vars
 let IpfsInstance;
 let IpfsNodeID;
 let currentWindow;
 let globalRoomListener;
 let streamersDataHandler;
+let savedGlobalRoomListener;
 function InitializeApp(debug = false) {
 
     //Loading page first
@@ -71,8 +77,11 @@ function InitializeApp(debug = false) {
                 console.log("Try to initialize IPFS instance...");
                 IpfsInstance = ipfsInstance;
                 IpfsNodeID = nodeID;
+
+                //handlers
                 globalRoomListener = new GlobalRoomListener(IpfsInstance);
                 streamersDataHandler = new StreamersDataHandler(IpfsInstance, globalRoomListener);
+                savedGlobalRoomListener = new SavedGlobalRoomListener(new SavedGlobalRoom(ipfsInstance));
             })
             .catch((error) => {
                 if(error) {

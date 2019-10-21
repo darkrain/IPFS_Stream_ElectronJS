@@ -3,13 +3,14 @@ class RoomEvent extends EventEmitter {}
 
 class RoomListener {
     constructor(room) {
-        this.room = room;
+        this.room = room.getRoomInstance();
         this.roomEvent = new RoomEvent();
         this.room.on('message', (msg) => {
            const data = msg.data.toString();
            //try to detect object type and emit needed event
             try {
-                const parsedObj = JSON.parse(data);
+                const buffer = new Buffer(data, 'base64');
+                const parsedObj = JSON.parse(buffer.toString());
                 if(parsedObj) {
                     console.log(`Successfully parsed message to object! onObjectGetted - emitted!`);
                     this.roomEvent.emit('onObjectGetted', parsedObj);
@@ -20,6 +21,10 @@ class RoomListener {
                 this.roomEvent.emit('onStrMessageGetted', data);
             }
         });
+    }
+
+    getRoomEvent() {
+        return this.roomEvent;
     }
 }
 

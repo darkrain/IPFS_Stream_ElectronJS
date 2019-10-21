@@ -7,6 +7,10 @@ class RoomBase {
         this.room = Room(ipfsInstance, roomName);
     }
 
+    getRoomInstance() {
+        return this.room;
+    }
+
     sendMessage(message) {
         let finalMessage = null;
 

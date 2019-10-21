@@ -1,6 +1,8 @@
 const PageBase = require('./pageBase');
 const ChatRoomInitializer = require('../helpers/ChatRoomInitializer');
 const StreamSaver = require('../stream/StreamSaver');
+const SavedGlobalRoom = require('../PubsubRooms/SavedGlobalRoom');
+
 class StreamPage extends PageBase{
   constructor(ipfs, streamInitializer, win, electronIPC, streamerInfo) {
       super();
@@ -43,8 +45,11 @@ class StreamPage extends PageBase{
         }
         this.streamSaver = new StreamSaver(this.ipfs, lastBlock, this.streamerInfo);
         this.streamSaver.getAllSavedStreamData().then((data) => {
-            //TODO: BROADCAST ABOUT DATA HERE
-            console.log(`ENDING STREAM DATA SAVED! \n ${JSON.stringify(data)}`);
+            if(!this.savedGlobalRoom) {
+                this.savedGlobalRoom = new SavedGlobalRoom(this.ipfs);
+            }
+            this.savedGlobalRoom.sendMessage(data);
+
         }).catch(err => {
             throw err;
         })
