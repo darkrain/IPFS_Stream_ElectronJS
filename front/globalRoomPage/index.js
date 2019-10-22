@@ -47,23 +47,27 @@ $( document ).ready(function() {
     $('body').on('click', '[data-watch]', (e) => {
         const isLive = $(event.target).attr('isLive') === 'true';
         e.preventDefault();
-        const arrayToFindStream = isLive ? window.listOfStreamers : window.savedStreams;
-
-        const watchId = $(event.target).attr('data-watch');
-        for(let i in arrayToFindStream){
-            const streamer = arrayToFindStream[i];
-
-            if( streamer.hashOfStreamer === watchId) {
-                const streamWatchPage = 'streamWatchPage';
-                ipc.send('goto-page', {pageName: streamWatchPage, pageArgs: streamer});
-                break;
-            }
-        }
+        const dataKey = $(event.target).attr('data-watch');
+        goToPageByType(isLive, dataKey);
     });
 
     ipc.on('listOfStreamersUpdated', (event, args) => {
-        window.listOfStreamers = args;
-        $('#listOfStreamers').html(streamersLoop.render({streamerInfo:args}))
+        const streamsList = args;
+        window.listOfStreamers = streamsList;
+        $('#listOfStreamers').html(streamersLoop.render({streamerInfo:streamsList}))
+
+        //Callback
+        setTimeout(() => {
+            //avoiding loop iteration to get streamKey, initialize object.
+            const streamsHashTable = {};
+            for(let i = 0; i < streamsList.length; i++) {
+                const stream = streamsList[i];
+                streamsHashTable[stream.hashOfStreamer] = stream;
+            }
+
+            window.streamsHashTable = streamsHashTable;
+
+        }, 0);
     });
 
     ipc.on(`savedStreamsUpdated`, (event, args) =>{
@@ -86,15 +90,12 @@ $( document ).ready(function() {
     });
 });
 
-function goToPageByType(isLive) {
+function goToPageByType(isLive, key) {
     const pageName = isLive ? 'streamWatchPage' : 'watchSavedStreamPage';
-
-    if(isLive) {
-
-    } else {
-
-    }
+    const pageArgs = isLive ? window.streamsHashTable[key] : window.recordsHashTable[key];
+    console.log(`Go to page with args: \n ${key} \n ${pageName} \n ${JSON.stringify(pageArgs).substr(0, 150)}`);
+    //test
+    return;
+    ipc.send('goto-page', {pageName: pageName, pageArgs: pageArgs});
 }
-
-
 

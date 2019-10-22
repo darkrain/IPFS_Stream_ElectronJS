@@ -47,11 +47,11 @@ async function generateDataForStreamerAsync(streamerObj, ipfs) {
     const streamData = {
         streamerName: streamerObj.nameOfStream,
         hashOfStreamer: streamerHash,
-        streamerAvaBase64: streamAvaBase64,
-        userAvaBase64: userAvaBase64,
         streamWatchCount: streamerObj.watchersCount,
         userName: streamerObj.userName,
-        nickname: streamerObj.nickname
+        nickname: streamerObj.nickname,
+        streamerAvaBase64: streamAvaBase64,
+        userAvaBase64: userAvaBase64
     };
     
     return streamData;
