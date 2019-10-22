@@ -43,7 +43,6 @@ class GlobalRoomPage extends PageBase {
             generatedData.recordKey = streamData.recordKey;
             return generatedData;
         }));
-        console.log(`SENDED DATA: \n ${JSON.stringify(convertedStreamersInfo)}`);
         this.win.webContents.send(`savedStreamsUpdated`, convertedStreamersInfo);
     }
 }
