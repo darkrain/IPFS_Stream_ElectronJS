@@ -5,6 +5,7 @@ class StreamSaver {
         this.streamerInfo = streamerInfo;
         this.savedData = {
             streamerInfo: this.streamerInfo,
+            recordKey: undefined,
             chunksHashes: []
         };
     }
@@ -15,6 +16,7 @@ class StreamSaver {
         const currentDate = `${date.getDay()}_${date.getMonth()}_${date.getFullYear()}`;
         this.savedData.streamerInfo.date = currentDate;
         this.savedData.chunksHashes = await this.downloadAllHashes();
+        this.savedData.recordKey = this.savedData.streamerInfo.hashOfStreamer + '_' + this.savedData.streamerInfo.date;
         return this.savedData;
     }
 

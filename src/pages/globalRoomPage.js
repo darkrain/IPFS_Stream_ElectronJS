@@ -37,14 +37,10 @@ class GlobalRoomPage extends PageBase {
     async updatePageAboutSavedStreams() {
         const streamersData = await this.savedStreamsDataHandler.readDataAsync();
 
-        //get only streamerInfo from data
-        const streamerInfoArray = streamersData.map((savedStreamData) => {
-            return savedStreamData.streamerInfo;
-        });
-
-        const convertedStreamersInfo = await Promise.all(streamerInfoArray.map(async (streamerInfo) => {
-            const generatedData = await streamersMonitor.generateDataForStreamerAsync(streamerInfo, this.ipfs);
-            generatedData.date = streamerInfo.date;
+        const convertedStreamersInfo = await Promise.all(streamersData.map(async (streamData) => {
+            const generatedData = await streamersMonitor.generateDataForStreamerAsync(streamData.streamerInfo, this.ipfs);
+            generatedData.date = streamData.streamerInfo.date;
+            generatedData.recordKey = streamData.recordKey;
             return generatedData;
         }));
         console.log(`SENDED DATA: \n ${JSON.stringify(convertedStreamersInfo)}`);
