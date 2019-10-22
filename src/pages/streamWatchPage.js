@@ -9,6 +9,7 @@ const PageBase = require('./pageBase');
 const appConfig = require('../../appFilesConfig');
 const STREAMERS_DATA_PATH = pathModule.join(appConfig.folders.USER_DATA_PATH ,'streamers');
 const fsExtra = require('fs-extra');
+const hlsPlaylistManager = require('../data/hlsPlaylistManager');
 
 class StreamWatchPage extends PageBase{
     constructor(ipfs, ipc, win, streamerInfo){  
@@ -20,7 +21,6 @@ class StreamWatchPage extends PageBase{
         this.streamerInfo = streamerInfo;
         this.lastBlockIndex = 0;
         this.isStreamInitialized = false;
-        this.isPreloaderInitialized = false;
         const streamWatchPageObj = this;
 
         this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.ipc, this.win, this.streamerInfo);
@@ -31,6 +31,7 @@ class StreamWatchPage extends PageBase{
             //DO something when path exists
             streamWatchPageObj.win.webContents.send('streamerDataGetted', streamWatchPageObj.streamerInfo);
             streamWatchPageObj.createTranslationFolder(path);
+            streamWatchPageObj.m3uPath = pathModule.join(streamWatchPageObj.streamerVideoFolder, 'master.m3u8');
             streamWatchPageObj.subscribeToStreamerRoom(streamWatchPageObj.streamerInfo);
             localServer.setStaticPath(streamWatchPageObj.streamerVideoFolder);
             streamWatchPageObj.win.webContents.send('countOfWatchers-updated', streamerInfo.streamWatchCount);
@@ -152,44 +153,6 @@ class StreamWatchPage extends PageBase{
         return chunkData;
     }
 
-    async downloadLastChunksIfExists(currentBlock, countOfChunks) {
-        try{
-            let lastStreamBlocks = [];
-            let lastBlockCid = currentBlock.dagCID;
-            for(let i = 0; i < countOfChunks; i++) {
-                try {
-                    if(!lastBlockCid)
-                        break;
-
-                    await new Promise((resolve, rejected) => {
-                        this.ipfs.dag.get(`${lastBlockCid}/link`, (err, result) => {
-                            if(err)
-                                rejected(err);
-                            lastStreamBlocks.unshift(result.value);
-                            lastBlockCid = result.value.dagCID;
-                            console.log(`Getting result from DAG preloader from streamer! \n ${JSON.stringify(result)}`);
-                            resolve();
-                        })
-                    });
-                } catch(err) {
-                    console.error(`Cannot donwload all stream block chain! Stop donwloading! ${err.message}`);
-                    break;
-                }
-            }
-
-            //download all chunks:
-            for(let i = 0; i < lastStreamBlocks.length; i++) {
-                const block = lastStreamBlocks[i];
-                await this.loadChunkAsync(block);
-            }
-
-            await this.createM3UFileIfNotExistsAsync(lastStreamBlocks);
-
-        } catch(err) {
-            throw err;
-        }
-    }
-
     initializeStartingStreamIfNotYet() {
         if(this.isStreamInitialized === false) {
             this.onStreamInitialized();
@@ -199,63 +162,6 @@ class StreamWatchPage extends PageBase{
 
     onStreamInitialized() {
         this.win.webContents.send('stream-loaded');
-    }
-
-    async createM3UFileIfNotExistsAsync(chunks = null) {
-        const m3uPath = pathModule.join(this.streamerVideoFolder, 'master.m3u8');
-        await new Promise((resolve, rejected) => {
-            if(!fs.existsSync(m3uPath)) {
-                const baseContent = `#EXTM3U\r\n#EXT-X-VERSION:3\r\n#EXT-X-TARGETDURATION:8\r\n#EXT-X-MEDIA-SEQUENCE:0\r\n#EXT-X-PLAYLIST-TYPE:EVENT\r\n`;
-                try{
-                    fs.appendFileSync(m3uPath, baseContent);
-                    resolve();
-                }catch(err) {
-                    rejected(err);
-                }
-            } else {
-                resolve();
-            }
-        });
-
-        if(chunks) {
-            console.log(`Preload chunks data!: ${JSON.stringify(chunks)}`);
-            for(let i = 0; i < chunks.length; i++) {
-                const chunkData = chunks[i];
-                await new Promise((resolve, rejected) => {
-                    const extInf = `#${chunkData.EXTINF},\r\n`;
-                    const chunkName = chunkData.FILE_NAME + '\r\n';
-                    try {
-                        fs.appendFileSync(m3uPath, extInf);
-                        fs.appendFileSync(m3uPath, chunkName);
-                        resolve();
-                    } catch(err) {
-                        rejected(err);
-                    }
-                });
-            }
-        }
-    }
-
-    async updateM3UFile(chunkData) {
-        const streamWatchPageObj = this;
-        const m3uPath = pathModule.join(streamWatchPageObj.streamerVideoFolder, 'master.m3u8');
-        try {
-            await this.createM3UFileIfNotExistsAsync();
-            await new Promise((resolve, rejected) => {              
-                const extInf = `#${chunkData.extInf},\r\n`;
-                const chunkName = chunkData.fileName + '\r\n';
-                try {
-                    fs.appendFileSync(m3uPath, extInf);
-                    fs.appendFileSync(m3uPath, chunkName);                  
-                    resolve();
-                } catch(err) {
-                    rejected(err);
-                }
-            });
-        } catch(err) {
-            console.error("Unable handle creation of m3ufile: \n" + err.toString());
-            throw err;
-        }            
     }
 
     async handleChunksQueueLoop() {
@@ -270,7 +176,8 @@ class StreamWatchPage extends PageBase{
                     const streamBlock = dataConverter.convertBase64DataToObject(rawBlockMessage);
                     const chunkData = await this.loadChunkAsync(streamBlock);
                     this.win.webContents.send('countOfWatchers-updated', streamBlock.streamWatchCount);
-                    await this.updateM3UFile(chunkData);
+
+                    await hlsPlaylistManager.updateM3UFileAsync(chunkData, this.m3uPath);
                     this.rawBlocksQueue.delete(rawBlockMessage);
                 }
             } catch(err) {
