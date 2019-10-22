@@ -34,8 +34,6 @@ class WatchSavedStreamPage extends PageBase {
         try {
             await this.createFolderForRecordAsync();
 
-            localServer.setStaticPath(this.recordPath);
-
             const currentStreamData = await this.recordsDataHandler.getRecordDataByKeyAsync(this.recordKey);
             if(!currentStreamData) {
                 throw new Error(`Cannot find stream data for key: ${this.recordKey}!`);
@@ -56,7 +54,8 @@ class WatchSavedStreamPage extends PageBase {
     }
 
     async downloadAllChunksAsync(chunkHashesArr, countToEmit = 1) {
-        if(countToEmit <= chunkHashesArr.length) {
+        const isExtra = countToEmit >= chunkHashesArr.length;
+        if(isExtra) {
             const timeOut = 5000;
             //emit by timeOut
             setTimeout(() => {
@@ -71,7 +70,7 @@ class WatchSavedStreamPage extends PageBase {
                 if(chunkInfo !== null) {
                     await hlsPlaylistManager.updateM3UFileAsync(chunkInfo, this.m3uPath);
                 }
-                if(i === countToEmit) {
+                if(i === countToEmit && isExtra === false) {
                     console.log(`Chunk #${i} has been loaded!`);
                     this.emitAboutChunksReady();
                 }
@@ -121,7 +120,8 @@ class WatchSavedStreamPage extends PageBase {
 
     emitAboutChunksReady() {
         console.log(`Emit about chunks updated!`);
-        this.win.webContents.send('record-loaded');
+        const url = 'http://localhost:4000/user/streamRecords/' + this.recordKey + '/master.m3u8';
+        this.win.webContents.send('record-loaded', url);
     }
 }
 

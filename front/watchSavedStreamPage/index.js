@@ -15,7 +15,7 @@ $(document).ready(function() {
 });
 
 ipc.on('record-loaded', (event, args) => {
-    const httpPath = "http://localhost:4000/master.m3u8";
+    const httpPath = args;
 	const video = document.getElementById('video-player');
 	if(Hls.isSupported()) {
 		const hls = new Hls();

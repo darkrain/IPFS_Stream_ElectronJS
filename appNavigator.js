@@ -99,7 +99,7 @@ function InitializeApp(debug = false) {
             })
             .then(() => {
                 console.log("Try to initialize localServer");
-                localServer.startLocalServer();
+                localServer.startLocalServer(appConfig.HOME);
             })
             .catch((err) => {
                 throw err;

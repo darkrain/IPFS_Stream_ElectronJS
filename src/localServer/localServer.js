@@ -8,16 +8,15 @@ let closed = false;
 let _streamPath;
 function setStaticPath(streamPath) {
     _streamPath = streamPath;
-    console.log(`Static path has been changed! ${_streamPath}`);
     if(app != null) {
         //If server already started use middleware about new stream path
         //its necessary because when express.static already defined then not updated.
         app.use(express.static(_streamPath));
+        console.log(`Static path has been changed! ${_streamPath}`);
     }
 }
 
-function startLocalServer() { 
-
+function startLocalServer(staticPath) {
     closed = false;
     app = express(); 
     app.removeAllListeners();
@@ -28,6 +27,10 @@ function startLocalServer() {
     app.use(bodyParser.urlencoded({limit: '50mb', extended: false }));
     // parse application/json
     app.use(bodyParser.json({limit: '50mb'}));
+
+    if(staticPath) {
+        setStaticPath(staticPath);
+    }
 
     if(debug) {
         //check which file being requested

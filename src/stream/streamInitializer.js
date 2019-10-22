@@ -30,27 +30,30 @@ class StreamInitializer {
         const videoFolderName = "videos";
         const streamName = this.generateRandomStreamName(); 
         console.log("Create new stream instance inside initializer..");
-
+        this.relativeVideoPath = pathModule.join(videoFolderName, streamName);
+        console.log(`RELATIVE PATH FOR VIDEO UPDATED: ${this.relativeVideoPath}`);
         this.ffmpegController = new FFmpegController();
         this.fullVideoPath = pathModule.join(this.getModuleFolderPath(videoFolderName), streamName);
         const playListPath = pathModule.join(this.fullVideoPath, 'master.m3u8');
         this.ffmpegRecorder = this.ffmpegController.getFFmpegRecorder(playListPath);
         this.stream = new Stream(this.ipfs, streamName, this.fullVideoPath, this.ffmpegRecorder);
         this.stream.createRooms();  
-        
+        this.streamName = streamName;
         this.deviceParser = this.ffmpegController.getDeviceParser();
     };  
 
     startStream(playListReadyCallBack, streamerInfo) {
         try {
             this.isStreamStarted = true;
-            this.stream.start(playListReadyCallBack, streamerInfo); 
-            localServer.setStaticPath(this.fullVideoPath);
+            this.stream.start(playListReadyCallBack, streamerInfo);
         } catch(e) {
             throw e;
         }
         
     };
+    getRelativePathOfVideo() {
+        return this.relativeVideoPath;
+    }
     getStreamUploader() {
         return this.stream.ipfsStreamUploader;
     }
@@ -117,14 +120,6 @@ class StreamInitializer {
 
     setAudioByName(audioName) {
         this.ffmpegRecorder.setAudio(audioName);
-    }
-
-    getLastFullVideoPath = () => {
-        return this.fullVideoPath;
-    }
-
-    isStreamStarted = () => {
-        return this.isStreamStarted;
     }
 }
 

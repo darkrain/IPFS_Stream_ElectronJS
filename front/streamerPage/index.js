@@ -32,7 +32,8 @@ $(document).ready(function() {
 
 // ### Client event subscriber handlers ###
 ipc.on('video-playlist-path-changed', (event, args) => {
-	const httpPath = "http://localhost:4000/master.m3u8";
+	const httpPath = args;
+	console.log(`Try to get video from url:${httpPath}`);
 	var video = document.getElementById('video-player');
 	if(Hls.isSupported()) {
 		const hls = new Hls();

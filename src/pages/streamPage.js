@@ -2,6 +2,7 @@ const PageBase = require('./pageBase');
 const ChatRoomInitializer = require('../helpers/ChatRoomInitializer');
 const StreamSaver = require('../stream/StreamSaver');
 const SavedGlobalRoom = require('../PubsubRooms/SavedGlobalRoom');
+const url = require('url');
 
 class StreamPage extends PageBase{
   constructor(ipfs, streamInitializer, win, electronIPC, streamerInfo) {
@@ -60,9 +61,10 @@ class StreamPage extends PageBase{
   //### Callbacks for Events's ###
   onPlaylistRelativePathUpdated = () => {
     const delayBeforePlay = 2000;
+    const fullUrl = 'http://localhost:4000/videos/' + this.streamInitializer.streamName + '/master.m3u8';
     setTimeout(() => {
-      this.pageWindow.webContents.send('video-playlist-path-changed');
-    }, delayBeforePlay); 
+      this.pageWindow.webContents.send('video-playlist-path-changed', fullUrl);
+    }, delayBeforePlay);
   };
   //### END Callbacks for Event's ###
 

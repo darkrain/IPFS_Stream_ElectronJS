@@ -33,7 +33,6 @@ class StreamWatchPage extends PageBase{
             streamWatchPageObj.createTranslationFolder(path);
             streamWatchPageObj.m3uPath = pathModule.join(streamWatchPageObj.streamerVideoFolder, 'master.m3u8');
             streamWatchPageObj.subscribeToStreamerRoom(streamWatchPageObj.streamerInfo);
-            localServer.setStaticPath(streamWatchPageObj.streamerVideoFolder);
             streamWatchPageObj.win.webContents.send('countOfWatchers-updated', streamerInfo.streamWatchCount);
             this.handleChunksQueueLoop().then(() => {
                 console.log(`Chunks Handling ENDED!`);
@@ -91,6 +90,7 @@ class StreamWatchPage extends PageBase{
 
     async initializeStreamerPath(streamerInfo) {
         const streamerHash = streamerInfo.hashOfStreamer;
+        this.streamerHash = streamerHash;
         const streamPath = pathModule.join(STREAMERS_DATA_PATH, streamerHash);
         const path = await new Promise((resolve, rejected) => {
             try{
@@ -161,7 +161,8 @@ class StreamWatchPage extends PageBase{
     }
 
     onStreamInitialized() {
-        this.win.webContents.send('stream-loaded');
+        const url = 'http://localhost:4000/user/userData/streamers' + this.streamerHash + '/master.m3u8';
+        this.win.webContents.send('stream-loaded', url);
     }
 
     async handleChunksQueueLoop() {
