@@ -1,6 +1,5 @@
 const streamersMonitor = require('../data/streamersMonitor.js');
 const PageBase = require('./pageBase');
-const StreamersDataHandler = require('../Managers/StreamersDataHandler');
 const SavedStreamsDataHandler = require('../DataHandlers/SavedStreamsDataHandler');
 
 class GlobalRoomPage extends PageBase {
