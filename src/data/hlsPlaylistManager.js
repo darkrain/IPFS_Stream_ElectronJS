@@ -33,6 +33,12 @@ async function createM3UFileIfNotExistsAsync(m3uPath, chunks = null) {
     }
 }
 
+async function appendEndToPlaylistAsync(m3uPath) {
+    await new Promise((resolve, rejected) => {
+        fs.appendFileSync(m3uPath, `#EXT-X-ENDLIST\r\n`);
+    })
+}
+
 async function updateM3UFileAsync(chunkData, m3uPath) {
     try {
         await createM3UFileIfNotExistsAsync(m3uPath);
@@ -54,5 +60,6 @@ async function updateM3UFileAsync(chunkData, m3uPath) {
 }
 module.exports = {
     createM3UFileIfNotExistsAsync,
-    updateM3UFileAsync
+    updateM3UFileAsync,
+    appendEndToPlaylistAsync
 };

@@ -187,7 +187,7 @@ async function loadPageByName(pageName, args)  {
             }
             case PAGES.WATCH_SAVED_STREAM_PAGE: {
                 createWindowAsync(WATCH_SAVED_STREAM_PAGE_LINK).then((win) => {
-                   _currentPage = new WatchSavedStreamPage(IpfsInstance, win, args.recordKey);
+                   _currentPage = new WatchSavedStreamPage(ipc, IpfsInstance, win, args.recordKey);
                 });
                 break;
             }
