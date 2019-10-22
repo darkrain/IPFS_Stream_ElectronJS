@@ -104,11 +104,16 @@ class WatchSavedStreamPage extends PageBase {
                     });
                 });
             });
-
-            const chunkVideoInfo = await getVideoInfo(chunkPath);
+             let duration = 8.0;
+            try {
+                const videoInfo = await getVideoInfo(chunkPath);
+                duration = videoInfo.format.duration;
+            } catch(err) {
+                console.error('FFPROBE works bad.');
+            }
             const chunkInfo = {
                 fileName: chunkName,
-                extInf: `EXTINF:${chunkVideoInfo.format.duration}`
+                extInf: `EXTINF:${duration}`
             };
 
             return chunkInfo;
