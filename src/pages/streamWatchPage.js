@@ -161,7 +161,7 @@ class StreamWatchPage extends PageBase{
     }
 
     onStreamInitialized() {
-        const url = 'http://localhost:4000/user/userData/streamers/' + this.streamerHash + '/master.m3u8';
+        const url = 'http://localhost:4000/user/userData/streamers/' + this.streamerHash + '/streamChunks/master.m3u8';
         this.win.webContents.send('stream-loaded', url);
     }
 
