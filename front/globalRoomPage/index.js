@@ -28,22 +28,6 @@ $( document ).ready(function() {
         ipc.send('goto-page', args);
     });
 
-
-    /*$('body').on('click', '[data-watch]', (e) => {
-        e.preventDefault();
-        let watchId = $(event.target).attr('data-watch');
-
-        for( i in window.listOfStreamers){
-            let streamer = window.listOfStreamers[i];
-
-            if( streamer.hashOfStreamer == watchId) {
-                const streamWatchPage = 'streamWatchPage';
-                ipc.send('goto-page', {pageName: streamWatchPage, pageArgs: streamer});  
-                break;              
-            };
-        }
-    });*/
-
     $('body').on('click', '[data-watch]', (e) => {
         const isLive = $(event.target).attr('isLive') === 'true';
         e.preventDefault();

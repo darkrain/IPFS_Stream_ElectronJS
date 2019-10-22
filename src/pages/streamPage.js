@@ -53,7 +53,9 @@ class StreamPage extends PageBase{
 
         }).catch(err => {
             throw err;
-        })
+        });
+
+        super.goToGlobalPage();
     });
     //### END IPC calls ###
   }
