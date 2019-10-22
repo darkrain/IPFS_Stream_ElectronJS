@@ -95,7 +95,6 @@ function goToPageByType(isLive, key) {
     const pageArgs = isLive ? window.streamsHashTable[key] : window.recordsHashTable[key];
     console.log(`Go to page with args: \n ${key} \n ${pageName} \n ${JSON.stringify(pageArgs).substr(0, 150)}`);
     //test
-    return;
     ipc.send('goto-page', {pageName: pageName, pageArgs: pageArgs});
 }
 
