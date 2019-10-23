@@ -98,6 +98,7 @@ class StreamRoomBroadcaster {
     }
     stopBroadcastAboutStream() {
         if(this.broadcastLoopInformator) {
+            this.streamerRoom.broadcast("STREAM_END");
             console.log("StreamRoomBroadcaster: Stop broadcast about stream!");
             clearInterval(this.broadcastLoopInformator);
         }

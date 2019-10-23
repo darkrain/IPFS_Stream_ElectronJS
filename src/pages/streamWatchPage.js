@@ -69,12 +69,20 @@ class StreamWatchPage extends PageBase{
         });
 
         const countOfChunksToReady = 2;
-        this.streamerRoom.on('message', (msg) => {
+        this.streamerRoom.on('message', async (msg) => {
             if(!super.isEnabled()) {
                 streamWatchPageObj.streamerRoom.removeAllListeners();
                 return;
             }
+
             const messageStr = msg.data.toString();
+
+            //end stream if message about end
+            if(messageStr === 'STREAM_END') {
+                await this.endPlayListAsync();
+                return;
+            }
+
             this.rawBlocksQueue.add(messageStr);
 
             if(this.lastBlockIndex >= countOfChunksToReady) { //Update front page after 2 chunks is ready
@@ -90,6 +98,10 @@ class StreamWatchPage extends PageBase{
                 console.log("LEave from room!");
             })
         }
+    }
+
+    async endPlayListAsync() {
+        await hlsPlaylistManager.appendEndToPlaylistAsync(this.m3uPath);
     }
 
     async initializeStreamerPath(streamerInfo) {
