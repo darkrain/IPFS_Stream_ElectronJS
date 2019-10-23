@@ -108,7 +108,7 @@ class StreamRoomBroadcaster {
         streamBlock.streamWatchCount = this.roomCounter.getAllPeers();
         this.encodeStreamBlockAsync(streamBlock).then((encodedBlock) => {
             this.streamerRoom.broadcast(encodedBlock);
-            console.log(`Broadcasted about block! \n data: ${streamBlockStr} \n encoded: ${encodedBlock}`);
+            console.log(`Broadcasted about block! \n encoded: ${encodedBlock}`);
         }).catch((err) => {
             throw err;
         })
