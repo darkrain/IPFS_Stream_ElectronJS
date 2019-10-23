@@ -131,12 +131,6 @@ class StreamersDataHandler {
                         const founded = streamersArray.find(streamer => streamer.hashOfStreamer === streamerInfoJson.hashOfStreamer);
 
                         if(founded) {
-                            //check watchersCount fields was changed, if true so no need to update file..
-                            if(founded.watchersCount === streamerInfoJson.watchersCount) {
-                                console.log("Streamer not changed with watchersCount...");
-                                return resolve();
-                            }
-
                             founded.watchersCount = streamerInfoJson.watchersCount;
                             //write in file
                             fs.writeFile(STREAMERS_DATA_PATH, JSON.stringify(streamersArray), (err) => {
