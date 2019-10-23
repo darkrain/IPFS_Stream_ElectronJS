@@ -23,6 +23,10 @@ class StreamWatchPage extends PageBase{
         this.isStreamInitialized = false;
         const streamWatchPageObj = this;
 
+        //*** update raw blocks queue by last block!
+        this.lastStreamBlockFromInfo = this.streamerInfo.lastStreamBlock;
+        this.rawBlocksQueue.add(this.lastStreamBlockFromInfo);
+
         this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.ipc, this.win, this.streamerInfo);
         this.chatRoomInitializer.initialize();
 
