@@ -31,8 +31,8 @@ class StreamRoomBroadcaster {
         }
     }
 
-    updateLastStreamBlock(streamBlock) {
-        this.lastStreamBlock = streamBlock;
+    async updateLastStreamBlockAsync(streamBlock) {
+        this.lastStreamBlockEncoded = await this.encodeStreamBlockAsync(streamBlock);
     }
 
     initializeRooms(streamerInfo) {
@@ -65,7 +65,7 @@ class StreamRoomBroadcaster {
         const streamerInfo = this.currentStreamerInfo;
         this.broadcastLoopInformator = setInterval(() => {
             try {
-                if(!this.lastStreamBlock) {
+                if(!this.lastStreamBlockEncoded) {
                     //skip without blocks
                     return;
                 }
@@ -73,7 +73,7 @@ class StreamRoomBroadcaster {
                 streamerInfo.watchersCount = countOfwarchers;
                 streamerInfo.userName = this.userData.userName;
                 streamerInfo.nickname = this.userData.nickName;
-                streamerInfo.lastStreamBlock = this.lastStreamBlock;
+                streamerInfo.lastStreamBlockEncoded = this.lastStreamBlockEncoded;
                 const jsonSTR = JSON.stringify(streamerInfo);
                 const encoded64Data = roomBroadcasterObj.getEncodedData(jsonSTR);
     
@@ -103,14 +103,27 @@ class StreamRoomBroadcaster {
         }
     }
 
-    startBroadcastAboutSteramBlock(streamBlock) {
+    startBroadcastAboutStreamBlock(streamBlock) {
         //Set count of watchers too
         streamBlock.streamWatchCount = this.roomCounter.getAllPeers();
+        this.encodeStreamBlockAsync(streamBlock).then((encodedBlock) => {
+            this.streamerRoom.broadcast(encodedBlock);
+            console.log(`Broadcasted about block! \n data: ${streamBlockStr} \n encoded: ${encodedBlock}`);
+        }).catch((err) => {
+            throw err;
+        })
+    }
 
-        const streamBlockStr = JSON.stringify(streamBlock);
-        const encodedBlock = this.getEncodedData(streamBlockStr);
-        this.streamerRoom.broadcast(encodedBlock);
-        console.log(`Broadcasted about block! \n data: ${streamBlockStr} \n encoded: ${encodedBlock}`);
+    encodeStreamBlockAsync(streamBlock) {
+        return new Promise((resolve, rejected) => {
+            try {
+                const streamBlockStr = JSON.stringify(streamBlock);
+                const encodedBlock = this.getEncodedData(streamBlockStr);
+                resolve(encodedBlock);
+            } catch(err) {
+                rejected(err);
+            }
+        })
     }
 
     getEncodedData(data) {

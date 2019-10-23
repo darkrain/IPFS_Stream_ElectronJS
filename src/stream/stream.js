@@ -173,9 +173,9 @@ class Stream {
 				const chunkHash = result[0].hash;
 				//create block in DAG
 				this.ipfsStreamUploader.addChunkToIpfsDAGAsync(fileName,chunkData.EXTINF,chunkHash)
-					.then((streamBlock) => {
-						this.roomBroadcaster.updateLastStreamBlock(streamBlock); //update last block data in global room broadcaster
-						this.roomBroadcaster.startBroadcastAboutSteramBlock(streamBlock);
+					.then(async (streamBlock) => {
+						await this.roomBroadcaster.updateLastStreamBlockAsync(streamBlock); //update last block data in global room broadcaster
+						this.roomBroadcaster.startBroadcastAboutStreamBlock(streamBlock);
 					})
 					.catch((err) => {
 						throw err;
