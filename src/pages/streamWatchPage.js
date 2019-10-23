@@ -68,7 +68,6 @@ class StreamWatchPage extends PageBase{
             console.log(`Subscribed to ${streamHash} room!`);
         });
 
-        const countOfChunksToReady = 2;
         this.streamerRoom.on('message', async (msg) => {
             if(!super.isEnabled()) {
                 streamWatchPageObj.streamerRoom.removeAllListeners();
@@ -82,12 +81,7 @@ class StreamWatchPage extends PageBase{
                 await this.endPlayListAsync();
                 return;
             }
-
             this.rawBlocksQueue.add(messageStr);
-
-            if(this.lastBlockIndex >= countOfChunksToReady) { //Update front page after 2 chunks is ready
-                this.initializeStartingStreamIfNotYet();
-            }
             console.log("Getted message from streamer: " + messageStr);
         });
     }
@@ -181,7 +175,7 @@ class StreamWatchPage extends PageBase{
         this.win.webContents.send('stream-loaded', url);
     }
 
-    async handleChunksQueueLoop() {
+    async handleChunksQueueLoop(countOfChunksToReady = 2) {
         const delayOfHandle = 1000;
         while (super.isEnabled()) {
             if(this.rawBlocksQueue.size <= 0) {
@@ -196,6 +190,10 @@ class StreamWatchPage extends PageBase{
 
                     await hlsPlaylistManager.updateM3UFileAsync(chunkData, this.m3uPath);
                     this.rawBlocksQueue.delete(rawBlockMessage);
+
+                    if(this.lastBlockIndex === countOfChunksToReady) { //Update front page after 2 chunks is ready
+                        this.initializeStartingStreamIfNotYet();
+                    }
                 }
             } catch(err) {
                 console.error(`Error in handling chunks! ${err.message}`);
