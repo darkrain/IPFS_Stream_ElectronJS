@@ -171,6 +171,8 @@ class Stream {
 			this.ipfs.addFromFs((filePath), (err, result) => {
 				if (err) { throw err }
 				const chunkHash = result[0].hash;
+				this.roomBroadcaster.updateLastBlockHash(chunkHash); //update last block data in global room broadcaster
+
 				//create block in DAG
 				this.ipfsStreamUploader.addChunkToIpfsDAGAsync(fileName,chunkData.EXTINF,chunkHash)
 					.then((streamBlock) => {

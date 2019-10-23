@@ -31,6 +31,10 @@ class StreamRoomBroadcaster {
         }
     }
 
+    updateLastBlockHash(lastBlockHash) {
+        this.lastBlockHash = lastBlockHash;
+    }
+
     initializeRooms(streamerInfo) {
         const broadcasterObj = this;
         let ipfs = this.ipfs;      
@@ -61,11 +65,15 @@ class StreamRoomBroadcaster {
         const streamerInfo = this.currentStreamerInfo;
         this.broadcastLoopInformator = setInterval(() => {
             try {
+                if(!this.lastBlockHash) {
+                    //skip without blocks
+                    return;
+                }
                 const countOfwarchers = roomBroadcasterObj.roomCounter.getAllPeers();
                 streamerInfo.watchersCount = countOfwarchers;
                 streamerInfo.userName = this.userData.userName;
                 streamerInfo.nickname = this.userData.nickName;
-
+                streamerInfo.lastBlockHash = this.lastBlockHash;
                 const jsonSTR = JSON.stringify(streamerInfo);
                 const encoded64Data = roomBroadcasterObj.getEncodedData(jsonSTR);
     
