@@ -78,6 +78,7 @@ class StreamWatchPage extends PageBase{
 
             //end stream if message about end
             if(messageStr === 'STREAM_END') {
+                this.win.webContents.send('onStreamEnded');
                 await this.endPlayListAsync();
                 return;
             }

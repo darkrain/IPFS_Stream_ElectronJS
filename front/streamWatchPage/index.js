@@ -32,6 +32,10 @@ $(document).ready(function() {
 		$('tbody',chatBody).append(messageHtml)
 	});
 
+	ipc.on('onStreamEnded', (event, args) => {
+		alert('Stream has been stopped!');
+	});
+
 	$('#sendMsgBtn').click(function () {
 		const messageInput = document.getElementById('messageInput');
 		ipc.send('onMessageSend', messageInput.value);
