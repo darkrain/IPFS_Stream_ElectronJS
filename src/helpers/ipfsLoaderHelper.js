@@ -1,10 +1,14 @@
 const IPFS = require('ipfs');
 const AWAIT_TIME = 3000;
+const appConfig = require('../../appFilesConfig');
+const pathModule = require('path');
 async function initializeIPFS_Async() {
   let dataToReturn = null;
+  const pathToIpfsRepo = pathModule.join(appConfig.HOME, 'ipfs');
+  console.log(`Path to ipfs repo: ${pathToIpfsRepo}`);
   while (!dataToReturn) {
     const ipfsInstance = new IPFS({
-      repo: 'ipfs/pubsub-demo/borgStream',
+      repo: pathToIpfsRepo,
       EXPERIMENTAL: {
         pubsub: true
       },
