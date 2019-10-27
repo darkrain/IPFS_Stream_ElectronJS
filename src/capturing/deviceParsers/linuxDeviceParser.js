@@ -37,14 +37,21 @@ class LinuxDeviceParser extends FfmpegParserBase {
         const splitted = dataToParse.split('\n');
         for(let i = 0; i < splitted.length; i++) {
             const line = splitted[i];
-            if(line.includes('/dev/'))
-                devices.push(line.trim());
+            if(line.includes('/dev/')){
+                const camName = line.trim();
+                const camNameBuffer = new Buffer(camName);
+
+                devices.push({
+                    name : camName,
+                    key: camNameBuffer.toString('base64')
+                });
+            }
         }
         return devices;
     }
     async getAudioDevices() {
         //TODO how to specify audio for linux!?
-        return ['FROM CAMERA']; //return empty audio for linux... Temporary!?
+        return [{name: 'FROM CAMERA', key: 'FROMCAMERA'}]; //return empty audio for linux... Temporary!?
     }
 }
 
