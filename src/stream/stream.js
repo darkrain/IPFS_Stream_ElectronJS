@@ -8,6 +8,7 @@ const dialogErrorHelper = require('../helpers/dialogErrorHelper');
 const pathModule = require('path');
 const getVideoInfo = require('get-video-info');
 const logger = require('../data/logger');
+const appConfig = require('../../appFilesConfig');
 class Stream {
 
 	constructor(ipfs, nameOfStreem, path, ffmpegRecorder) {
@@ -166,7 +167,7 @@ class Stream {
 				return;
 			}
 			const filePath = pathModule.join(this.keepPath, fileName);
-			const videoInfo = await getVideoInfo(filePath);
+			const videoInfo = await getVideoInfo(filePath, appConfig.files.FFPROBE);
 			const videoDuration = videoInfo.format.duration;
 			const chunkData = {
 				EXTINF: `EXTINF:${videoDuration}`,

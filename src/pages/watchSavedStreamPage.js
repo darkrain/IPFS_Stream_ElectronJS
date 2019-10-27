@@ -106,7 +106,7 @@ class WatchSavedStreamPage extends PageBase {
             });
              let duration = 8.0;
             try {
-                const videoInfo = await getVideoInfo(chunkPath);
+                const videoInfo = await getVideoInfo(chunkPath, appConfig.files.FFPROBE);
                 duration = videoInfo.format.duration;
             } catch(err) {
                 console.error('FFPROBE works bad.');
