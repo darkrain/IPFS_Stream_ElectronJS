@@ -3,7 +3,7 @@ const Stream = require('./stream.js');
 const localServer = require('../localServer/localServer.js');
 const appConfig = require('../../appFilesConfig');
 const FFmpegController = require('../capturing/ffmpegController');
-
+const logger = require('../data/logger');
 class StreamInitializer {
     constructor(IPFSinstance) {               
         this.ipfs = IPFSinstance;
@@ -25,29 +25,35 @@ class StreamInitializer {
     };
 
     resetStream() {
-        const date = new Date();
-        console.log(`Reset stream in .. ${date.getMinutes()}m ${date.getSeconds()}`);
-        const videoFolderName = "videos";
-        const streamName = this.generateRandomStreamName(); 
-        console.log("Create new stream instance inside initializer..");
-        this.relativeVideoPath = pathModule.join(videoFolderName, streamName);
-        console.log(`RELATIVE PATH FOR VIDEO UPDATED: ${this.relativeVideoPath}`);
-        this.ffmpegController = new FFmpegController();
-        this.fullVideoPath = pathModule.join(this.getModuleFolderPath(videoFolderName), streamName);
-        const playListPath = pathModule.join(this.fullVideoPath, 'master.m3u8');
-        this.ffmpegRecorder = this.ffmpegController.getFFmpegRecorder(playListPath);
-        this.stream = new Stream(this.ipfs, streamName, this.fullVideoPath, this.ffmpegRecorder);
-        this.stream.createRooms();  
-        this.streamName = streamName;
-        this.deviceParser = this.ffmpegController.getDeviceParser();
+        try {
+            const date = new Date();
+            console.log(`Reset stream in .. ${date.getMinutes()}m ${date.getSeconds()}`);
+            const videoFolderName = "videos";
+            const streamName = this.generateRandomStreamName();
+            console.log("Create new stream instance inside initializer..");
+            this.relativeVideoPath = pathModule.join(videoFolderName, streamName);
+            console.log(`RELATIVE PATH FOR VIDEO UPDATED: ${this.relativeVideoPath}`);
+            this.ffmpegController = new FFmpegController();
+            this.fullVideoPath = pathModule.join(this.getModuleFolderPath(videoFolderName), streamName);
+            const playListPath = pathModule.join(this.fullVideoPath, 'master.m3u8');
+            this.ffmpegRecorder = this.ffmpegController.getFFmpegRecorder(playListPath);
+            this.stream = new Stream(this.ipfs, streamName, this.fullVideoPath, this.ffmpegRecorder);
+            this.stream.createRooms();
+            this.streamName = streamName;
+            this.deviceParser = this.ffmpegController.getDeviceParser();
+        } catch(err) {
+            logger.printErr(err);
+            throw err;
+        }
     };  
 
     startStream(playListReadyCallBack, streamerInfo) {
         try {
             this.isStreamStarted = true;
             this.stream.start(playListReadyCallBack, streamerInfo);
-        } catch(e) {
-            throw e;
+        } catch(err) {
+            logger.printErr(err);
+            throw err;
         }
         
     };
@@ -86,6 +92,7 @@ class StreamInitializer {
             }
             return dataOfCamers;
         } catch(err) {
+            logger.printErr(err);
             throw err;
         }        
     };
@@ -110,6 +117,7 @@ class StreamInitializer {
             }
             return dataOfAudios;
         } catch(err) {
+            logger.printErr(err);
             throw err;
         }
     }

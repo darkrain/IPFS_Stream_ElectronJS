@@ -5,7 +5,7 @@ const userInfoLoader = require('../data/userInfoLoader');
 const BROADCAST_INTERVAL = 10000; //ms
 const GLOBAL_ROOM_NAME = 'borgStream';
 const appConfig = require('../../appFilesConfig');
-
+const logger = require('../data/logger');
 class BroadcastEvent extends EventEmitter {}
 
 class StreamRoomBroadcaster {
@@ -26,6 +26,7 @@ class StreamRoomBroadcaster {
                     this.userData.nickName = data.nickname;
                 }
             }).catch((err) => {
+                logger.printErr(err);
                 throw err;
             })
         }
@@ -52,6 +53,7 @@ class StreamRoomBroadcaster {
         this.globalRoom.setMaxListeners(0);
         //subscribe to handle errors
         this.globalRoom.on('error', (err) => {
+            logger.printErr(err);
             throw err;
         });
 
@@ -88,6 +90,7 @@ class StreamRoomBroadcaster {
                 };
                 roomBroadcasterObj.broadcastEvent.emit('onStreamBroadcasted', dataObject);
             } catch(err) {
+                logger.printErr(err);
                 throw err;
             }
             
@@ -111,6 +114,7 @@ class StreamRoomBroadcaster {
             this.streamerRoom.broadcast(encodedBlock);
             console.log(`Broadcasted about block! \n encoded: ${encodedBlock}`);
         }).catch((err) => {
+            logger.printErr(err);
             throw err;
         })
     }

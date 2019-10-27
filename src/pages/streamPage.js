@@ -7,19 +7,23 @@ const url = require('url');
 class StreamPage extends PageBase{
   constructor(ipfs, streamInitializer, win, electronIPC, streamerInfo) {
       super();
-      this.ipfs = ipfs;
-      this.electronIPC = electronIPC;
-      this.pageWindow = win;
-      this.streamerInfo = streamerInfo;
-      this.streamInitializer = streamInitializer; 
-      this.subscribeToIpcEvents(this.electronIPC);      
-      
-      this.streamInitializer.startStream(this.onPlaylistRelativePathUpdated, streamerInfo);
-      this.subscribeToBroadcastEvents();
+      try {
+          this.ipfs = ipfs;
+          this.electronIPC = electronIPC;
+          this.pageWindow = win;
+          this.streamerInfo = streamerInfo;
+          this.streamInitializer = streamInitializer;
+          this.subscribeToIpcEvents(this.electronIPC);
 
-      this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.electronIPC, this.pageWindow, this.streamerInfo);
-      this.chatRoomInitializer.initialize();
-      this.streamSaver = null;
+          this.streamInitializer.startStream(this.onPlaylistRelativePathUpdated, streamerInfo);
+          this.subscribeToBroadcastEvents();
+
+          this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.electronIPC, this.pageWindow, this.streamerInfo);
+          this.chatRoomInitializer.initialize();
+          this.streamSaver = null;
+      } catch(err) {
+          throw err;
+      }
   }
 
   subscribeToBroadcastEvents() {
@@ -39,23 +43,28 @@ class StreamPage extends PageBase{
         super.goToGlobalPage();
     });
     ipc.on('saveStreamClicked', (event, args) => {
-        const lastBlock = this.streamInitializer.getStreamUploader().getLastSteamBlock();
-        if(!lastBlock) {
-            console.error(`Last block not initialized in stream uploader!!! RETURN!`);
-            return;
-        }
-        this.streamSaver = new StreamSaver(this.ipfs, lastBlock, this.streamerInfo);
-        this.streamSaver.getAllSavedStreamData().then((data) => {
-            if(!this.savedGlobalRoom) {
-                this.savedGlobalRoom = new SavedGlobalRoom(this.ipfs);
+        try {
+            const lastBlock = this.streamInitializer.getStreamUploader().getLastSteamBlock();
+            if(!lastBlock) {
+                console.error(`Last block not initialized in stream uploader!!! RETURN!`);
+                super.goToGlobalPage();
+                return;
             }
-            this.savedGlobalRoom.sendMessage(data);
+            this.streamSaver = new StreamSaver(this.ipfs, lastBlock, this.streamerInfo);
+            this.streamSaver.getAllSavedStreamData().then((data) => {
+                if(!this.savedGlobalRoom) {
+                    this.savedGlobalRoom = new SavedGlobalRoom(this.ipfs);
+                }
+                this.savedGlobalRoom.sendMessage(data);
 
-        }).catch(err => {
+            }).catch(err => {
+                throw err;
+            });
+
+            super.goToGlobalPage();
+        } catch(err) {
             throw err;
-        });
-
-        super.goToGlobalPage();
+        }
     });
     //### END IPC calls ###
   }

@@ -7,6 +7,7 @@ const StreamRoomBroadcaster = require('../stream/streamRoomBroadcaster.js');
 const dialogErrorHelper = require('../helpers/dialogErrorHelper');
 const pathModule = require('path');
 const getVideoInfo = require('get-video-info');
+const logger = require('../data/logger');
 class Stream {
 
 	constructor(ipfs, nameOfStreem, path, ffmpegRecorder) {
@@ -48,6 +49,7 @@ class Stream {
 		ffmpegProcess.on('error', (err) => {
 			console.error("FFmpeg process ERROR! \n");
 			ffmpegProcess.kill();
+			logger.printErr(err);
 			throw err;
 		});
 		
@@ -102,7 +104,10 @@ class Stream {
 		output += '#EXT-X-ENDLIST\n';
 	    fs.writeFile(this.m3u8IPFS, output, function(err) {
 			streamObj.ipfs.addFromFs(streamObj.m3u8IPFS, (err, result) => {
-			  if (err) { throw err }
+			  if (err) {
+			  	logger.printErr(err);
+			  	throw err;
+			  }
 
 			  	let data = {
 			  		live : streamObj.ipfsID+"/"+streamObj.nameOfStreem
@@ -169,15 +174,23 @@ class Stream {
 			};
 
 			this.ipfs.addFromFs((filePath), (err, result) => {
-				if (err) { throw err }
+				if (err) {
+					logger.printErr(err);
+					throw err;
+				}
 				const chunkHash = result[0].hash;
 				//create block in DAG
 				this.ipfsStreamUploader.addChunkToIpfsDAGAsync(fileName,chunkData.EXTINF,chunkHash)
 					.then(async (streamBlock) => {
-						await this.roomBroadcaster.updateLastStreamBlockAsync(streamBlock); //update last block data in global room broadcaster
-						this.roomBroadcaster.startBroadcastAboutStreamBlock(streamBlock);
+						try {
+							await this.roomBroadcaster.updateLastStreamBlockAsync(streamBlock); //update last block data in global room broadcaster
+							this.roomBroadcaster.startBroadcastAboutStreamBlock(streamBlock);
+						} catch(err) {
+							throw err;
+						}
 					})
 					.catch((err) => {
+						logger.printErr(err);
 						throw err;
 					});
 			});
@@ -186,6 +199,7 @@ class Stream {
 
 		} catch(err) {
 			console.error(`Unable handle chunk upload from stream: ${err.message}`);
+			logger.printErr(err);
 		}
 	}
 

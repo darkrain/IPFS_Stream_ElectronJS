@@ -65,79 +65,64 @@ let currentWindow;
 let globalRoomListener;
 let streamersDataHandler;
 let savedGlobalRoomListener;
-function InitializeApp(debug = false) {
 
-    //Loading page first
-    loadPageByName(PAGES.LOADING_PAGE).then(() => {
-    //firstable initialize IPFS instance
-        ipfsLoaderHelper.initializeIPFS_Async()
-            .then(data => {
-                const nodeID = data.id;
-                const ipfsInstance = data.ipfsInstance;
-                console.log("Try to initialize IPFS instance...");
-                IpfsInstance = ipfsInstance;
-                IpfsNodeID = nodeID;
+async function InitializeAppAsync(debug = false) {
 
-                //handlers
-                globalRoomListener = new GlobalRoomListener(IpfsInstance);
-                streamersDataHandler = new StreamersDataHandler(IpfsInstance, globalRoomListener);
-                savedGlobalRoomListener = new SavedGlobalRoomListener(new SavedGlobalRoom(ipfsInstance));
-            })
-            .catch((error) => {
-                if(error) {
-                    console.error("Unable initialize IPFS! \n");
-                    logger.printErr(error);
-                    throw error;
-                }
-            })
-            .then(async () => {
-                try {
-                    await appConfig.initializeBasicFolders();
-                } catch(err) {
-                    throw err;
-                }
-            })
-            .then(() => {
-                console.log("Try to initialize localServer");
-                localServer.startLocalServer(appConfig.HOME);
-            })
-            .catch((err) => {
-                throw err;
-            })
-            .then(() => {
-                console.log("Try to initialize Electron...");
-                onAppInitialized();
+    try {
+        await loadPageByName(PAGES.LOADING_PAGE);
 
-                if(debug === true) {
-                    testRunner.startTests();
-                }
+        //INITIALIZE IPFS
+        const ipfsData = await ipfsLoaderHelper.initializeIPFS_Async();
+        const nodeID = ipfsData.id;
+        const ipfsInstance = ipfsData.ipfsInstance;
+        console.log("Try to initialize IPFS instance...");
+        IpfsInstance = ipfsInstance;
+        IpfsNodeID = nodeID;
 
-            }).catch(err => {
-            throw err;
-        });
-    });
+        //handlers
+        globalRoomListener = new GlobalRoomListener(IpfsInstance);
+        streamersDataHandler = new StreamersDataHandler(IpfsInstance, globalRoomListener);
+        savedGlobalRoomListener = new SavedGlobalRoomListener(new SavedGlobalRoom(ipfsInstance));
+
+        //basic folders
+        await appConfig.initializeBasicFolders();
+
+        //local Server
+        await localServer.startLocalServer(appConfig.HOME);
+
+        //Electron start
+        console.log("Try to initialize Electron...");
+        await onAppInitialized();
+
+        if(debug === true) {
+            testRunner.startTests();
+        }
+
+    } catch(err) {
+        logger.printErr(err);
+        throw err;
+    }
 }
 
 //Calls when the app and dependencies already initialized
-function onAppInitialized() {
-    loadDefaultPage();   
+async function onAppInitialized() {
+    await loadDefaultPageAsync();
 }
 
-function loadDefaultPage() {
-    loadPageByName(DEFAULT_PAGE);
+async function loadDefaultPageAsync() {
+    await loadPageByName(DEFAULT_PAGE);
 }
 let _currentPage;
 async function loadPageByName(pageName, args)  {
-
-    //disable currentPage, if its open
-    if(_currentPage) {
-        console.log("Stop last page: " + _currentPage.constructor.name);
-        await Promise.resolve(_currentPage.stop());
-    }
-    resetAppData(); //this function reset all data listeners from another objects, so memory leak is decreasing...
-
     console.log("Start loading page: " + pageName + "....");
     try{
+        //disable currentPage, if its open
+        if(_currentPage) {
+            console.log("Stop last page: " + _currentPage.constructor.name);
+            await Promise.resolve(_currentPage.stop());
+        }
+        resetAppData(); //this function reset all data listeners from another objects, so memory leak is decreasing...
+
         switch(pageName) {       
             case PAGES.USER_INFO_PAGE: {
                 createWindowAsync(USER_INFO_PAGE_LINK).then((win) => {
@@ -198,6 +183,7 @@ async function loadPageByName(pageName, args)  {
     } catch(err) {
         logger.printErr(err);
         dialogErrorHelper.showErorDialog('AppNavigator', `${err.message} ${err.stack}`, true);
+        throw err;
     }
 }
 
@@ -240,11 +226,10 @@ function createWindowAsync(linkToPage) {
     });
 }
   
-app.on('ready', () => {
+app.on('ready', async () => {
     try {
-        InitializeApp(false);
+        await InitializeAppAsync(false);
     } catch(err) {
-        logger.printErr(err);
         dialogErrorHelper.showErorDialog("AppNavigator", `Cannot run application, coz: \n ${err.message} \n ${err.stack}`, true);
     }
 });
@@ -307,6 +292,6 @@ process.setMaxListeners(0);
 
 
 module.exports.loadPageByName = loadPageByName;
-module.exports.loadDefaultPage = loadDefaultPage;
+module.exports.loadDefaultPage = loadDefaultPageAsync;
 module.exports.getCurrentPage = getCurrentPage;
 module.exports.PAGES = PAGES;
