@@ -1,4 +1,5 @@
 const osDetector = require('./src/helpers/OSDetecting.js');
+const os = require('os');
 const path = require('path');
 const fs = require('fs');
 const _HOME_ = require('os').homedir();
@@ -7,6 +8,9 @@ const _APPHOME_ = `${_HOME_}${_SEP_}.borgStream${_SEP_}`;
 
 const USER_FOLDERS = [
     'bin',
+    'bin/ffprobe',
+    'bin/ffprobe/win32',
+    `bin/ffprobe/win32/${os.arch()}`,
     'user',
     'user/userData',
     'user/userData/streamers',
@@ -60,25 +64,30 @@ async function initializeBasicFolders() {
 }
 
 async function copyNecessaryData() {
-    const copyPaths = [
-        'bin/ffmpeg.exe'
-    ];
-    for(const index in copyPaths) {
-        const relativePath = copyPaths[index];
-        const fullFilePath = getFullPathOfFile(relativePath);
-        const destFilePath = getFullPathOfFileFromSystemPath(relativePath);
-        if(fs.existsSync(destFilePath)) {
-            console.log(`File ${destFilePath} exists, continue..`);
-            continue;
+    try {
+        const copyPaths = [
+            'bin/ffmpeg.exe',
+            `bin/ffprobe/win32/${os.arch()}/ffprobe.exe`
+        ];
+        for(const index in copyPaths) {
+            const relativePath = copyPaths[index];
+            const fullFilePath = getFullPathOfFile(relativePath);
+            const destFilePath = getFullPathOfFileFromSystemPath(relativePath);
+            if(fs.existsSync(destFilePath)) {
+                console.log(`File ${destFilePath} exists, continue..`);
+                continue;
+            }
+            console.log(`File ${destFilePath} not exists! Copy...`);
+            await new Promise((resolve, rejected) => {
+                fs.copyFile(fullFilePath, destFilePath, (err) => {
+                    if(err)
+                        rejected(err);
+                    resolve();
+                });
+            });
         }
-        console.log(`File ${destFilePath} not exists! Copy...`);
-        await new Promise((resolve, rejected) => {   
-            fs.copyFile(fullFilePath, destFilePath, (err) => {
-                if(err)
-                    rejected(err);
-                resolve();
-            });             
-        });
+    } catch(err) {
+        throw err;
     }
 }
 
@@ -104,6 +113,7 @@ function getFfmpegPath(currentOs = osDetector.getOs()) {
 }
 
 const files = {
+    FFPROBE: getFullPathOfFileFromSystemPath(`bin/ffprobe/win32/${os.arch()}/ffprobe.exe`),
     FFMPEG : getFfmpegPath(),
     USERINFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userInfoJSON.json'),
     USER_STREAM_INFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userStreamInfo.json'),
