@@ -34,7 +34,7 @@
     "cropperjs": "^1.5.6",
     "express": "^4.17.1",
     "fs-extra": "^8.1.0",
-    "get-video-info": "^1.0.0",
+    "get-video-info": "git+https://github.com/intfloatbool/get-video-info.git",
     "hls.js": "^0.12.4",
     "ipfs": "0.37.0",
     "ipfs-pubsub-room": "1.4.1",

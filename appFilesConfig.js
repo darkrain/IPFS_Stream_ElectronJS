@@ -9,8 +9,8 @@ const _APPHOME_ = `${_HOME_}${_SEP_}.borgStream${_SEP_}`;
 const USER_FOLDERS = [
     'bin',
     'bin/ffprobe',
-    'bin/ffprobe/win32',
-    `bin/ffprobe/win32/${os.arch()}`,
+    `bin/ffprobe/${os.platform()}`,
+    `bin/ffprobe/${os.platform()}/${os.arch()}`,
     'user',
     'user/userData',
     'user/userData/streamers',
@@ -65,9 +65,10 @@ async function initializeBasicFolders() {
 
 async function copyNecessaryData() {
     try {
+        const probeName = os.platform() === 'win32' ? 'ffprobe.exe' : 'ffprobe';
         const copyPaths = [
             'bin/ffmpeg.exe',
-            `bin/ffprobe/win32/${os.arch()}/ffprobe.exe`
+            `bin/ffprobe/${os.platform()}/${os.arch()}/${probeName}`
         ];
         for(const index in copyPaths) {
             const relativePath = copyPaths[index];
@@ -113,7 +114,7 @@ function getFfmpegPath(currentOs = osDetector.getOs()) {
 }
 
 const files = {
-    FFPROBE: getFullPathOfFileFromSystemPath(`bin/ffprobe/win32/${os.arch()}/ffprobe.exe`),
+    FFPROBE: getFullPathOfFileFromSystemPath(`bin/ffprobe/${os.platform()}/${os.arch()}/${os.platform() === 'win32' ? 'ffprobe.exe' : 'ffprobe'}`),
     FFMPEG : getFfmpegPath(),
     USERINFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userInfoJSON.json'),
     USER_STREAM_INFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userStreamInfo.json'),
