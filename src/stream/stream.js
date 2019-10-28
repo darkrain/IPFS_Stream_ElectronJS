@@ -180,6 +180,7 @@ class Stream {
 					throw err;
 				}
 				const chunkHash = result[0].hash;
+				console.log(`Chunk uploaded with result: \n${JSON.stringify((result))}`);
 				//create block in DAG
 				this.ipfsStreamUploader.addChunkToIpfsDAGAsync(fileName,chunkData.EXTINF,chunkHash)
 					.then(async (streamBlock) => {
