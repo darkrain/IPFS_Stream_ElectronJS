@@ -173,8 +173,8 @@ class Stream {
 				EXTINF: `EXTINF:${videoDuration}`,
 				FILE_NAME: fileName
 			};
-
-			this.ipfs.addFromFs((filePath), (err, result) => {
+			const buffer = fs.readFileSync(filePath);
+			this.ipfs.add(buffer, (err, result) => {
 				if (err) {
 					logger.printErr(err);
 					throw err;
