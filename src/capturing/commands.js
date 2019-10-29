@@ -25,7 +25,9 @@ function getWindowsDshowCommand() {
         '-profile:v', 'high422', //set profile to support 4:2:2 resolution
         '-level', '3.0',
         '-c:v', 'libx264',
-        '-crf','35', //crf is video qualiti from 1(best) to 51 (worst)
+        '-crf','20', //crf is video qualiti from 1(best) to 51 (worst)
+        '-maxrate', '1M',
+        '-bufsize', '2M',
         '-preset','veryfast',
         '-c:a', 'aac', 
         '-b:a', '128k', 
