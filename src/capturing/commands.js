@@ -43,6 +43,7 @@ function getWindowsDshowCommand() {
 
 //NOTE: this commands not including output path!!!
 const RecordCommands = {
+    //TODO is just for test
     LINUX: getSplittedLinuxCommand(),
     WINDOWS: getWindowsDshowCommand(),
     MAC: [] //TODO complete MAC logic
