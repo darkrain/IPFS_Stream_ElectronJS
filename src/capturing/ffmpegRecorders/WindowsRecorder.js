@@ -35,11 +35,17 @@ class WindowsRecorder extends RecorderBase {
     checkAboutObsCamera() {
         const isObs = this.camera.includes('OBS');
         if(this.audio.includes('OBS'))
-            throw new Error("Cannot run with OBS CAMERA!!!");
+            this.audio = null;
+        if(this.audio === null)
+            this.audio = '';
+        else {
+            const audioBuild = ':' + 'audio='+'"'+this.audio+'"';
+            this.audio = audioBuild;
+        }
         if(isObs) {
             this.commandsToRun = [
                 '-f' , 'dshow',
-                '-i', 'video=' + '"' + this.camera + '"' + ':' + 'audio='+'"'+this.audio+'"',
+                '-i', 'video=' + '"' + this.camera + '"' + this.audio,
                 '-video_size', '848x480', //set profile to support 4:2:2 resolution
                 '-vcodec', 'libx264',
                 '-preset','ultrafast',
