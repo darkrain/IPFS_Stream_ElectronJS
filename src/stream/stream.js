@@ -1,5 +1,4 @@
 const Room = require('ipfs-pubsub-room')
-const watch = require('node-watch');
 const fs = require('fs');	
 const fsPath = require('path');
 const IpfsStreamUploader = require('../helpers/ipfsStreamUploader.js');

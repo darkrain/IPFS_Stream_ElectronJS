@@ -49,13 +49,13 @@ class WindowsRecorder extends RecorderBase {
             this.commandsToRun = [
                 '-f' , 'dshow',
                 '-i', 'video=' + '"' + this.camera + '"' + this.audio,
-                '-video_size', '848x480', //set profile to support 4:2:2 resolution
+                '-video_size', '752x452', //set profile to support 4:2:2 resolution
                 '-vcodec', 'libx264',
                 '-preset','ultrafast',
                 '-profile:v', 'high422',
                 '-level', '3.0',
                 '-c:v','libx264',
-                '-crf', '20',
+                '-crf', '30',
                 '-tune','zerolatency',
                 '-r', '10',
                 '-async', '1',
@@ -63,7 +63,7 @@ class WindowsRecorder extends RecorderBase {
                 '-maxrate', '750k',
                 '-f', 'hls',
                 '-hls_list_size', '1000000',
-                '-hls_time', '12',
+                '-hls_time', '8',
                 '-hls_playlist_type', 'event',
             ];
             this.commandsToRun.push(this.outputPath);

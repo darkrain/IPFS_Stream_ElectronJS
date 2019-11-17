@@ -10,10 +10,13 @@ const appConfig = require('../../appFilesConfig');
 const STREAMERS_DATA_PATH = pathModule.join(appConfig.folders.USER_DATA_PATH ,'streamers');
 const fsExtra = require('fs-extra');
 const hlsPlaylistManager = require('../data/hlsPlaylistManager');
+const logger = require('../data/logger');
 
 class StreamWatchPage extends PageBase{
     constructor(ipfs, ipc, win, streamerInfo){  
         super();
+        this.setEnabled(true);
+        this.lastBlockRawMessage = null;
         this.rawBlocksQueue = new Set();
         this.ipfs = ipfs;
         this.ipc = ipc;
@@ -42,7 +45,9 @@ class StreamWatchPage extends PageBase{
                 console.log(`Chunks Handling ENDED!`);
             });
         }).catch((err) => {
-            console.error("Cannot initialize streamer path: \n" + err.toString())
+            const errMsg = "Cannot initialize streamer path: \n" + err.toString();
+            console.error(errMsg);
+            logger.printErr(new Error(errMsg))
         });
 
         this.ipc.on('exit-watch', (event, args) => {
@@ -108,11 +113,15 @@ class StreamWatchPage extends PageBase{
                 if(fs.existsSync(streamPath)) {
                     resolve(streamPath);
                 } else {
-                    console.error(`Path ${path} not exists!`);
+                    const errMsg = `Path ${path} not exists!`;
+                    console.error(errMsg);
+                    logger.printErr(new Error(errMsg));
                     resolve(streamPath);
                 }
             } catch(err) {
-                console.error(`Some error in initialize streamer path: ` + err.toString());
+                const errMsg = `Some error in initialize streamer path: ` + err.toString();
+                console.error(errMsg);
+                logger.printErr(new Error(errMsg));
                 resolve(streamPath);
             }           
         });
@@ -162,7 +171,6 @@ class StreamWatchPage extends PageBase{
                 });
             });
         });
-        this.lastBlockIndex++;
         return chunkData;
     }
 
@@ -178,8 +186,9 @@ class StreamWatchPage extends PageBase{
         this.win.webContents.send('stream-loaded', url);
     }
 
-    async handleChunksQueueLoop(countOfChunksToReady = 1) {
+    async handleChunksQueueLoop(countOfChunksToReady = 2) {
         const delayOfHandle = 1000;
+        const delayBetweenChunks = 500;
         while (super.isEnabled()) {
             if(this.rawBlocksQueue.size <= 0) {
                 await this.delayAsync(delayOfHandle);
@@ -187,19 +196,27 @@ class StreamWatchPage extends PageBase{
             }
             try {
                 for(let rawBlockMessage of this.rawBlocksQueue) {
+                    if(rawBlockMessage === this.lastBlockRawMessage) {
+                        await this.delayAsync(delayOfHandle);
+                        continue;
+                    }
                     const streamBlock = dataConverter.convertBase64DataToObject(rawBlockMessage);
                     const chunkData = await this.loadChunkAsync(streamBlock);
                     this.win.webContents.send('countOfWatchers-updated', streamBlock.streamWatchCount);
 
                     await hlsPlaylistManager.updateM3UFileAsync(chunkData, this.m3uPath);
-                    this.rawBlocksQueue.delete(rawBlockMessage);
-
-                    if(this.lastBlockIndex === countOfChunksToReady) { //Update front page after 2 chunks is ready
+                    if(this.lastBlockIndex >= countOfChunksToReady) { //Update front page after 2 chunks is ready
                         this.initializeStartingStreamIfNotYet();
                     }
+                    this.lastBlockRawMessage = rawBlockMessage;
+                    this.rawBlocksQueue.delete(rawBlockMessage);
+                    this.lastBlockIndex++;
+                    await this.delayAsync(delayBetweenChunks);
                 }
             } catch(err) {
-                console.error(`Error in handling chunks! ${err.message}`);
+                const errMsg = `ERROR HANDLING CHUNKS! ${err.message}`;
+                console.error(errMsg);
+                logger.printErr(new Error(errMsg));
                 await this.delayAsync(delayOfHandle);
             }
         }
