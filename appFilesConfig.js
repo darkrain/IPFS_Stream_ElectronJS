@@ -118,7 +118,8 @@ const files = {
     FFMPEG : getFfmpegPath(),
     USERINFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userInfoJSON.json'),
     USER_STREAM_INFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userStreamInfo.json'),
-    SAVED_STREAMS_DATA_JSON_PATH: getFullPathOfFileFromSystemPath('user/savedStreams.json')
+    SAVED_STREAMS_DATA_JSON_PATH: getFullPathOfFileFromSystemPath('user/savedStreams.json'),
+    IPFS_LOCK_FILE: getFullPathOfFileFromSystemPath('ipfs/datastore/LOCK')
 };
 
 const folders = {

@@ -2,11 +2,13 @@ const IPFS = require('ipfs');
 const AWAIT_TIME = 3000;
 const appConfig = require('../../appFilesConfig');
 const pathModule = require('path');
+const fs = require('fs');
 async function initializeIPFS_Async() {
   let dataToReturn = null;
   const pathToIpfsRepo = pathModule.join(appConfig.HOME, 'ipfs');
   console.log(`Path to ipfs repo: ${pathToIpfsRepo}`);
-  while (!dataToReturn) {
+  while (dataToReturn == null) {
+    removeLockIpfsIfExists();
     const ipfsInstance = new IPFS({
       repo: pathToIpfsRepo,
       EXPERIMENTAL: {
@@ -26,30 +28,19 @@ async function initializeIPFS_Async() {
     try {
       dataToReturn = await new Promise((resolve, rejected) => {
         ipfsInstance.on('error',  (err) => {
-          resolve(err);
+          rejected(err);
         });
         ipfsInstance.once('ready', () => ipfsInstance.id((err, peerInfo) => {
-          if (err) { resolve(err) }
-          //add external peer
-          const peerAddr = '/ip4/46.101.114.73/tcp/4001/ipfs/QmXjuSKjf7eKENw9ZURWnm2J1kUTJHzAFMNJotx5RwL5gf';
-          ipfsInstance.bootstrap.add(peerAddr, [], (err, res) => {
-            if(err) rejected(err);
-            console.log('Connected peers: \n' + JSON.stringify(res.Peers));
-            console.log('IPFS node started and has ID ' + peerInfo.id);
-            dataToReturn = {
-              ipfsInstance: ipfsInstance,
-              id: peerInfo.id
-            };
-            resolve(dataToReturn);
+          if (err) { rejected(err) }
+          resolve({
+            ipfsInstance: ipfsInstance,
+            id: peerInfo.id
           });
         }));
       });
 
-      if(dataToReturn.name === 'Error') {
-        throw dataToReturn;
-      }
-
     } catch(err) {
+      removeLockIpfsIfExists();
       console.error(`Failed to start ipfs, coz: ${err.message} , trying again...`);
       dataToReturn = null;
       await new Promise(resolve => setTimeout(resolve, AWAIT_TIME));
@@ -57,6 +48,12 @@ async function initializeIPFS_Async() {
   }
 
   return dataToReturn;
+}
+
+function removeLockIpfsIfExists() {
+  if(fs.existsSync(appConfig.files.IPFS_LOCK_FILE)) {
+    fs.unlinkSync(appConfig.files.IPFS_LOCK_FILE);
+  }
 }
 
 module.exports = {
