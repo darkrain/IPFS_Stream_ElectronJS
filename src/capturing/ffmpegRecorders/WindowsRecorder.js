@@ -36,6 +36,9 @@ class WindowsRecorder extends RecorderBase {
         const isObs = this.camera.includes('OBS');
         if(this.audio.includes('OBS'))
             this.audio = null;
+        else {
+            return false;
+        }
         if(this.audio === null)
             this.audio = '';
         else {
