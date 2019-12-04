@@ -65,9 +65,14 @@
                             <select class="form-control" id="audioSelection" name="audio">
                                 <option value="none">Loading...</option>
                             </select>
-                        </div>                        
-
-                        
+                        </div>      
+                        <div class="form-group" id="qualitySelectionContainer">
+                            <label class="col-form-label" for="audio">Выберете качество трансляции</label>
+                            <input type="range" id="steramQualityInput" name="streamQuality"
+                                min="1" max="51">     
+                            <!-- <label id="qualityLabel" for="streamQuality">0</label> -->
+                        </div>                    
+             
                         <button class="btn btn-accent" id="openStreamBtn">Начать трансляцию</button>
                         <a class="btn btn-danger" id="backBtn">Я передумал</a>
                         

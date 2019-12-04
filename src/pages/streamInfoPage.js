@@ -39,8 +39,8 @@ class StreamInfoPage extends PageBase{
 
     ipc.on('onQualityChanged', (event, args) => {
       const quality = args;
-      this.streamerInfo.setStreamQuality(quality);
-    })
+      this.streamInitializer.setStreamQuality(quality);
+    });
     
     ipc.on('backBtnClicked', (event, args) => {
         super.goToGlobalPage();

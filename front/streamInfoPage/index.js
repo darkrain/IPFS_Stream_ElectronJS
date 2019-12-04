@@ -41,6 +41,14 @@ $( document ).ready(function() {
 		initializeSelectionData('#audioSelection', args);
 	});
 
+    const qualityRangeSlider = document.getElementById('steramQualityInput');
+    qualityRangeSlider.onchange = function(){
+        const maxValue = 51;
+        const sliderValue = Number(this.value);
+        const inversedValue = (maxValue + 1) - sliderValue; 
+        console.log(`Slider changed ${inversedValue}`);
+        ipc.send('onQualityChanged', inversedValue);
+    }
 
     $('form').submit((event) => {
         event.preventDefault();
