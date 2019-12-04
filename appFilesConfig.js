@@ -17,6 +17,7 @@ const USER_FOLDERS = [
     'user/img',
     'user/img/photo',
     'user/streamRecords',
+    'user/TEMP',
     'videos'
 ];
 
@@ -126,7 +127,8 @@ const folders = {
     USER_PAGE: getFullPathOfFile('front/userInfoPage'),
     USER_DATA_PATH: getFullPathOfFileFromSystemPath('user/userData'),
     USER_PHOTO_PATH: getFullPathOfFileFromSystemPath('img/photo'),
-    STREAM_RECORDS_FOLDER: getFullPathOfFileFromSystemPath('user/streamRecords')
+    STREAM_RECORDS_FOLDER: getFullPathOfFileFromSystemPath('user/streamRecords'),
+    TEMP_FOLDER: getFullPathOfFileFromSystemPath('user/TEMP')
 };
 
 const fileSizes = {
