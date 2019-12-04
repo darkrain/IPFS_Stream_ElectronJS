@@ -132,6 +132,7 @@ class StreamersDataHandler {
 
                         if(founded) {
                             founded.watchersCount = streamerInfoJson.watchersCount;
+                            founded.lastStreamBlockEncoded = streamerInfoJson.lastStreamBlockEncoded;
                             //write in file
                             fs.writeFile(STREAMERS_DATA_PATH, JSON.stringify(streamersArray), (err) => {
                                 if(err)
