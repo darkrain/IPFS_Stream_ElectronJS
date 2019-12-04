@@ -25,6 +25,18 @@ class RecorderBase {
         throw new Error(`not implemented!`);
     } 
 
+    setQuality(propertyValue) {
+        const propertyKey = '-crf';
+        const index = this.commandsToRun.indexOf(propertyKey);
+        const valueIndex = index + 1;
+        if(~index && ~valueIndex) { //if z >= 0
+            this.commandsToRun[valueIndex] = propertyValue.toString();
+            console.log(`Property ${propertyKey} changed to value: ${propertyValue}!`);   
+        } else {
+            console.error(`Cannot find command with key ${commandKey}!`);
+        }
+    }
+   
     changeCameraBeforeRun() {
         //find camera key and change it
         const index = this.commandsToRun.indexOf(KEYS.CAM_KEY);
