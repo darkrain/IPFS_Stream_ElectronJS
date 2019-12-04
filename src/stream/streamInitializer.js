@@ -24,6 +24,13 @@ class StreamInitializer {
         return appConfig.getFullPathOfFileFromSystemPath(folderName);
     };
 
+    //crf is video qualiti from 1(best) to 51 (worst)
+    setStreamQuality(quality) {
+        if(this.stream) {
+            this.stream.setQuaility(quality);
+        }
+    }
+
     resetStream() {
         try {
             const date = new Date();

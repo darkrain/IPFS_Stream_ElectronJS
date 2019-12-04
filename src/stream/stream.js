@@ -37,10 +37,18 @@ class Stream {
 		return this;
 	}
 
-
+	setQuaility(qualityIndex) {
+		this.qualityIndex = qualityIndex;
+	}
 	ffmpeg(debug){		
 		const streamObj = this.getInstance();
 		console.log('send stream to '+ this.keepPath);	
+		
+		if(this.qualityIndex) {
+			this.ffmpegRecorder.setQuality(this.qualityIndex);
+			console.log(`Quality changed to: ${this.qualityIndex}`);
+		}
+
 		this.ffmpegProc = this.ffmpegRecorder.startRecord();
 		console.log()
 		const ffmpegProcess = this.ffmpegProc;

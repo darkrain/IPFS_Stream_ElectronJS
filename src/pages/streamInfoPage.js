@@ -36,6 +36,11 @@ class StreamInfoPage extends PageBase{
         this.onStreamerNameChanged(args.streamName);
         this.onAvaImageUploaded(args.avaBase64);
     });
+
+    ipc.on('onQualityChanged', (event, args) => {
+      const quality = args;
+      this.streamerInfo.setStreamQuality(quality);
+    })
     
     ipc.on('backBtnClicked', (event, args) => {
         super.goToGlobalPage();
