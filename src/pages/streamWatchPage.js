@@ -195,8 +195,10 @@ class StreamWatchPage extends PageBase{
                 continue;
             }
             try {
+                this.log(`Trying load chunk id${this.lastBlockIndex}`);
                 for(let rawBlockMessage of this.rawBlocksQueue) {
                     if(rawBlockMessage === this.lastBlockRawMessage) {
+                        this.log(`Founded recursive chunk! Delay and return!`);
                         await this.delayAsync(delayOfHandle);
                         continue;
                     }
@@ -210,8 +212,10 @@ class StreamWatchPage extends PageBase{
                     }
                     this.lastBlockRawMessage = rawBlockMessage;
                     this.rawBlocksQueue.delete(rawBlockMessage);
+                    this.log(`Chunk id${this.lastBlockIndex} succefully downloaded!`);
                     this.lastBlockIndex++;
-                    await this.delayAsync(delayBetweenChunks);
+                    
+                    //await this.delayAsync(delayBetweenChunks);
                 }
             } catch(err) {
                 const errMsg = `ERROR HANDLING CHUNKS! ${err.message}`;
@@ -220,6 +224,10 @@ class StreamWatchPage extends PageBase{
                 await this.delayAsync(delayOfHandle);
             }
         }
+    }
+
+    log(message) {
+        console.log(`StreamWatchPage: \n ${message}`);
     }
 
     delayAsync(delay) {
