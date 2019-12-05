@@ -210,16 +210,16 @@ class StreamWatchPage extends PageBase{
                     const streamBlock = dataConverter.convertBase64DataToObject(rawBlockMessage);
                     this.loadChunkAsync(streamBlock).then((chunkData) => {
                         hlsPlaylistManager.updateM3UFileAsync(chunkData, this.m3uPath);
+                        this.log(`Chunk id${this.lastBlockIndex} succefully downloaded!`);
+                        this.lastBlockIndex++;
+                        
                     }).catch(err => {
                         throw err;
                     });
                     this.win.webContents.send('countOfWatchers-updated', streamBlock.streamWatchCount);
 
-                    
                     this.lastBlockRawMessage = rawBlockMessage;
                     this.rawBlocksQueue.delete(rawBlockMessage);
-                    this.log(`Chunk id${this.lastBlockIndex} succefully downloaded!`);
-                    this.lastBlockIndex++;
                     
                 }
             } catch(err) {
