@@ -188,9 +188,9 @@ class StreamWatchPage extends PageBase{
 
     async handleChunksQueueLoop(countOfChunksToReady = 2) {
         const delayOfHandle = 1000;
-        const delayBetweenChunks = 500;
         while (super.isEnabled()) {
             if(this.rawBlocksQueue.size <= 0) {
+                this.log(`blocks queue is empty.. wait.`);
                 await this.delayAsync(delayOfHandle);
                 continue;
             }
@@ -215,7 +215,6 @@ class StreamWatchPage extends PageBase{
                     this.log(`Chunk id${this.lastBlockIndex} succefully downloaded!`);
                     this.lastBlockIndex++;
                     
-                    //await this.delayAsync(delayBetweenChunks);
                 }
             } catch(err) {
                 const errMsg = `ERROR HANDLING CHUNKS! ${err.message}`;
