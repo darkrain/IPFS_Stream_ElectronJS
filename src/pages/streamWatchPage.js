@@ -146,6 +146,7 @@ class StreamWatchPage extends PageBase{
     }
 
     async loadChunkAsync(streamBlock) {
+        this.log('Chunk beign downloading...');
         const chunkHash = streamBlock.VIDEO_CHUNK_HASH;
         const extInf = streamBlock.EXTINF;
         const chunkData = {
@@ -193,8 +194,7 @@ class StreamWatchPage extends PageBase{
                 //skip if queue is empty
                 continue;
             }
-            try {
-                this.log(`Trying load chunk id${this.lastBlockIndex}`);
+            try {               
                 for(let rawBlockMessage of this.rawBlocksQueue) {
 
                     if(rawBlockMessage === this.lastBlockRawMessage) {
@@ -202,17 +202,20 @@ class StreamWatchPage extends PageBase{
                         await this.delayAsync(delayOfHandle);
                         continue;
                     }
-
-                    if(this.lastBlockIndex >= countOfChunksToReady) { //Update front page after 2 chunks is ready
-                        this.initializeStartingStreamIfNotYet();
-                    }
-
+               
                     const streamBlock = dataConverter.convertBase64DataToObject(rawBlockMessage);
+                    this.log(`Trying load chunk id${this.lastBlockIndex}`);
                     this.loadChunkAsync(streamBlock).then((chunkData) => {
-                        hlsPlaylistManager.updateM3UFileAsync(chunkData, this.m3uPath);
-                        this.log(`Chunk id${this.lastBlockIndex} succefully downloaded!`);
-                        this.lastBlockIndex++;
-                        
+                        hlsPlaylistManager.updateM3UFileAsync(chunkData, this.m3uPath).then(() => {
+                            this.log(`Chunk id${this.lastBlockIndex} succefully downloaded!`);
+                            this.lastBlockIndex++;
+    
+                            if(this.lastBlockIndex >= countOfChunksToReady) { //Update front page after 2 chunks is ready
+                                this.initializeStartingStreamIfNotYet();
+                            }
+                        }).catch((err) => {
+                            throw err;
+                        })                                   
                     }).catch(err => {
                         throw err;
                     });
