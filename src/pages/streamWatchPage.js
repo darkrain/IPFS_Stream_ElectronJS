@@ -210,21 +210,15 @@ class StreamWatchPage extends PageBase{
                     }
                
                     const streamBlock = dataConverter.convertBase64DataToObject(rawBlockMessage);
-                    this.log(`Trying load chunk id${this.lastBlockIndex}`);
-                    this.loadChunkAsync(streamBlock).then((chunkData) => {
-                        hlsPlaylistManager.updateM3UFileAsync(chunkData, this.m3uPath).then(() => {
-                            this.log(`Chunk id${this.lastBlockIndex} succefully downloaded!`);
-                            this.lastBlockIndex++;
+                    this.log(`Trying load chunk id${this.lastBlockIndex}`);             
+                    const chunkData = await this.loadChunkAsync(streamBlock);
+                    this.log(`Chunk id${this.lastBlockIndex} succefully downloaded!`);
+                    await hlsPlaylistManager.updateM3UFileAsync(chunkData, this.m3uPath)
+                    this.lastBlockIndex++;
     
-                            if(this.lastBlockIndex >= countOfChunksToReady) { //Update front page after 2 chunks is ready
-                                this.initializeStartingStreamIfNotYet();
-                            }
-                        }).catch((err) => {
-                            throw err;
-                        })                                   
-                    }).catch(err => {
-                        throw err;
-                    });
+                    if(this.lastBlockIndex >= countOfChunksToReady) { //Update front page after 2 chunks is ready
+                        this.initializeStartingStreamIfNotYet();
+                    }                  
                     this.win.webContents.send('countOfWatchers-updated', streamBlock.streamWatchCount);
 
                     this.lastBlockRawMessage = rawBlockMessage;
