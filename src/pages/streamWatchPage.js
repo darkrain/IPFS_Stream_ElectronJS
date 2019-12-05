@@ -198,6 +198,7 @@ class StreamWatchPage extends PageBase{
         while (super.isEnabled()) {
             if(this.rawBlocksQueue.size <= 0) {
                 //skip if queue is empty
+                await this.delayAsync(delayOfHandle);
                 continue;
             }
             try {               
