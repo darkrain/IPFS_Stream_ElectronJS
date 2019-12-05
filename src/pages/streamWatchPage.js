@@ -196,19 +196,26 @@ class StreamWatchPage extends PageBase{
             try {
                 this.log(`Trying load chunk id${this.lastBlockIndex}`);
                 for(let rawBlockMessage of this.rawBlocksQueue) {
+
                     if(rawBlockMessage === this.lastBlockRawMessage) {
                         this.log(`Founded recursive chunk! Delay and return!`);
                         await this.delayAsync(delayOfHandle);
                         continue;
                     }
-                    const streamBlock = dataConverter.convertBase64DataToObject(rawBlockMessage);
-                    const chunkData = await this.loadChunkAsync(streamBlock);
-                    this.win.webContents.send('countOfWatchers-updated', streamBlock.streamWatchCount);
 
-                    await hlsPlaylistManager.updateM3UFileAsync(chunkData, this.m3uPath);
                     if(this.lastBlockIndex >= countOfChunksToReady) { //Update front page after 2 chunks is ready
                         this.initializeStartingStreamIfNotYet();
                     }
+
+                    const streamBlock = dataConverter.convertBase64DataToObject(rawBlockMessage);
+                    this.loadChunkAsync(streamBlock).then((chunkData) => {
+                        hlsPlaylistManager.updateM3UFileAsync(chunkData, this.m3uPath);
+                    }).catch(err => {
+                        throw err;
+                    });
+                    this.win.webContents.send('countOfWatchers-updated', streamBlock.streamWatchCount);
+
+                    
                     this.lastBlockRawMessage = rawBlockMessage;
                     this.rawBlocksQueue.delete(rawBlockMessage);
                     this.log(`Chunk id${this.lastBlockIndex} succefully downloaded!`);
