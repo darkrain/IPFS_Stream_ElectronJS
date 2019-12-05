@@ -30,7 +30,10 @@ $( document ).ready(function() {
         reader.onerror = (err) => {
             //TODO handle error
         }
-	})
+    })
+    
+    //default quality
+    ipc.send('onQualityChanged', 30);
 	
 	ipc.on('camera-list-update', (event, args) => {
 	    console.log(`CAMERAS GETTED: \n ${args}`);
