@@ -190,8 +190,7 @@ class StreamWatchPage extends PageBase{
         const delayOfHandle = 1000;
         while (super.isEnabled()) {
             if(this.rawBlocksQueue.size <= 0) {
-                this.log(`blocks queue is empty.. wait.`);
-                await this.delayAsync(delayOfHandle);
+                //skip if queue is empty
                 continue;
             }
             try {
