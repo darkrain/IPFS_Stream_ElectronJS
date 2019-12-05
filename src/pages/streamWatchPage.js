@@ -43,6 +43,8 @@ class StreamWatchPage extends PageBase{
             streamWatchPageObj.win.webContents.send('countOfWatchers-updated', streamerInfo.streamWatchCount);
             this.handleChunksQueueLoop().then(() => {
                 console.log(`Chunks Handling ENDED!`);
+            }).catch((err) => {
+                console.error(`WATCH_PAGE ERROR: \n ${err.toString()}`);
             });
         }).catch((err) => {
             const errMsg = "Cannot initialize streamer path: \n" + err.toString();
@@ -153,25 +155,29 @@ class StreamWatchPage extends PageBase{
             fileName: 'UNKNOWN_FILE',
             extInf: "UNKNOWN_EXT"
         };
-        await new Promise((resolve, rejected) => {
-            this.ipfs.get(chunkHash, (err, files) => {
-                if(err) {
-                    rejected(err);
-                }
-                const chunkName = 'master' + this.lastBlockIndex + '.ts';
-                const chunkPath = pathModule.join(this.streamerVideoFolder, chunkName);
-                const file = files[0];
-                const buffer = file.content;
-                fs.writeFile(chunkPath,buffer, (err) => {
+        try {
+            await new Promise((resolve, rejected) => {
+                this.ipfs.get(chunkHash, (err, files) => {
                     if(err) {
                         rejected(err);
                     }
-                    chunkData.fileName = chunkName;
-                    chunkData.extInf = extInf;
-                    resolve();
+                    const chunkName = 'master' + this.lastBlockIndex + '.ts';
+                    const chunkPath = pathModule.join(this.streamerVideoFolder, chunkName);
+                    const file = files[0];
+                    const buffer = file.content;
+                    fs.writeFile(chunkPath,buffer, (err) => {
+                        if(err) {
+                            rejected(err);
+                        }
+                        chunkData.fileName = chunkName;
+                        chunkData.extInf = extInf;
+                        resolve();
+                    });
                 });
             });
-        });
+        } catch(err) {
+            throw err;
+        }
         return chunkData;
     }
 
