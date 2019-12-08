@@ -198,10 +198,10 @@ function createWindowAsync(linkToPage) {
             currentWindow = new BrowserWindow({
                 width: 1280,
                 height: 768,
-                frame: false,
                 webPreferences: {
                     nodeIntegration: true
-                }
+                },
+                closable: true
             });           
         }
                
