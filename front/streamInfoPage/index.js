@@ -2,6 +2,7 @@ const electron = require('electron');
 const ipc = electron.ipcRenderer;
 const requestUrl = 'http://localhost:4000/streamInfo';
 
+window.gameDataObj = [];
 
 $( document ).ready(function() {
     const imageOpts = {
@@ -46,8 +47,8 @@ $( document ).ready(function() {
     
     ipc.on('gameEventsContentUpdated', (event, args) => {
         const gameEventsObjCollection = args;
-        for(let gameEventObj of gameEventsObjCollection) {
-            initializeGameEventObjAsView(gameEventObj);
+        for(let gameData of gameEventsObjCollection) {
+            initializeGameEventObjAsView(gameData);
         }
     })
 
@@ -90,6 +91,25 @@ $( document ).ready(function() {
 
 function initializeGameEventObjAsView(gameEventObj) {
     console.log(`GameEventObj initialized: \n${JSON.stringify(gameEventObj)}`);
-
     //TODO realize render as buttons
+    const gameButtons = document.getElementById('gameButtons');
+    console.log(`Game Buttons: \n ${gameButtons}`);
+    const container = document.createElement('div');
+    container.style.cssText = 'margin-top:10px;';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.id = gameEventObj.name;
+    button.setAttribute('data-dismiss', 'modal');
+    button.className = "btn btn-accent";
+    button.innerText = gameEventObj.prettyViewName;
+    container.appendChild(button);
+    gameButtons.appendChild(container);
+    button.onclick = function() {
+        onGameChoiced(gameEventObj);
+    }
+}
+
+function onGameChoiced(gameEventObj) {
+    console.log(`Game choiced! \n${JSON.stringify(gameEventObj)}`);
+    document.getElementById('currentGameEventName').innerText = gameEventObj.prettyViewName;
 }

@@ -7,6 +7,7 @@ const fileHandler = require('../data/fileHandling');
 const DataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
 const StreamInfoGenerator = require('../data/StreamerInfoGenerator.js');
 const jsonHelper = require('../helpers/JSONHelpers');
+const gameEventHandler = require('../gameEvents/gameEventHandler');
 
 class StreamInfoPage extends PageBase{
   constructor(ipfs, ipfsNodeID, electronIPC, pageWindow) {
@@ -23,12 +24,24 @@ class StreamInfoPage extends PageBase{
       
       //refresh firstable
       this.onStreamerDataUpdated();
+      
+      //update gameData on chooisen popup 
+      const gameData = [
+        gameEventHandler.smartContractGame,
+        gameEventHandler.testGameEvent
+      ]
+
+      this.pageWindow.webContents.send('gameEventsContentUpdated', gameData)
   }
 
   subscribeToIpcEvents = (ipc) => {
     let streamPageObj = this;
     let win = this.pageWindow;
     //### IPC calls ###
+
+    ipc.on('documentReady', () => {
+      console.log(`ALLL DATA READY!`);
+    });
 
     //Calling when all data is READY!
     ipc.on('dataReady', async (event, args) => {
