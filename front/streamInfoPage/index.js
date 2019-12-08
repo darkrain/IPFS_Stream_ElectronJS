@@ -83,6 +83,9 @@ $( document ).ready(function() {
                 
         });
     })
+
+    //test
+    //GAME_EVENTS_DATA['smartContractGame']();
 })
 
 function initializeGameEventObjAsView(gameEventObj) {
