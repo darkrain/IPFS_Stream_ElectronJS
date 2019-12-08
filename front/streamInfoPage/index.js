@@ -18,10 +18,6 @@ $( document ).ready(function() {
         $('#chooiseUserAvaBtn').click()
     })
 
-    $('#gameBtn').click(() => {
-        console.log("Game choiced!");        
-    })
-
     $('#chooiseUserAvaBtn').change((event) => {
         const file = event.target.files[0];
         const reader = new FileReader();
@@ -46,7 +42,14 @@ $( document ).ready(function() {
 
 	ipc.on('audio-list-update', (event, args) => {
 		initializeSelectionData('#audioSelection', args);
-	});
+    });
+    
+    ipc.on('gameEventsContentUpdated', (event, args) => {
+        const gameEventsObjCollection = args;
+        for(let gameEventObj of gameEventsObjCollection) {
+            initializeGameEventObjAsView(gameEventObj);
+        }
+    })
 
     const qualityRangeSlider = document.getElementById('steramQualityInput');
     qualityRangeSlider.onchange = function(){
@@ -80,6 +83,10 @@ $( document ).ready(function() {
                 
         });
     })
-
-
 })
+
+function initializeGameEventObjAsView(gameEventObj) {
+    console.log(`GameEventObj initialized: \n${JSON.stringify(gameEventObj)}`);
+
+    //TODO realize render as buttons
+}
