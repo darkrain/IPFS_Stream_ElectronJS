@@ -18,6 +18,10 @@ $( document ).ready(function() {
         $('#chooiseUserAvaBtn').click()
     })
 
+    $('#gameBtn').click(() => {
+        console.log("Game choiced!");        
+    })
+
     $('#chooiseUserAvaBtn').change((event) => {
         const file = event.target.files[0];
         const reader = new FileReader();
