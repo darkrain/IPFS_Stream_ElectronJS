@@ -25,6 +25,9 @@ class StreamInfoPage extends PageBase{
       //refresh firstable
       this.onStreamerDataUpdated();
       
+      //game data handling
+      this.currentGameData = null;
+
       //update gameData on chooisen popup 
       const gameData = [
         gameEventHandler.smartContractGame,
@@ -39,8 +42,9 @@ class StreamInfoPage extends PageBase{
     let win = this.pageWindow;
     //### IPC calls ###
 
-    ipc.on('documentReady', () => {
-      console.log(`ALLL DATA READY!`);
+    ipc.on('gameDataChoiced', (event, args) => {
+      this.currentGameData = Object.assign({},args); //copy obj
+      console.log(`GameDataEvent updated! \n ${JSON.stringify(this.currentGameData)}`);
     });
 
     //Calling when all data is READY!

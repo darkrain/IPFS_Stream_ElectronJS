@@ -112,4 +112,5 @@ function initializeGameEventObjAsView(gameEventObj) {
 function onGameChoiced(gameEventObj) {
     console.log(`Game choiced! \n${JSON.stringify(gameEventObj)}`);
     document.getElementById('currentGameEventName').innerText = gameEventObj.prettyViewName;
+    ipc.send('gameDataChoiced', gameEventObj);
 }
