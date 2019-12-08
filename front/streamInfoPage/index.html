@@ -77,14 +77,13 @@
                             <label class="col-form-label" for="addGameEventBtn">Игровые события</label>
                             <div class="card" style="width: 18rem;">
                                 <div class="card-body">
-                                    <button class="btn btn-secondary" id="addGameEventBtn">Выбрать игровое событие</button>
+                                    <button class="btn btn-secondary" type="button" id="addGameEventBtn" data-toggle="modal" data-target="#choiceGameEventModal" onclick="">Выбрать игровое событие</button>
                                     <h5 class="card-title" id="gameEventTitle">Текущее событие</h5>
                                     <h1 class=""></h1>
                                     <p class="card-text">NONE</p>
                                 </div>
                             </div>
                         </div>
-
                         <button class="btn btn-accent" id="openStreamBtn">Начать трансляцию</button>
                         <a class="btn btn-danger" id="backBtn">Я передумал</a>
                         
@@ -93,6 +92,26 @@
             </div>
         </div>
     </section>
+    <!-- Modal -->
+    <div class="modal fade" id="choiceGameEventModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              ...
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
     <!-- End main content-->
 
 </div>
