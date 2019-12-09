@@ -90,23 +90,73 @@ $( document ).ready(function() {
 })
 
 function initializeGameEventObjAsView(gameEventObj) {
+
     console.log(`GameEventObj initialized: \n${JSON.stringify(gameEventObj)}`);
-    //TODO realize render as buttons
+    const args = gameEventObj.args;
     const gameButtons = document.getElementById('gameButtons');
-    console.log(`Game Buttons: \n ${gameButtons}`);
-    const container = document.createElement('div');
-    container.style.cssText = 'margin-top:10px;';
+
+    const cardDiv = document.createElement('div');
+    cardDiv.className = "card text-white bg-secondary mb-3";
+    cardDiv.style.cssText = "width: 300px; margin-top: 10px;";
+    const cardBody = document.createElement('div');
+    cardBody.className = "card-body";
+
+    const gameEventNameElem = document.createElement('h4');
+    gameEventNameElem.innerText = gameEventObj.prettyViewName;
+    const header = document.createElement('div');
+    header.className = "card-header";
+    header.appendChild(gameEventNameElem);
     const button = document.createElement('button');
     button.type = 'button';
     button.id = gameEventObj.name;
     button.setAttribute('data-dismiss', 'modal');
-    button.className = "btn btn-accent";
-    button.innerText = gameEventObj.prettyViewName;
-    container.appendChild(button);
-    gameButtons.appendChild(container);
+    button.className = "btn btn-dark";
+    button.innerText = "Добавить";
+
+    cardDiv.appendChild(header);
+    cardDiv.appendChild(cardBody);
+    if(args !== null) {
+        createPropertiesForGameEventArgs(args, cardBody);
+    }
+    const footer = document.createElement('div');
+    footer.className = 'card-footer';
+
+    footer.appendChild(button);
+    cardDiv.appendChild(footer);
+    gameButtons.appendChild(cardDiv);
+
     button.onclick = function() {
         onGameChoiced(gameEventObj);
     }
+    
+}
+
+function createPropertiesForGameEventArgs(gameEventArgs, containerToAppend) {
+    for(const property of gameEventArgs) {
+        const div = document.createElement('div');
+        const nameElem = document.createElement('p').appendChild(document.createElement('b'));
+        nameElem.innerText = `${property.prettyViewName + ':  '}`;
+        
+        const inputElem = document.createElement('input');
+        inputElem.type = 'text';
+        inputElem.maxLength = 4;
+        inputElem.size = 4;
+        inputElem.id = getIdOfGameEventInputProperty(property.name);
+        inputElem.value = property.value;
+
+        inputElem.onchange = function() {
+            console.log(`Param ${property.name} changed!`);
+            property.value = inputElem.value;
+        }
+
+        nameElem.appendChild(inputElem);
+        div.appendChild(nameElem);
+        containerToAppend.appendChild(div);
+    }
+} 
+
+function getIdOfGameEventInputProperty(property) {
+    return `prop${property.name}`;
 }
 
 function onGameChoiced(gameEventObj) {
