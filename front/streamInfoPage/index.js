@@ -145,8 +145,13 @@ function createPropertiesForGameEventArgs(gameEventArgs, containerToAppend) {
         inputElem.value = property.value;
 
         inputElem.onchange = function() {
-            console.log(`Param ${property.name} changed!`);
-            property.value = inputElem.value;
+            const value = Number(inputElem.value);
+            if(value) {
+                property.value = inputElem.value;
+            } else {
+                property.value = null;
+            }
+            console.log(`Param ${property.name} changed!`);        
         }
 
         nameElem.appendChild(inputElem);
@@ -161,6 +166,23 @@ function getIdOfGameEventInputProperty(property) {
 
 function onGameChoiced(gameEventObj) {
     console.log(`Game choiced! \n${JSON.stringify(gameEventObj)}`);
-    document.getElementById('currentGameEventName').innerText = gameEventObj.prettyViewName;
-    ipc.send('gameDataChoiced', gameEventObj);
+    const gameEventNameElem = document.getElementById('currentGameEventName');
+    gameEventNameElem.innerText = gameEventObj.prettyViewName;
+    const gameProperties = gameEventObj.args;
+    let valueToSend = gameEventObj;
+    if(gameProperties && gameProperties.length > 0) {
+        for(const prop of gameProperties) {
+            if(prop.value) {
+                gameEventNameElem.innerText += `\n ${prop.prettyViewName} : ${prop.value}`;
+            } else {
+                valueToSend = null;
+                break;
+            }
+        }
+    }
+    
+
+    ipc.send('gameDataChoiced', valueToSend);
+    if(valueToSend === null)
+        gameEventNameElem.innerText = 'NONE';
 }

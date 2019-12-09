@@ -43,6 +43,8 @@ class StreamInfoPage extends PageBase{
     //### IPC calls ###
 
     ipc.on('gameDataChoiced', (event, args) => {
+      if(!args)
+        return;
       this.currentGameData = Object.assign({},args); //copy obj
       console.log(`GameDataEvent updated! \n ${JSON.stringify(this.currentGameData)}`);
     });
