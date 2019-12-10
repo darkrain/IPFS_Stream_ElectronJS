@@ -54,9 +54,7 @@ class StreamWatchPage extends PageBase{
 
 
         this.gameData = this.streamerInfo.gameData;
-        if(this.gameData) {
-            this.win.webContents.send('gameDataIncluded', this.gameData);
-        }
+        this.win.webContents.send('gameDataIncluded', this.gameData);
 
         this.ipc.on('exit-watch', (event, args) => {
             //Some actions on exit watch page...
