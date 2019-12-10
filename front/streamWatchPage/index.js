@@ -71,7 +71,7 @@ function initializeGameData(gameData) {
 
 	console.log(`Game data getted from streamer! \n ${JSON.stringify(gameData)}`);
 	printValuesOfGameDataInWindow(gameData);
-	subscribeToBetButton();
+	subscribeToBetButtons();
 }
 
 function printValuesOfGameDataInWindow(gameData) {
@@ -81,7 +81,8 @@ function printValuesOfGameDataInWindow(gameData) {
 	gameEventDescrElem.innerText = gameData.gameEventDescription;
 }
 
-function subscribeToBetButton() {
-	const betButton = document.getElementById('makeBetBtn');
+function subscribeToBetButtons() {
+	const betTRUEButton = document.getElementById('makeItEventButton');
+	const betFALSEButton = document.getElementById('dontItEventButton');
 }
 

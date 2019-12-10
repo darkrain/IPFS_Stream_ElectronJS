@@ -71,9 +71,9 @@
                             <p id="gameEventDescription">Some description</p>
                         </div>
                         <div>
-                            <button type="button" id="makeBetBtn" class="btn btn-info text-center">
+                            <button class="btn btn-secondary" type="button" id="makeBetBtn" data-toggle="modal" data-target="#choiceGameEventModal" onclick="">
                                 <h3>Сделать ставку!</h3>
-                            </button>                   
+                            </button>               
                         </div>
                     </div> 
                 </div>
@@ -106,6 +106,34 @@
 
         </div>
     </section>
+
+    <!-- Modal -->
+    <div class="modal fade" id="choiceGameEventModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header text-center">
+                  <h5 class="modal-title" id="exampleModalLabel">На что ставим?</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="gameButtons">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-success" id="makeItEventButton">
+                                <h4>Сделает!</h4>
+                            </button>
+                            <button type="button" class="btn btn-danger" id="dontItEventButton">
+                                <h4>Не сделает!</h4>
+                            </button>
+                        </div>        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+              </div>
+            </div>
+          </div>
 </div>
 <!-- End wrapper-->
 <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
