@@ -69,8 +69,19 @@ function initializeGameData(gameData) {
 		return;
 	}	
 
-	//necessary elements
-
 	console.log(`Game data getted from streamer! \n ${JSON.stringify(gameData)}`);
+	printValuesOfGameDataInWindow(gameData);
+	subscribeToBetButton();
+}
+
+function printValuesOfGameDataInWindow(gameData) {
+	const gameEventNameElem = document.getElementById('gameEventName');
+	const gameEventDescrElem = document.getElementById('gameEventDescription');
+	gameEventNameElem.innerText = gameData.prettyViewName;
+	gameEventDescrElem.innerText = gameData.gameEventDescription;
+}
+
+function subscribeToBetButton() {
+	const betButton = document.getElementById('makeBetBtn');
 }
 
