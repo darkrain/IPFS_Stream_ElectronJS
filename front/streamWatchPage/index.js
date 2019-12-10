@@ -90,9 +90,9 @@ function subscribeToBetButtons() {
 //answer is a boolean!
 function showDialogByAnswer(answer) {
 	if(answer === true) {
-
+	//TODO show dialog
 	} else if (answer === false) {
-
+		
 	} else {
 		console.error(`Unknow type of answer! :/`);
 	}
