@@ -52,7 +52,8 @@ async function generateDataForStreamerAsync(streamerObj, ipfs) {
         nickname: streamerObj.nickname,
         lastStreamBlockEncoded: streamerObj.lastStreamBlockEncoded,
         streamerAvaBase64: streamAvaBase64,
-        userAvaBase64: userAvaBase64
+        userAvaBase64: userAvaBase64,
+        gameData: streamerObj.gameData
     };
     
     return streamData;
