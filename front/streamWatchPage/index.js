@@ -36,6 +36,10 @@ $(document).ready(function() {
 		alert('Stream has been stopped!');
 	});
 
+	ipc.on('gameDataIncluded', (event, args) => {
+		initializeGameData(args);
+	})
+
 	$('#sendMsgBtn').click(function () {
 		const messageInput = document.getElementById('messageInput');
 		ipc.send('onMessageSend', messageInput.value);
@@ -55,4 +59,10 @@ ipc.on('stream-loaded', (event, args) => {
 		});
 	}
 });
+
+function initializeGameData(gameData) {
+	if(!gameData)
+		return;
+	console.log(`Game data getted from streamer! \n ${JSON.stringify(gameData)}`);
+}
 

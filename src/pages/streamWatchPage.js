@@ -25,7 +25,7 @@ class StreamWatchPage extends PageBase{
         this.lastBlockIndex = 0;
         this.isStreamInitialized = false;
         const streamWatchPageObj = this;
-
+    
         //*** update raw blocks queue by last block!
         this.lastStreamBlockFromInfo = this.streamerInfo.lastStreamBlockEncoded;
         this.rawBlocksQueue.add(this.lastStreamBlockFromInfo);
@@ -51,6 +51,12 @@ class StreamWatchPage extends PageBase{
             console.error(errMsg);
             logger.printErr(new Error(errMsg))
         });
+
+
+        this.gameData = this.streamerInfo.gameData;
+        if(this.gameData) {
+            this.win.webContents.send('gameDataIncluded', this.gameData);
+        }
 
         this.ipc.on('exit-watch', (event, args) => {
             //Some actions on exit watch page...
