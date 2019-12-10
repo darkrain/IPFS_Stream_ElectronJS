@@ -7,7 +7,7 @@ window.gameDataObj = [];
 const gameEventPrototype = {
     nameID: null,
     prettyViewName: null, 
-    betValue: null
+    gameEventDescription: null
 }
 
 $( document ).ready(function() {
@@ -95,15 +95,14 @@ function subscribeToGameDataUiHandlers() {
     const createEventBtn = document.getElementById('createGameEventBtn');
     createEventBtn.onclick = function() {
         const prettyViewNameValue = document.getElementById('gameEventPrettyViewName').value;
-        const betValue = document.getElementById('gameEventValue').value;
+        const gameEventDescription = document.getElementById('gameEventDescription').value;
         
-        const isNaN = !Number(betValue)
         //try to create event 
-        if(!isNaN && prettyViewNameValue) {
+        if(prettyViewNameValue) {
             const gameEventObj = createCustomGameEvent({
                 name: 0,
                 prettyViewName: prettyViewNameValue,
-                betValue: betValue
+                gameEventDescription: gameEventDescription
             });
             onGameChoiced(gameEventObj);
         } else {
@@ -122,17 +121,21 @@ function onGameChoiced(gameEventObj) {
         
     console.log(`Game choiced! \n${JSON.stringify(gameEventObj)}`);
     gameEventNameElem.innerText = gameEventObj.prettyViewName;
-    const gameBetValue = gameEventObj.betValue;
-    let valueToSend = gameEventObj;
-    gameEventNameElem.innerText += `\n Ставка ETH : ${gameBetValue}`;
+    const description = gameEventObj.gameEventDescription;
+    let croppedDescription = null;
+    if(description && description.length > 0) {
+        croppedDescription = description.substring(0,description.length / 2 );
+        gameEventNameElem.innerText += `\n Описание: ${croppedDescription}...`;
+    }
     
-    ipc.send('gameDataChoiced', valueToSend);
+    
+    ipc.send('gameDataChoiced', gameEventObj);
 }
 
 function createCustomGameEvent(opt) {
     const protoype = Object.assign({}, gameEventPrototype);
     protoype.nameID = opt.nameID;
     protoype.prettyViewName = opt.prettyViewName;
-    protoype.betValue = opt.betValue;
+    protoype.gameEventDescription = opt.gameEventDescription;
     return protoype;
 }

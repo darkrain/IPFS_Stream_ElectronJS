@@ -79,7 +79,7 @@
                                 <div class="card-body">
                                     <button class="btn btn-secondary" type="button" id="addGameEventBtn" data-toggle="modal" data-target="#choiceGameEventModal" onclick="">Выбрать игровое событие</button>
                                     <h5 class="card-title" id="gameEventTitle">Текущее событие</h5>
-                                    <p class="card-text" id='currentGameEventName'>NONE</p>
+                                    <p class="card-text" id='currentGameEventName'>Отсутствует</p>
                                 </div>
                             </div>
                         </div>
@@ -105,9 +105,9 @@
                     <div class="form-group">
                         <label class="col-form-label" for="gameEventPrettyViewName">Название события</label>
                         <input type="text" size="13" maxLength="13" placeholder="" title="" value="" id="gameEventPrettyViewName" class="form-control">
-                        <label class="col-form-label" for="gameEventValue">Ставка</label>
-                        <input type="text" size="4" maxlength="4" placeholder="" title="" value="" id="gameEventValue" class="form-control">
-                        
+                        <label class="col-form-label" for="gameEventDescription">Описание события</label>
+                        <textarea class="form-control" id="gameEventDescription"></textarea>
+
                         <button type="button" class="btn btn-dark" id="createGameEventBtn" data-dismiss="modal">Создать</button>
                     </div>        
                 </div>
