@@ -133,6 +133,8 @@ class StreamInfoPage extends PageBase{
             };
             if(readyData.isDataReady) {
                 this.streamerInfo = readyData.streamInfo;
+                //if game data included
+                this.tryAttachGameDataForStreamer(this.streamerInfo);
                 console.log(`Ready streamer info: \n ${JSON.stringify(this.streamerInfo)}`);
                 const streamInfoDecorated = jsonHelper.simplifyStringifyValue(streamInfoArray);
                 console.log(`Streamer info updated! Values: \n ${streamInfoDecorated}`);
@@ -141,7 +143,11 @@ class StreamInfoPage extends PageBase{
       throw err;
     })
   };
-
+  tryAttachGameDataForStreamer(streamInfo) {
+    if(this.currentGameData) {
+      streamInfo.gameData = this.currentGameData;
+    }
+  }
   stop() {
     const streamInfoPageObj = this;
     return new Promise((resolve, rejected) => {

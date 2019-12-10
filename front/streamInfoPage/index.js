@@ -128,7 +128,6 @@ function onGameChoiced(gameEventObj) {
         gameEventNameElem.innerText += `\n Описание: ${croppedDescription}...`;
     }
     
-    
     ipc.send('gameDataChoiced', gameEventObj);
 }
 
