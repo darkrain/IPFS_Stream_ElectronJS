@@ -61,10 +61,16 @@ ipc.on('stream-loaded', (event, args) => {
 });
 
 function initializeGameData(gameData) {
+
+	const streamerGameEventElem = document.getElementById('streamerGameEvent');
 	if(!gameData) {
 		console.log(`This Stream without data!`);
+		streamerGameEventElem.hidden = true;
 		return;
 	}	
+
+	//necessary elements
+
 	console.log(`Game data getted from streamer! \n ${JSON.stringify(gameData)}`);
 }
 
