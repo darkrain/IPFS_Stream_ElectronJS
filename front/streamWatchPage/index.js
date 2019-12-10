@@ -84,5 +84,18 @@ function printValuesOfGameDataInWindow(gameData) {
 function subscribeToBetButtons() {
 	const betTRUEButton = document.getElementById('makeItEventButton');
 	const betFALSEButton = document.getElementById('dontItEventButton');
+	betTRUEButton.onclick = () => {showDialogByAnswer(true);}
+	betFALSEButton.onclick = () => {showDialogByAnswer(false);}
+}
+//answer is a boolean!
+function showDialogByAnswer(answer) {
+	if(answer === true) {
+
+	} else if (answer === false) {
+
+	} else {
+		console.error(`Unknow type of answer! :/`);
+	}
+	console.log(`Bet click: ${answer}!`);
 }
 
