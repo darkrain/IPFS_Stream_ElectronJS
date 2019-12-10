@@ -4,16 +4,16 @@ class GameEvent {
         this.prettyViewName = options.prettyViewName
         //Args should contains any necessary data for event
         //for example: if it is smartContract iteration- any values for web3
-        this.args = options.args;
+        this.betValue = options.betValue;
     } 
     
     getArgs() {
-        if(this.args === null)
+        if(this.betValue === null)
             throw new Error(`Args of gameEvent ${this.name} is NULL!!`);
-        return this.args
+        return this.betValue
     }
-    setArgs(args) {
-        this.args = args;
+    setBetValue(betValue) {
+        this.betValue = betValue;
     }
 }
 

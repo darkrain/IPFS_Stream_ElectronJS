@@ -6,3 +6,20 @@
     color: black;
 }
 .container-center {margin: 0 auto;}
+
+#gameEventPrettyViewName {
+    width: 200px;
+}
+#gameEventValue {
+    width: 100px;
+}
+#createGameEventBtn {
+    width: 200px;
+    margin-top: 10px;
+}
+
+#gameButtons {
+    margin: auto;
+    width: 400px;
+}
+

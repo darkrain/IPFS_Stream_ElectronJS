@@ -4,7 +4,16 @@ const requestUrl = 'http://localhost:4000/streamInfo';
 
 window.gameDataObj = [];
 
+const gameEventPrototype = {
+    nameID: null,
+    prettyViewName: null, 
+    betValue: null
+}
+
 $( document ).ready(function() {
+
+    subscribeToGameDataUiHandlers();
+
     const imageOpts = {
         width: 350,
         height: 250,
@@ -45,13 +54,6 @@ $( document ).ready(function() {
 		initializeSelectionData('#audioSelection', args);
     });
     
-    ipc.on('gameEventsContentUpdated', (event, args) => {
-        const gameEventsObjCollection = args;
-        for(let gameData of gameEventsObjCollection) {
-            initializeGameEventObjAsView(gameData);
-        }
-    })
-
     const qualityRangeSlider = document.getElementById('steramQualityInput');
     qualityRangeSlider.onchange = function(){
         const maxValue = 51;
@@ -89,100 +91,48 @@ $( document ).ready(function() {
     //GAME_EVENTS_DATA['smartContractGame']();
 })
 
-function initializeGameEventObjAsView(gameEventObj) {
-
-    console.log(`GameEventObj initialized: \n${JSON.stringify(gameEventObj)}`);
-    const args = gameEventObj.args;
-    const gameButtons = document.getElementById('gameButtons');
-
-    const cardDiv = document.createElement('div');
-    cardDiv.className = "card text-white bg-secondary mb-3";
-    cardDiv.style.cssText = "width: 300px; margin-top: 10px;";
-    const cardBody = document.createElement('div');
-    cardBody.className = "card-body";
-
-    const gameEventNameElem = document.createElement('h4');
-    gameEventNameElem.innerText = gameEventObj.prettyViewName;
-    const header = document.createElement('div');
-    header.className = "card-header";
-    header.appendChild(gameEventNameElem);
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.id = gameEventObj.name;
-    button.setAttribute('data-dismiss', 'modal');
-    button.className = "btn btn-dark";
-    button.innerText = "Добавить";
-
-    cardDiv.appendChild(header);
-    cardDiv.appendChild(cardBody);
-    if(args !== null) {
-        createPropertiesForGameEventArgs(args, cardBody);
-    }
-    const footer = document.createElement('div');
-    footer.className = 'card-footer';
-
-    footer.appendChild(button);
-    cardDiv.appendChild(footer);
-    gameButtons.appendChild(cardDiv);
-
-    button.onclick = function() {
-        onGameChoiced(gameEventObj);
-    }
-    
-}
-
-function createPropertiesForGameEventArgs(gameEventArgs, containerToAppend) {
-    for(const property of gameEventArgs) {
-        const div = document.createElement('div');
-        const nameElem = document.createElement('p').appendChild(document.createElement('b'));
-        nameElem.innerText = `${property.prettyViewName + ':  '}`;
+function subscribeToGameDataUiHandlers() {
+    const createEventBtn = document.getElementById('createGameEventBtn');
+    createEventBtn.onclick = function() {
+        const prettyViewNameValue = document.getElementById('gameEventPrettyViewName').value;
+        const betValue = document.getElementById('gameEventValue').value;
         
-        const inputElem = document.createElement('input');
-        inputElem.type = 'text';
-        inputElem.maxLength = 4;
-        inputElem.size = 4;
-        inputElem.id = getIdOfGameEventInputProperty(property.name);
-        inputElem.value = property.value;
-
-        inputElem.onchange = function() {
-            const value = Number(inputElem.value);
-            if(value) {
-                property.value = inputElem.value;
-            } else {
-                property.value = null;
-            }
-            console.log(`Param ${property.name} changed!`);        
+        const isNaN = !Number(betValue)
+        //try to create event 
+        if(!isNaN && prettyViewNameValue) {
+            const gameEventObj = createCustomGameEvent({
+                name: 0,
+                prettyViewName: prettyViewNameValue,
+                betValue: betValue
+            });
+            onGameChoiced(gameEventObj);
+        } else {
+            console.error(`Cannot create gameEventObject!`);
+            onGameChoiced(null);
         }
-
-        nameElem.appendChild(inputElem);
-        div.appendChild(nameElem);
-        containerToAppend.appendChild(div);
     }
-} 
-
-function getIdOfGameEventInputProperty(property) {
-    return `prop${property.name}`;
 }
 
 function onGameChoiced(gameEventObj) {
-    console.log(`Game choiced! \n${JSON.stringify(gameEventObj)}`);
     const gameEventNameElem = document.getElementById('currentGameEventName');
-    gameEventNameElem.innerText = gameEventObj.prettyViewName;
-    const gameProperties = gameEventObj.args;
-    let valueToSend = gameEventObj;
-    if(gameProperties && gameProperties.length > 0) {
-        for(const prop of gameProperties) {
-            if(prop.value) {
-                gameEventNameElem.innerText += `\n ${prop.prettyViewName} : ${prop.value}`;
-            } else {
-                valueToSend = null;
-                break;
-            }
-        }
-    }
-    
-
-    ipc.send('gameDataChoiced', valueToSend);
-    if(valueToSend === null)
+    if(gameEventObj === null) {
         gameEventNameElem.innerText = 'NONE';
+        return;
+    }
+        
+    console.log(`Game choiced! \n${JSON.stringify(gameEventObj)}`);
+    gameEventNameElem.innerText = gameEventObj.prettyViewName;
+    const gameBetValue = gameEventObj.betValue;
+    let valueToSend = gameEventObj;
+    gameEventNameElem.innerText += `\n Ставка ETH : ${gameBetValue}`;
+    
+    ipc.send('gameDataChoiced', valueToSend);
+}
+
+function createCustomGameEvent(opt) {
+    const protoype = Object.assign({}, gameEventPrototype);
+    protoype.nameID = opt.nameID;
+    protoype.prettyViewName = opt.prettyViewName;
+    protoype.betValue = opt.betValue;
+    return protoype;
 }

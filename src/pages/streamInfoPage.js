@@ -7,7 +7,6 @@ const fileHandler = require('../data/fileHandling');
 const DataReadyHelper = require('../helpers/dataReadyCheckHelper.js');
 const StreamInfoGenerator = require('../data/StreamerInfoGenerator.js');
 const jsonHelper = require('../helpers/JSONHelpers');
-const gameEventHandler = require('../gameEvents/gameEventHandler');
 
 class StreamInfoPage extends PageBase{
   constructor(ipfs, ipfsNodeID, electronIPC, pageWindow) {
@@ -27,14 +26,6 @@ class StreamInfoPage extends PageBase{
       
       //game data handling
       this.currentGameData = null;
-
-      //update gameData on chooisen popup 
-      const gameData = [
-        gameEventHandler.smartContractGame,
-        gameEventHandler.testGameEvent
-      ]
-
-      this.pageWindow.webContents.send('gameEventsContentUpdated', gameData)
   }
 
   subscribeToIpcEvents = (ipc) => {
