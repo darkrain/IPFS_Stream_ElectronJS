@@ -72,7 +72,6 @@ function initializeGameData(gameData) {
 	console.log(`Game data getted from streamer! \n ${JSON.stringify(gameData)}`);
 	printValuesOfGameDataInWindow(gameData);
 	subscribeToBetButtons();
-	subscribeToModal();
 	setActiveOfDialog(false); //basicly
 }
 
