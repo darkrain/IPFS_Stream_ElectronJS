@@ -90,15 +90,12 @@ function subscribeToBetButtons() {
 	betFALSEButton.onclick = () => {showDialogByAnswer(false);}
 }
 
-function subscribeToModal() {
-	const modal = document.getElementById('setupBetModal');
-	modal.addEventListener('hide.bs.modal', () => {
-		setActiveOfDialog(false);
-	}) 
-}
 //answer is a boolean!
 function showDialogByAnswer(answer) {
 	setActiveOfDialog(true);
+	const answerTitle = document.getElementById('answerElem');
+	const answerStr = answer ? "Сделает" : "Не сделает";
+	const answerStrColor = answer ? "white" : "red";
 	if(answer === true) {
 	//TODO show dialog
 	} else if (answer === false) {
@@ -106,6 +103,10 @@ function showDialogByAnswer(answer) {
 	} else {
 		console.error(`Unknow type of answer! :/`);
 	}
+
+	answerTitle.innerText = answerStr;
+	answerTitle.style.color = answerStrColor;
+
 	console.log(`Bet click: ${answer}!`);
 }
 
