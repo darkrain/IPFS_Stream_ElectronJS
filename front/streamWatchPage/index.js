@@ -111,6 +111,6 @@ function showDialogByAnswer(answer) {
 
 function setActiveOfDialog(isActive) {
 	const dialog = document.getElementById('paymentInfo');
-	dialog.hidden = isActive;
+	dialog.hidden = !isActive;
 }
 
