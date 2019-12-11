@@ -72,6 +72,7 @@ function initializeGameData(gameData) {
 	console.log(`Game data getted from streamer! \n ${JSON.stringify(gameData)}`);
 	printValuesOfGameDataInWindow(gameData);
 	subscribeToBetButtons();
+	subscribeToModal();
 }
 
 function printValuesOfGameDataInWindow(gameData) {
@@ -87,8 +88,16 @@ function subscribeToBetButtons() {
 	betTRUEButton.onclick = () => {showDialogByAnswer(true);}
 	betFALSEButton.onclick = () => {showDialogByAnswer(false);}
 }
+
+function subscribeToModal() {
+	const modal = document.getElementById('setupBetModal'); 
+	modal.on('hide.bs.modal', () => {
+		setActiveOfDialog(false);
+	})
+}
 //answer is a boolean!
 function showDialogByAnswer(answer) {
+	setActiveOfDialog(true);
 	if(answer === true) {
 	//TODO show dialog
 	} else if (answer === false) {
@@ -97,5 +106,10 @@ function showDialogByAnswer(answer) {
 		console.error(`Unknow type of answer! :/`);
 	}
 	console.log(`Bet click: ${answer}!`);
+}
+
+function setActiveOfDialog(isActive) {
+	const dialog = document.getElementById('paymentInfo');
+	dialog.hidden = isActive;
 }
 
