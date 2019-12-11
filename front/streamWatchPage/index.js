@@ -90,10 +90,10 @@ function subscribeToBetButtons() {
 }
 
 function subscribeToModal() {
-	const modal = document.getElementById('setupBetModal'); 
-	modal.on('hide.bs.modal', () => {
+	const modal = document.getElementById('setupBetModal');
+	modal.addEventListener('hide.bs.modal', () => {
 		setActiveOfDialog(false);
-	})
+	}) 
 }
 //answer is a boolean!
 function showDialogByAnswer(answer) {
