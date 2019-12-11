@@ -73,6 +73,7 @@ function initializeGameData(gameData) {
 	printValuesOfGameDataInWindow(gameData);
 	subscribeToBetButtons();
 	subscribeToModal();
+	setActiveOfDialog(false); //basicly
 }
 
 function printValuesOfGameDataInWindow(gameData) {
