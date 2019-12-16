@@ -2,6 +2,14 @@ const electron = require('electron');
 const ipc = electron.ipcRenderer;
 const chatItem = $.templates("#chatItem");
 $(document).ready(function() {
+
+	//hide by default
+	setActiveGameEventControls(false);
+
+	ipc.on('gameEventReady', (event, args) => {
+		setActiveGameEventControls(true);
+	})
+
 	$('#backBtn').click(function(){
 		ipc.send('backBtnClicked');
 	});
@@ -19,6 +27,8 @@ $(document).ready(function() {
 		let messageHtml = chatItem.render(args);
 		$('tbody',chatBody).append(messageHtml)
 	});
+
+	
 
 	$('#sendMsgBtn').click(function () {
 		const messageInput = document.getElementById('messageInput');
@@ -51,5 +61,10 @@ ipc.on('watcher-count-update', (event, args) => {
 	const textCounter = document.getElementById('countOfWatchers');
 	textCounter.textContent = watchersCount;
 });
+
+function setActiveGameEventControls(isActive) {
+	const dialog = document.getElementById('gameEventControl');
+	dialog.hidden = !isActive;
+}
 
 // ### END Client event subscriber handlers ###
