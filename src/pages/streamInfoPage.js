@@ -64,7 +64,8 @@ class StreamInfoPage extends PageBase{
                 clearInterval(transitionInterval);
                 const argsForStream = {
                     streamerInfo: this.streamerInfo,
-                    streamInitializer: streamPageObj.streamInitializer
+                    streamInitializer: streamPageObj.streamInitializer,
+                    gameEvent: this.currentGameData
                 };
                 console.log(`Transition to streamingPage !!!`);
                 super.goToPage('streamingPage', argsForStream);

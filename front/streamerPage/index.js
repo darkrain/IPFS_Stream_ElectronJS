@@ -7,6 +7,8 @@ $(document).ready(function() {
 	setActiveGameEventControls(false);
 
 	ipc.on('gameEventReady', (event, args) => {
+		const gameData = args;
+		updateGameEventDialogByData(gameData);
 		setActiveGameEventControls(true);
 	})
 
@@ -65,6 +67,13 @@ ipc.on('watcher-count-update', (event, args) => {
 function setActiveGameEventControls(isActive) {
 	const dialog = document.getElementById('gameEventControl');
 	dialog.hidden = !isActive;
+}
+
+function updateGameEventDialogByData(gameData) {
+	const gameEventName = document.getElementById('gameEventName');
+	const gameEventDescription = document.getElementById('gameEventDescription');
+	gameEventName.innerText = gameData.prettyViewName;
+	gameEventDescription.innerText = gameData.gameEventDescription;
 }
 
 // ### END Client event subscriber handlers ###

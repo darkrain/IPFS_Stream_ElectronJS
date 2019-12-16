@@ -5,7 +5,7 @@ const SavedGlobalRoom = require('../PubsubRooms/SavedGlobalRoom');
 const url = require('url');
 
 class StreamPage extends PageBase{
-  constructor(ipfs, streamInitializer, win, electronIPC, streamerInfo) {
+  constructor(ipfs, streamInitializer, win, electronIPC, streamerInfo, gameData) {
       super();
       try {
           this.ipfs = ipfs;
@@ -21,6 +21,12 @@ class StreamPage extends PageBase{
           this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.electronIPC, this.pageWindow, this.streamerInfo);
           this.chatRoomInitializer.initialize();
           this.streamSaver = null;
+          this.gameData = gameData;
+
+          if(this.gameData) {
+            this.pageWindow.webContents.send('gameEventReady', this.gameData);
+          }
+
       } catch(err) {
           throw err;
       }

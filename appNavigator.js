@@ -134,6 +134,7 @@ async function loadPageByName(pageName, args)  {
                 const streamArgs = args;
                 const streamerInfo = args.streamerInfo;
                 const streamInitializer = args.streamInitializer;
+                const gameData = args.gameEvent;
                 if(!streamerInfo) {
                     throw new Error(`Unable to start stream page, streamer info is NULL!!!`);
                 }
@@ -141,7 +142,8 @@ async function loadPageByName(pageName, args)  {
                     throw new Error(`Unable to start stream page, streamInitializer is NULL!!!`);
                 }
                 createWindowAsync(STREAM_PAGE_LINK).then((win) => {
-                    _currentPage = new StreamPage(IpfsInstance, streamInitializer, win, ipc, streamerInfo);
+                    _currentPage = new StreamPage(IpfsInstance, streamInitializer, win, ipc, streamerInfo,
+                        gameData);
                 });
                 break;
             }
