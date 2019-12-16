@@ -2,6 +2,12 @@ const electron = require('electron');
 const ipc = electron.ipcRenderer;
 const chatItem = $.templates("#chatItem");
 
+//CHANGE IT TO ITERACT WITH CONTRACTS!
+const contractsAdresses = {
+	FALSE_CONTRACT: null,
+	TRUE_CONTRACT: null
+}
+
 $(document).ready(function() {
 	ipc.on('streamerDataGetted', (event, args) => {
 		const streamData = args;
