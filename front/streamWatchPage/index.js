@@ -4,8 +4,8 @@ const chatItem = $.templates("#chatItem");
 
 //CHANGE IT TO ITERACT WITH CONTRACTS!
 const contractsAdresses = {
-	FALSE_CONTRACT: null,
-	TRUE_CONTRACT: null
+	FALSE_CONTRACT: "0xEB0FFD6837A03Ecc269C6e9595582f61A051f47f",
+	TRUE_CONTRACT: "0xCD7FF97536688A1329714460E6D61e67EA340B1e"
 }
 
 $(document).ready(function() {
@@ -98,9 +98,12 @@ function subscribeToBetButtons() {
 //answer is a boolean!
 function showDialogByAnswer(answer) {
 	setActiveOfDialog(true);
+	const answerAddress = document.getElementById('walletAddressField');
 	const answerTitle = document.getElementById('answerElem');
 	const answerStr = answer ? "Сделает" : "Не сделает";
 	const answerStrColor = answer ? "white" : "red";
+	answerAddress.value = answer ? contractsAdresses.TRUE_CONTRACT  : contractsAdresses.FALSE_CONTRACT;
+
 	if(answer === true) {
 	//TODO show dialog
 	} else if (answer === false) {
