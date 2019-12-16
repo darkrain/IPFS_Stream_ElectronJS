@@ -63,7 +63,18 @@
                 <video id="video-player" width="100%" controls>
                 </video>
             </div>
-
+            <div class="row">
+                <div class="panel panel-filled text-center" style="width: 100%; margin-top: 10px; margin-bottom: 10px;">
+                    <h1>Ваше событие:</h1>
+                    <h4 id="gameEventDescription">Описание</h4>
+                    <button type="button" class="btn btn-success" style="width: 25%;">
+                        <h4>Сделал</h4>
+                    </button>
+                    <button type="button" class="btn btn-danger" style="width: 25%;">
+                        <h4>Не сделал</h4>
+                    </button>
+                </div>
+            </div> 
             <div class="row">
                     <div class="panel panel-filled" style="width:100%">
                         <div class="panel-heading">
@@ -101,6 +112,7 @@
 <script src="../vendor/jquery/jquery.min.js"></script>
 <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
 <script src="../../node_modules/jsrender/jsrender.min.js"></script>
+<script src="../js/web3.min.js"></script>
 <script src="index.js"> </script> 
 <!-- App scripts -->
 <script>if (window.module) module = window.module;</script>
