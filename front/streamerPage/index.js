@@ -5,233 +5,233 @@ const chatItem = $.templates("#chatItem");
 //Bad design, define all necessary data for web3 js 
 //to iteract with contract
 const contractAbi = [
-    {
-      "inputs": [],
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "previousOwner",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnershipTransferred",
-      "type": "event"
-    },
-    {
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "fallback"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "betHolderFALSE",
-      "outputs": [
-        {
-          "internalType": "contract BetHolderContract",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "betHolderTRUE",
-      "outputs": [
-        {
-          "internalType": "contract BetHolderContract",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "falsePlayersHashTable",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "isOwner",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "renounceOwnership",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "transferOwnership",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "truePlayersHashTable",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "getPlayerBalanceInTrueBets",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "getPlayerBalanceInFalseBets",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "finishBettingForTrue",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "finishBettingForFalse",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "getPlayersBettingPoolAmount",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    }
-  ]
+  {
+    "inputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "fallback"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "betHolderFALSE",
+    "outputs": [
+      {
+        "internalType": "contract BetHolderContract",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "betHolderTRUE",
+    "outputs": [
+      {
+        "internalType": "contract BetHolderContract",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "falsePlayersHashTable",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "isOwner",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "truePlayersHashTable",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getPlayerBalanceInTrueBets",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getPlayerBalanceInFalseBets",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "finishBettingForTrue",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "finishBettingForFalse",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getPlayersBettingPoolAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
 const gameContractData = {
-	contractAdress: '0x6187Ddeda1d960834C9FeEc0b1Bc3245E92E6c7A',
+	contractAdress: '0xE9d7Ca2e9170b208482b7e15ad6bF800E7AFE428',
 	abi: contractAbi,
 	ownerInfo: {
-		addr: '0x24979284Bc9f7D16c3f13fE82DB1eDB6b201aBE3',
-		privateKey: '9ec3a942c018eebf1422f54c6a7a58b225241ddcaa3e13abddbb2e844eed7968',
-		mnemonic: 'major mutual knife split ability tennis silly run swarm major control rubber'
+		addr: '0x57221f51c1d31d1a27d391E5EA4Ab181376cb222',
+		privateKey: '5fbb4026de3f121b50010efe73c7a7e78fe4dfcae247661ba6aaeb99364617f1',
+		mnemonic: 'moral roof vivid stadium gold acquire plunge artefact artefact post analyst lyrics'
 	}
 }
 
@@ -244,7 +244,8 @@ $(document).ready(function() {
 		const gameData = args;
 		updateGameEventDialogByData(gameData);
 		initializeWeb3();
-		setActiveGameEventControls(true);
+    setActiveGameEventControls(true);
+    subscribeToContractControlButtons();
 	})
 
 	$('#backBtn').click(function(){
@@ -304,7 +305,8 @@ function subscribeToContractControlButtons() {
     const loseItBtn = document.getElementById('loseIt');
 
     btnTakeIt.onclick = () => {
-
+      paymentForTrue();
+      setActiveGameEventControls(false);
     }
 
     loseItBtn.onclick = () => {
@@ -331,24 +333,23 @@ function initializeWeb3() {
 	} else {
 		// set the provider you want from Web3.providers
 		window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-	}
-
-	console.log(`Web3 initialized! \n ${web3}`);
-}
-
-function paymentForFalse() {
-
-	//TODO realize logic
-	
-	const opts = {
+  }
+  const opts = {
 		from: gameContractData.ownerInfo.addr,
 		gasPrice: '100000000000', //price in wei
 		gas: 210000 //limit
   };
 
-  const contract = web3.eth.contract(gameContractData.abi, gameContractData.contractAdress, opts);
-  
-  contract.methods.finishBettingForFalse().call({from: gameContractData.ownerInfo.addr}, function(error, result){
+  window.mainContract = new web3.eth.Contract(gameContractData.abi, gameContractData.contractAdress, opts);
+
+  if(!window.mainContract) {
+    throw new Error("Contract not initialized!");
+  }
+	console.log(`Web3 initialized! \n ${web3}`);
+}
+
+function paymentForFalse() {
+  window.mainContract.methods.finishBettingForFalse().send({from: gameContractData.ownerInfo.addr}, function(error, result){
       if(error) {
         console.error(`Error with contract! \n ${error.toString()}`);
         return;
@@ -356,6 +357,17 @@ function paymentForFalse() {
 
       console.log(`FALSE wins! Result: \n ${JSON.stringify(result)}`);
     }); 
+}
+
+function paymentForTrue() {
+  window.mainContract.methods.finishBettingForTrue().send({from: gameContractData.ownerInfo.addr}, function(error, result){
+    if(error) {
+      console.error(`Error with contract! \n ${error.toString()}`);
+      return;
+    }
+
+    console.log(`TRUE wins! Result: \n ${JSON.stringify(result)}`);
+  }); 
 }
 
 // ### END Client event subscriber handlers ###
