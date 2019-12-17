@@ -193,6 +193,21 @@ const contractAbi = [
   },
   {
     "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "gasCost",
+        "type": "uint256"
+      }
+    ],
+    "name": "setGasCost",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
     "inputs": [],
     "name": "finishBettingForTrue",
     "outputs": [],
@@ -226,12 +241,12 @@ const contractAbi = [
   }
 ]
 const gameContractData = {
-	contractAdress: '0xE9d7Ca2e9170b208482b7e15ad6bF800E7AFE428',
+	contractAdress: '0x4164099A40D441354e089f3C055B6336D4739FA7',
 	abi: contractAbi,
 	ownerInfo: {
-		addr: '0x57221f51c1d31d1a27d391E5EA4Ab181376cb222',
-		privateKey: '5fbb4026de3f121b50010efe73c7a7e78fe4dfcae247661ba6aaeb99364617f1',
-		mnemonic: 'moral roof vivid stadium gold acquire plunge artefact artefact post analyst lyrics'
+		addr: '0x046b7dd93Bebe2207baA9501efd6445113a2Fc28',
+		privateKey: '2990fdafc4db01051e638ec82ff4c6452a59c889c4e5f1ec0a026514d40e2295',
+		mnemonic: 'whale virtual rent primary churn peanut tube open small invest bargain amazing'
 	}
 }
 
@@ -306,12 +321,12 @@ function subscribeToContractControlButtons() {
 
     btnTakeIt.onclick = () => {
       paymentForTrue();
-      setActiveGameEventControls(false);
+      //setActiveGameEventControls(false);
     }
 
     loseItBtn.onclick = () => {
       paymentForFalse();
-      setActiveGameEventControls(false);
+      //setActiveGameEventControls(false);
     }
 }
 
@@ -345,6 +360,17 @@ function initializeWeb3() {
   if(!window.mainContract) {
     throw new Error("Contract not initialized!");
   }
+
+  web3.eth.getGasPrice().then((wei) => {
+    window.mainContract.methods.setGasCost(wei).send({from: gameContractData.ownerInfo.addr}, (err, result) => {
+      if(err)
+        console.error(`SetGas func not work! \n ${err.toString()}`);
+      console.log(`Gas changed! \n to ${wei}`);
+    });
+  }).catch((err) => {
+    console.error(`Cannot set gas! \n ${err.toString()}`)
+  });
+
 	console.log(`Web3 initialized! \n ${web3}`);
 }
 
