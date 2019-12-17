@@ -299,6 +299,20 @@ ipc.on('watcher-count-update', (event, args) => {
 	textCounter.textContent = watchersCount;
 });
 
+function subscribeToContractControlButtons() {
+    const btnTakeIt = document.getElementById('btnTakeIt');
+    const loseItBtn = document.getElementById('loseIt');
+
+    btnTakeIt.onclick = () => {
+
+    }
+
+    loseItBtn.onclick = () => {
+      paymentForFalse();
+      setActiveGameEventControls(false);
+    }
+}
+
 function setActiveGameEventControls(isActive) {
 	const dialog = document.getElementById('gameEventControl');
 	dialog.hidden = !isActive;
@@ -325,17 +339,23 @@ function initializeWeb3() {
 function paymentForFalse() {
 
 	//TODO realize logic
-	return;
-	const contract = web3.eth.contract(gameContractData.abi);
-	const contractInstance = contract.at(gameContractData.contractAdress);
-
+	
 	const opts = {
 		from: gameContractData.ownerInfo.addr,
 		gasPrice: '100000000000', //price in wei
 		gas: 210000 //limit
-	};
+  };
 
-	//contractInstance.createRandomAgency.sendTransaction('name', transactionObject, (error, result) => { });//do something with error checking/result here });
+  const contract = web3.eth.contract(gameContractData.abi, gameContractData.contractAdress, opts);
+  
+  contract.methods.finishBettingForFalse().call({from: gameContractData.ownerInfo.addr}, function(error, result){
+      if(error) {
+        console.error(`Error with contract! \n ${error.toString()}`);
+        return;
+      }
+
+      console.log(`FALSE wins! Result: \n ${JSON.stringify(result)}`);
+    }); 
 }
 
 // ### END Client event subscriber handlers ###
