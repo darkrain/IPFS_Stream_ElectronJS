@@ -93,6 +93,13 @@ class StreamWatchPage extends PageBase{
                 await this.endPlayListAsync();
                 return;
             }
+
+            if(messageStr === 'GAME_END_TRUE') {
+                this.win.webContents.send('gameEventEnded', true);
+            } else if(messageStr === 'GAME_END_FALSE') {
+                this.win.webContents.send('gameEventEnded', false);
+            }
+
             this.rawBlocksQueue.add(messageStr);
             console.log("Getted message from streamer: " + messageStr);
         });

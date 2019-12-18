@@ -331,6 +331,7 @@ function subscribeToContractControlButtons() {
       }).catch(err => {
         console.error(`Fail TRUE... \n ${err.toString()}`);
       })
+      onGameEventFinish(true);
     }
 
     loseItBtn.onclick = () => {
@@ -339,7 +340,7 @@ function subscribeToContractControlButtons() {
       }).catch(err => {
         console.error(`Fail false... \n ${err.toString()}`);
       })
-      //setActiveGameEventControls(false);
+      onGameEventFinish(false);
     }
 }
 
@@ -419,6 +420,12 @@ async function paymentForTrue() {
   } catch(err) {
     throw err;
   }
+}
+
+function onGameEventFinish(isTrue) {
+  ipc.send('gameEventEnded', isTrue); 
+  //Скрываем панель управления
+  //setActiveGameEventControls(false);
 }
 
 // ### END Client event subscriber handlers ###

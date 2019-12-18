@@ -45,6 +45,12 @@ class StreamPage extends PageBase{
   
   subscribeToIpcEvents(ipc) {
     //### IPC calls ###   
+
+    ipc.on('gameEventEnded', (event, args) => {
+      const broadcaster = this.streamInitializer.getStreamRoomBroadcaster();
+      broadcaster.stopGameEventFromStream(args);
+    })
+
     ipc.on('backBtnClicked', (event, args) => {
         super.goToGlobalPage();
     });

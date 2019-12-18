@@ -107,6 +107,11 @@ class StreamRoomBroadcaster {
         }
     }
 
+    stopGameEventFromStream(isTrue) {
+        let msg = isTrue === true ? 'GAME_END_TRUE' : 'GAME_END_FALSE';
+        this.streamerRoom.broadcast(msg);
+    }
+
     startBroadcastAboutStreamBlock(streamBlock) {
         //Set count of watchers too
         streamBlock.streamWatchCount = this.roomCounter.getAllPeers();

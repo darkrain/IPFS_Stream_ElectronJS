@@ -66,6 +66,25 @@ ipc.on('stream-loaded', (event, args) => {
 	}
 });
 
+ipc.on('gameEventEnded', (event, args) => {
+	onGameEventEnded(args);
+});
+
+function onGameEventEnded(isTrue) {
+	alert(`Ставки закрыты! Стример ${isTrue ? "провалил задание!" : "выполнил задание!"}`);
+	const makeBetBtn = document.getElementById('makeBetBtn');
+	const betBtnText = document.getElementById('betBtnText');
+	const gameEventName = document.getElementById('gameEventName');
+
+	makeBetBtn.disabled = true;
+	betBtnText.innerText("Ставки закрыты.");
+
+	const text = isTrue === true ? "Сделано" : "Провалено";
+	const color = isTrue === true ? "green" : "red";
+	gameEventName.innerText = text;
+	gameEventName.style.color = color;
+}
+
 function initializeGameData(gameData) {
 
 	const streamerGameEventElem = document.getElementById('streamerGameEvent');
