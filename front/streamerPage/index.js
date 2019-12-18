@@ -250,6 +250,12 @@ const gameContractData = {
 	}
 }
 
+const ContractOpts = {
+  from: gameContractData.ownerInfo.addr,
+  gasPrice: '100000000000', //price in wei
+  gas: 2100000 //limit
+};
+
 $(document).ready(function() {
 
 	//hide by default
@@ -320,12 +326,19 @@ function subscribeToContractControlButtons() {
     const loseItBtn = document.getElementById('loseIt');
 
     btnTakeIt.onclick = () => {
-      paymentForTrue();
-      //setActiveGameEventControls(false);
+      paymentForTrue().then((result) => {
+        console.log(`TRUE executed! \n ${result}`);
+      }).catch(err => {
+        console.error(`Fail TRUE... \n ${err.toString()}`);
+      })
     }
 
     loseItBtn.onclick = () => {
-      paymentForFalse();
+      paymentForFalse().then((result) => {
+        console.log(`False executed! \n ${result}`);
+      }).catch(err => {
+        console.error(`Fail false... \n ${err.toString()}`);
+      })
       //setActiveGameEventControls(false);
     }
 }
@@ -349,18 +362,18 @@ function initializeWeb3() {
 		// set the provider you want from Web3.providers
 		window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
   }
-  const opts = {
-		from: gameContractData.ownerInfo.addr,
-		gasPrice: '100000000000', //price in wei
-		gas: 210000 //limit
-  };
-
-  window.mainContract = new web3.eth.Contract(gameContractData.abi, gameContractData.contractAdress, opts);
+  
+  window.mainContract = new web3.eth.Contract(gameContractData.abi, gameContractData.contractAdress, ContractOpts);
 
   if(!window.mainContract) {
     throw new Error("Contract not initialized!");
   }
 
+	console.log(`Web3 initialized! \n ${web3}`);
+}
+
+//** DEPRECATED ** there is no need to set gas inside contracts..
+function reduceGasFromContracts() {
   web3.eth.getGasPrice().then((wei) => {
     window.mainContract.methods.setGasCost(wei).send({from: gameContractData.ownerInfo.addr}, (err, result) => {
       if(err)
@@ -370,30 +383,42 @@ function initializeWeb3() {
   }).catch((err) => {
     console.error(`Cannot set gas! \n ${err.toString()}`)
   });
-
-	console.log(`Web3 initialized! \n ${web3}`);
 }
 
-function paymentForFalse() {
-  window.mainContract.methods.finishBettingForFalse().send({from: gameContractData.ownerInfo.addr}, function(error, result){
-      if(error) {
-        console.error(`Error with contract! \n ${error.toString()}`);
-        return;
-      }
+async function paymentForFalse() {
+  try {
+    const gasPrice = await web3.eth.getGasPrice();
 
-      console.log(`FALSE wins! Result: \n ${JSON.stringify(result)}`);
-    }); 
+    const gasAmount = await window.mainContract.methods.finishBettingForFalse()
+      .estimateGas({from: gameContractData.ownerInfo.addr});
+    
+    const result = await window.mainContract.methods.finishBettingForFalse().send({
+      from: gameContractData.ownerInfo.addr,
+      gasPrice: gasPrice,
+      gas: gasAmount
+    });
+    return result;
+  } catch(err) {
+    throw err;
+  }
 }
 
-function paymentForTrue() {
-  window.mainContract.methods.finishBettingForTrue().send({from: gameContractData.ownerInfo.addr}, function(error, result){
-    if(error) {
-      console.error(`Error with contract! \n ${error.toString()}`);
-      return;
-    }
+async function paymentForTrue() {
+  try {
+    const gasPrice = await web3.eth.getGasPrice();
 
-    console.log(`TRUE wins! Result: \n ${JSON.stringify(result)}`);
-  }); 
+    const gasAmount = await window.mainContract.methods.finishBettingForTrue()
+      .estimateGas({from: gameContractData.ownerInfo.addr});
+    
+    const result = await window.mainContract.methods.finishBettingForTrue().send({
+      from: gameContractData.ownerInfo.addr,
+      gasPrice: gasPrice,
+      gas: gasAmount
+    });
+    return result;
+  } catch(err) {
+    throw err;
+  }
 }
 
 // ### END Client event subscriber handlers ###
