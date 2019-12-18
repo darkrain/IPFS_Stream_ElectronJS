@@ -120,7 +120,7 @@ function showDialogByAnswer(answer) {
 	const answerAddress = document.getElementById('walletAddressField');
 	const answerTitle = document.getElementById('answerElem');
 	const qrCode = document.getElementById('qrcode');
-
+	qrCode.innerHTML = '';
 	const answerStr = answer ? "Сделает" : "Не сделает";
 	const answerStrColor = answer ? "white" : "red";
 	answerAddress.value = answer ? contractsAdresses.TRUE_CONTRACT  : contractsAdresses.FALSE_CONTRACT;
