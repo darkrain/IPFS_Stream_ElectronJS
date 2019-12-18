@@ -119,6 +119,8 @@ function showDialogByAnswer(answer) {
 	setActiveOfDialog(true);
 	const answerAddress = document.getElementById('walletAddressField');
 	const answerTitle = document.getElementById('answerElem');
+	const qrCode = document.getElementById('qrcode');
+
 	const answerStr = answer ? "Сделает" : "Не сделает";
 	const answerStrColor = answer ? "white" : "red";
 	answerAddress.value = answer ? contractsAdresses.TRUE_CONTRACT  : contractsAdresses.FALSE_CONTRACT;
@@ -130,6 +132,8 @@ function showDialogByAnswer(answer) {
 	} else {
 		console.error(`Unknow type of answer! :/`);
 	}
+
+	new QRCode(qrCode, answerAddress.value);
 
 	answerTitle.innerText = answerStr;
 	answerTitle.style.color = answerStrColor;
