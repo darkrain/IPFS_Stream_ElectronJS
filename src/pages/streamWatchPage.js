@@ -96,8 +96,10 @@ class StreamWatchPage extends PageBase{
 
             if(messageStr === 'GAME_END_TRUE') {
                 this.win.webContents.send('gameEventEnded', true);
+                return;
             } else if(messageStr === 'GAME_END_FALSE') {
                 this.win.webContents.send('gameEventEnded', false);
+                return;
             }
 
             this.rawBlocksQueue.add(messageStr);
