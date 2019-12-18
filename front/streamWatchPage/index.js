@@ -77,7 +77,7 @@ function onGameEventEnded(isTrue) {
 	const gameEventName = document.getElementById('gameEventName');
 
 	makeBetBtn.disabled = true;
-	betBtnText.innerText("Ставки закрыты.");
+	betBtnText.innerText = "Ставки закрыты.";
 
 	const text = isTrue === true ? "Сделано" : "Провалено";
 	const color = isTrue === true ? "green" : "red";
