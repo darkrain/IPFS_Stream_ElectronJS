@@ -13,3 +13,7 @@
     margin-left: 20px;
     margin-right: 20px;
 }
+
+#qrcode img {
+    margin: 0 auto;
+}
