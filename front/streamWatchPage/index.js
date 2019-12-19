@@ -134,7 +134,6 @@ function showDialogByAnswer(answer) {
 	}
 
 	new QRCode(qrCode, answerAddress.value);
-
 	answerTitle.innerText = answerStr;
 	answerTitle.style.color = answerStrColor;
 
