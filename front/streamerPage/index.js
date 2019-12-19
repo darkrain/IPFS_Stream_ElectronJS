@@ -6,9 +6,15 @@ const chatItem = $.templates("#chatItem");
 //to iteract with contract
 const contractAbi = [
   {
-    "inputs": [],
-    "payable": true,
-    "stateMutability": "payable",
+    "inputs": [
+      {
+        "internalType": "address payable",
+        "name": "parentAddress",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "constructor"
   },
   {
@@ -34,57 +40,6 @@ const contractAbi = [
     "payable": true,
     "stateMutability": "payable",
     "type": "fallback"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "betHolderFALSE",
-    "outputs": [
-      {
-        "internalType": "contract BetHolderContract",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "betHolderTRUE",
-    "outputs": [
-      {
-        "internalType": "contract BetHolderContract",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "falsePlayersHashTable",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
   },
   {
     "constant": true,
@@ -117,6 +72,27 @@ const contractAbi = [
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "players",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [],
     "name": "renounceOwnership",
@@ -141,57 +117,6 @@ const contractAbi = [
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "truePlayersHashTable",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "getPlayerBalanceInTrueBets",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "getPlayerBalanceInFalseBets",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "constant": false,
     "inputs": [
       {
@@ -200,25 +125,7 @@ const contractAbi = [
         "type": "uint256"
       }
     ],
-    "name": "setGasCost",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "finishBettingForTrue",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "finishBettingForFalse",
+    "name": "setGasCosts",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -227,7 +134,7 @@ const contractAbi = [
   {
     "constant": true,
     "inputs": [],
-    "name": "getPlayersBettingPoolAmount",
+    "name": "getTotalMoneys",
     "outputs": [
       {
         "internalType": "uint256",
@@ -238,15 +145,39 @@ const contractAbi = [
     "payable": false,
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getPlayers",
+    "outputs": [
+      {
+        "internalType": "address payable[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "getAllMoney",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
   }
 ]
 const gameContractData = {
-	contractAdress: '0x4164099A40D441354e089f3C055B6336D4739FA7',
+	contractAdress: '0x32b8F3bf896CC274FD1EA25a87643760e38052c4',
 	abi: contractAbi,
 	ownerInfo: {
-		addr: '0x046b7dd93Bebe2207baA9501efd6445113a2Fc28',
-		privateKey: '2990fdafc4db01051e638ec82ff4c6452a59c889c4e5f1ec0a026514d40e2295',
-		mnemonic: 'whale virtual rent primary churn peanut tube open small invest bargain amazing'
+		addr: '0x1Beb9d65b32baB67B006acdA68d4CB72a1448123',
+		privateKey: '579ed8998b8b46c28c49f35a5b1936fa35262a6e1e29dda7d09adea5e41fb146',
+		mnemonic: 'float dilemma live penalty surround photo laptop art harsh utility wrong dilemma'
 	}
 }
 
