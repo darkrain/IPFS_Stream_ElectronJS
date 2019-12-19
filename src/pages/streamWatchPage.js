@@ -13,7 +13,7 @@ const hlsPlaylistManager = require('../data/hlsPlaylistManager');
 const logger = require('../data/logger');
 
 class StreamWatchPage extends PageBase{
-    constructor(ipfs, ipc, win, streamerInfo){  
+    constructor(ipfs, ipc, win, streamerInfo, streamersDataHandler){  
         super();
         this.setEnabled(true);
         this.lastBlockRawMessage = null;
@@ -25,6 +25,10 @@ class StreamWatchPage extends PageBase{
         this.lastBlockIndex = 0;
         this.isStreamInitialized = false;
         const streamWatchPageObj = this;
+        
+        //to avoid get messages from global room in watch page!
+        this.streamersDataHandler = streamersDataHandler;
+        this.streamersDataHandler.setActive(false); 
     
         //*** update raw blocks queue by last block!
         this.lastStreamBlockFromInfo = this.streamerInfo.lastStreamBlockEncoded;
@@ -108,6 +112,8 @@ class StreamWatchPage extends PageBase{
     }
 
     onExit() {
+        //Enable streamers handler for global room again!
+        this.streamersDataHandler.setActive(true); 
         if(this.streamerRoom) {
             this.streamerRoom.leave().then(() => {
                 console.log("LEave from room!");

@@ -19,12 +19,16 @@ class StreamersDataHandler {
         this.globalRoomListener = globalRoomListener;
         this.dataEvent = new StreamersDataEvent();
         this.dataEvent.setMaxListeners(0);
-
+        this.isActive = true;
         //clear data firstable
         this.clearStreamersData().then( async () => {
             this.createUserFilesIfNotExists();
             this.initializeListenersForRooms();
         });
+    }
+
+    setActive(isActive) {
+        this.isActive = isActive;
     }
 
     async isMyStreamAsync(nodeIdToEqual) {
@@ -48,6 +52,8 @@ class StreamersDataHandler {
     initializeListenersForRooms() {
         try {
             this.globalRoomListener.getOnStreamDataRecievedEvent().on('message_recieved',async (msg) => {
+                if(this.isActive === false)
+                    return;
                 const messageStr = msg.data.toString();
                 console.log(`Message getted: \n from: ${msg.from} \n `);
                 const isMyStream = await this.isMyStreamAsync(msg.from);
