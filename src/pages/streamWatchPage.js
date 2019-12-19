@@ -24,6 +24,9 @@ class StreamWatchPage extends PageBase{
         this.streamerInfo = streamerInfo;
         this.lastBlockIndex = 0;
         this.isStreamInitialized = false;
+
+        this.lastWatchCount = -1;
+
         const streamWatchPageObj = this;
         
         //to avoid get messages from global room in watch page!
@@ -107,7 +110,6 @@ class StreamWatchPage extends PageBase{
             }
 
             this.rawBlocksQueue.add(messageStr);
-            console.log("Getted message from streamer: " + messageStr);
         });
     }
 
@@ -233,13 +235,18 @@ class StreamWatchPage extends PageBase{
                     this.log(`Trying load chunk id${this.lastBlockIndex}`);             
                     const chunkData = await this.loadChunkAsync(streamBlock);
                     this.log(`Chunk id${this.lastBlockIndex} succefully downloaded!`);
-                    await hlsPlaylistManager.updateM3UFileAsync(chunkData, this.m3uPath)
+                    await hlsPlaylistManager.updateM3UFileAsync(chunkData, this.m3uPath);
                     this.lastBlockIndex++;
     
                     if(this.lastBlockIndex >= countOfChunksToReady) { //Update front page after 2 chunks is ready
                         this.initializeStartingStreamIfNotYet();
                     }                  
-                    this.win.webContents.send('countOfWatchers-updated', streamBlock.streamWatchCount);
+
+                    //check only numbers to call overload operations like a view update
+                    if(this.lastWatchCount != streamBlock.streamWatchCount) {
+                        this.lastWatchCount = streamBlock.streamWatchCount;
+                        this.win.webContents.send('countOfWatchers-updated', streamBlock.streamWatchCount);
+                    }
 
                     this.lastBlockRawMessage = rawBlockMessage;
                     this.rawBlocksQueue.delete(rawBlockMessage);
