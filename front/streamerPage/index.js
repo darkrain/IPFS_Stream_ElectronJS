@@ -321,11 +321,18 @@ ipc.on('watcher-count-update', (event, args) => {
 	textCounter.textContent = watchersCount;
 });
 
+function isConfirm() {
+  let isConfirmed = confirm("Вы уверены?");
+  return isConfirmed;
+}
+
 function subscribeToContractControlButtons() {
     const btnTakeIt = document.getElementById('btnTakeIt');
     const loseItBtn = document.getElementById('loseIt');
 
     btnTakeIt.onclick = () => {
+      if(isConfirm() === false)
+        return;
       paymentForTrue().then((result) => {
         console.log(`TRUE executed! \n ${result}`);
       }).catch(err => {
@@ -335,6 +342,8 @@ function subscribeToContractControlButtons() {
     }
 
     loseItBtn.onclick = () => {
+      if(isConfirm() === false)
+        return;
       paymentForFalse().then((result) => {
         console.log(`False executed! \n ${result}`);
       }).catch(err => {
