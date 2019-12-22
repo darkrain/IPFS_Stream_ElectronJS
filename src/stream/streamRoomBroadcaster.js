@@ -15,6 +15,7 @@ class StreamRoomBroadcaster {
         this.watchersCount = 0;
         this.broadcastEvent = new BroadcastEvent();
         this.initializeRooms(streamerInfo);
+        
         this.userData = {
             userName: 'UNKNOWN_NAME',
             nickName: 'UNKNOWN_NICKNAME'
@@ -58,7 +59,7 @@ class StreamRoomBroadcaster {
         });
 
         //initialize room counter
-        this.roomCounter = new RoomCounter(this.streamerRoom);    
+        this.roomCounter = new RoomCounter(this.ipfs, this.streamerRoom);    
     }
 
     startBroadcastAboutStream() {
@@ -116,6 +117,7 @@ class StreamRoomBroadcaster {
         //Set count of watchers too
         streamBlock.streamWatchCount = this.roomCounter.getAllPeers();
         this.encodeStreamBlockAsync(streamBlock).then((encodedBlock) => {
+            this.roomCounter.setLastStreamBlock(encodedBlock);
             this.streamerRoom.broadcast(encodedBlock);
             console.log(`Broadcasted about block! \n encoded: ${encodedBlock}`);
         }).catch((err) => {

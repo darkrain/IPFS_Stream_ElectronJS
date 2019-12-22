@@ -13,8 +13,9 @@ const hlsPlaylistManager = require('../data/hlsPlaylistManager');
 const logger = require('../data/logger');
 
 class StreamWatchPage extends PageBase{
-    constructor(ipfs, ipc, win, streamerInfo, streamersDataHandler){  
+    constructor(ipfs, ipc, win, streamerInfo, streamersDataHandler, nodeID){  
         super();
+        this.nodeID = nodeID;
         this.setEnabled(true);
         this.lastBlockRawMessage = null;
         this.rawBlocksQueue = new Set();
@@ -70,6 +71,14 @@ class StreamWatchPage extends PageBase{
             this.onExit();
             super.goToGlobalPage();
         });
+
+
+        this.nodeRoom = Room(this.ipfs, this.nodeID);
+        this.nodeID.on('message', (msg) => {
+            console.log(`Node id message getted!`);
+            const messageStr = msg.data.toString();
+            this.rawBlocksQueue.add(messageStr);
+        });
     }
 
     subscribeToStreamerRoom(streamerInfo) {
@@ -116,6 +125,7 @@ class StreamWatchPage extends PageBase{
     onExit() {
         //Enable streamers handler for global room again!
         this.streamersDataHandler.setActive(true); 
+        this.nodeID.removeAllListeners();
         if(this.streamerRoom) {
             this.streamerRoom.leave().then(() => {
                 console.log("LEave from room!");

@@ -156,7 +156,8 @@ async function loadPageByName(pageName, args)  {
             case PAGES.STREAM_WATCH_PAGE: {
                 createWindowAsync(STREAMWATCH_PAGE_LINK).then((win => {
                     const streamerInfo = args;
-                    _currentPage = new StreamWatchPage(IpfsInstance, ipc, win, streamerInfo, streamersDataHandler);
+                    _currentPage = new StreamWatchPage(IpfsInstance, ipc, win, streamerInfo, streamersDataHandler
+                        , IpfsNodeID);
                 }));
                 break;
             }
