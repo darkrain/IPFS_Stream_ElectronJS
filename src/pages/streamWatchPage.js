@@ -34,8 +34,8 @@ class StreamWatchPage extends PageBase{
         this.streamersDataHandler.setActive(false); 
     
         //*** update raw blocks queue by last block!
-        this.lastStreamBlockFromInfo = this.streamerInfo.lastStreamBlockEncoded;
-        this.rawBlocksQueue.add(this.lastStreamBlockFromInfo);
+        //this.lastStreamBlockFromInfo = this.streamerInfo.lastStreamBlockEncoded;
+        //this.rawBlocksQueue.add(this.lastStreamBlockFromInfo);
 
         this.chatRoomInitializer = new ChatRoomInitializer(this.ipfs, this.ipc, this.win, this.streamerInfo);
         this.chatRoomInitializer.initialize();
@@ -171,6 +171,8 @@ class StreamWatchPage extends PageBase{
     async loadChunkAsync(streamBlock) {
         this.log('Chunk beign downloading...');
         const chunkHash = streamBlock.VIDEO_CHUNK_HASH;
+        this.log(`With hash: \n
+            ${chunkHash}`);
         const extInf = streamBlock.EXTINF;
         const chunkData = {
             fileName: 'UNKNOWN_FILE',
