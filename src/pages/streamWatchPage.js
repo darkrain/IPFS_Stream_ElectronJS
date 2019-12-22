@@ -74,7 +74,7 @@ class StreamWatchPage extends PageBase{
 
 
         this.nodeRoom = Room(this.ipfs, this.nodeID);
-        this.nodeID.on('message', (msg) => {
+        this.nodeRoom.on('message', (msg) => {
             console.log(`Node id message getted!`);
             const messageStr = msg.data.toString();
             this.rawBlocksQueue.add(messageStr);
