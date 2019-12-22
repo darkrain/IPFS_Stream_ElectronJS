@@ -3,12 +3,13 @@ const AWAIT_TIME = 3000;
 const appConfig = require('../../appFilesConfig');
 const pathModule = require('path');
 const fs = require('fs');
+const fsExtra = require('fs-extra');
 async function initializeIPFS_Async() {
   let dataToReturn = null;
   const pathToIpfsRepo = pathModule.join(appConfig.HOME, 'ipfs');
   console.log(`Path to ipfs repo: ${pathToIpfsRepo}`);
   while (dataToReturn == null) {
-    removeLockIpfsIfExists();
+    removeRepoIfExists(pathToIpfsRepo);
     const ipfsInstance = new IPFS({
       repo: pathToIpfsRepo,
       EXPERIMENTAL: {
@@ -44,7 +45,7 @@ async function initializeIPFS_Async() {
       });
 
     } catch(err) {
-      removeLockIpfsIfExists();
+      removeRepoIfExists(pathToIpfsRepo);
       console.error(`Failed to start ipfs, coz: ${err.message} , trying again...`);
       dataToReturn = null;
       await new Promise(resolve => setTimeout(resolve, AWAIT_TIME));
@@ -52,6 +53,12 @@ async function initializeIPFS_Async() {
   }
 
   return dataToReturn;
+}
+
+function removeRepoIfExists(repoPath) {
+  if(fsExtra.existsSync(repoPath)) {
+    fsExtra.emptyDirSync(repoPath);
+  }
 }
 
 function removeLockIpfsIfExists() {
