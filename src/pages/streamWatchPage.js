@@ -226,7 +226,7 @@ class StreamWatchPage extends PageBase{
         this.win.webContents.send('stream-loaded', url);
     }
 
-    async handleChunksQueueLoop(countOfChunksToReady = 2) {
+    async handleChunksQueueLoop(countOfChunksToReady = 1) {
         const delayOfHandle = 1000;
         while (super.isEnabled()) {
             if(this.rawBlocksQueue.size <= 0) {
