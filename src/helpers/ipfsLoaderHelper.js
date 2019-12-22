@@ -24,8 +24,7 @@ async function initializeIPFS_Async() {
         }    
       },
       EXPERIMENTAL: {
-        pubsub: true,
-        dht: true
+        pubsub: true
       }
     });
 
