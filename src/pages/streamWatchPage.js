@@ -122,6 +122,8 @@ class StreamWatchPage extends PageBase{
                 return;
             }
 
+            this.lastBlockRawMessage = messageStr;
+
             this.rawBlocksQueue.add(messageStr);
         });
     }
