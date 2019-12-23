@@ -20,7 +20,7 @@ async function initializeIPFS_Async() {
         Addresses: {
           Swarm: [
             "/ip4/0.0.0.0/tcp/6001",
-            "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
+            "/dns4/borg.systems/tcp/9090/ws/p2p-websocket-star/"
           ]
         }    
       },
