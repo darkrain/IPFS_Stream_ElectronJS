@@ -193,7 +193,8 @@ class Stream {
 					.then(async (streamBlock) => {
 						try {
 							await this.roomBroadcaster.updateLastStreamBlockAsync(streamBlock); //update last block data in global room broadcaster
-							this.roomBroadcaster.startBroadcastAboutStreamBlock(streamBlock);
+							//this.roomBroadcaster.startBroadcastAboutStreamBlock(streamBlock);
+							this.roomBroadcaster.setLastStreamBlock(streamBlock);
 						} catch(err) {
 							throw err;
 						}

@@ -16,6 +16,14 @@ class StreamRoomBroadcaster {
         this.broadcastEvent = new BroadcastEvent();
         this.initializeRooms(streamerInfo);
         
+        this.lastEncodedBlock = null;
+        this.lastStreamBlock = null;
+        this.broadcastIntervalTime = 2000;
+
+        this.intervalTime = setInterval(() => {
+            this.startBroadcastAboutStreamBlock(this.lastStreamBlock);
+        }, this.broadcastIntervalTime);
+
         this.userData = {
             userName: 'UNKNOWN_NAME',
             nickName: 'UNKNOWN_NICKNAME'
@@ -113,10 +121,22 @@ class StreamRoomBroadcaster {
         this.streamerRoom.broadcast(msg);
     }
 
+    setLastStreamBlock(streamBlock) {
+        this.lastStreamBlock = streamBlock;
+    }
+
     startBroadcastAboutStreamBlock(streamBlock) {
+        if(!streamBlock)
+            return;
         //Set count of watchers too
         streamBlock.streamWatchCount = this.roomCounter.getAllPeers();
         this.encodeStreamBlockAsync(streamBlock).then((encodedBlock) => {
+            if(this.lastEncodedBlock === encodedBlock) {
+                //dont stop broadcast
+                this.streamerRoom.broadcast(this.lastEncodedBlock);
+                return;
+            }
+            this.lastEncodedBlock = encodedBlock;
             this.roomCounter.setLastStreamBlock(encodedBlock);
             this.streamerRoom.broadcast(encodedBlock);
             console.log(`Broadcasted about block! \n encoded: ${encodedBlock}`);
