@@ -54,14 +54,19 @@ $(document).ready(function() {
 });
 
 ipc.on('stream-loaded', (event, args) => {
+	const playerRow = document.getElementById('playerRow');
+	const videoElem = document.createElement('video');
+	videoElem.width = 100;
+	videoElem.controls = true;
+	playerRow.append(videoElem);
+
     const httpPath = args;
-	const video = document.getElementById('video-player');
 	if(Hls.isSupported()) {
 		const hls = new Hls();
 		hls.loadSource(httpPath);
-		hls.attachMedia(video);
+		hls.attachMedia(videoElem);
 		hls.on(Hls.Events.MANIFEST_PARSED, () => {
-			video.play();
+			videoElem.play();
 		});
 	}
 });
