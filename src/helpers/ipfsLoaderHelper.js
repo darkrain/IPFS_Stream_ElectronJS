@@ -1,5 +1,5 @@
 const IPFS = require('ipfs');
-const AWAIT_TIME = 3000;
+const AWAIT_TIME = 5000;
 const appConfig = require('../../appFilesConfig');
 const pathModule = require('path');
 const fs = require('fs');
@@ -10,6 +10,7 @@ async function initializeIPFS_Async() {
   console.log(`Path to ipfs repo: ${pathToIpfsRepo}`);
   while (dataToReturn == null) {
     removeRepoIfExists(pathToIpfsRepo);
+    await new Promise(resolve => setTimeout(resolve, AWAIT_TIME));
     const ipfsInstance = new IPFS({
       repo: pathToIpfsRepo,
       EXPERIMENTAL: {
@@ -19,7 +20,8 @@ async function initializeIPFS_Async() {
         Addresses: {
           Swarm: [
             "/ip4/0.0.0.0/tcp/6001",
-            "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
+            //"/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star",
+            "/ip4/127.0.0.1/tcp/9090/ws/p2p-websocket-star/"
           ]
         }    
       },
@@ -56,7 +58,11 @@ async function initializeIPFS_Async() {
 
 function removeRepoIfExists(repoPath) {
   if(fsExtra.existsSync(repoPath)) {
-    fsExtra.emptyDirSync(repoPath);
+    try {
+      fsExtra.emptyDirSync(repoPath);
+    } catch(err) {
+      console.error(`Cannot remove LOCK: \n ${err.toString()}`);
+    }
   }
 }
 
