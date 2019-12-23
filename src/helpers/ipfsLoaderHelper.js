@@ -21,10 +21,6 @@ async function initializeIPFS_Async() {
           Swarm: [
             "/ip4/0.0.0.0/tcp/6001",
             "/dns4/borg.systems/tcp/9090/ws/p2p-websocket-star/"
-          ],
-          Delegates : [
-            "/dns4/node0.delegate.ipfs.io/tcp/443/https",
-            "/dns4/node1.delegate.ipfs.io/tcp/443/https"
           ]
         }    
       },
