@@ -56,7 +56,7 @@ $(document).ready(function() {
 ipc.on('stream-loaded', (event, args) => {
 	const playerRow = document.getElementById('playerRow');
 	const videoElem = document.createElement('video');
-	videoElem.width = 600;
+	videoElem.width = 1200;
 	videoElem.videoWidth 
 	videoElem.controls = true;
 	playerRow.append(videoElem);
