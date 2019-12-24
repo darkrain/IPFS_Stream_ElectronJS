@@ -13,8 +13,9 @@ const hlsPlaylistManager = require('../data/hlsPlaylistManager');
 const logger = require('../data/logger');
 
 class StreamWatchPage extends PageBase{
-    constructor(ipfs, ipc, win, streamerInfo, streamersDataHandler, nodeID){  
+    constructor(ipfs, ipc, win, streamerInfo, streamersDataHandler, nodeID, ipfsApi){  
         super();
+        this.ipfsApi = ipfsApi;
         this.nodeID = nodeID;
         this.setEnabled(true);
         this.lastBlockRawMessage = null;
@@ -193,25 +194,19 @@ class StreamWatchPage extends PageBase{
             extInf: "UNKNOWN_EXT"
         };
         try {
-            await new Promise((resolve, rejected) => {
-                this.ipfs.get(chunkHash, (err, files) => {
-                    if(err) {
-                        rejected(err);
-                    }
-                    const chunkName = 'master' + this.lastBlockIndex + '.ts';
-                    const chunkPath = pathModule.join(this.streamerVideoFolder, chunkName);
-                    const file = files[0];
-                    const buffer = file.content;
-                    fs.writeFile(chunkPath,buffer, (err) => {
-                        if(err) {
-                            rejected(err);
-                        }
-                        chunkData.fileName = chunkName;
-                        chunkData.extInf = extInf;
-                        resolve();
-                    });
-                });
+
+            const bufferFromIpfs = await this.ipfsApi.getFileAsync(chunkHash);
+            const chunkName = 'master' + this.lastBlockIndex + '.ts';
+            const chunkPath = pathModule.join(this.streamerVideoFolder, chunkName);
+            fs.writeFileSync(chunkPath,bufferFromIpfs, (err) => {
+                if(err) {
+                    rejected(err);
+                }
+                chunkData.fileName = chunkName;
+                chunkData.extInf = extInf;
+                resolve();
             });
+        
         } catch(err) {
             throw err;
         }

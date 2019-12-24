@@ -16,6 +16,10 @@ class IpfsApiController {
         this.API_URL.ADD = `${this.fullUrl}api/v0/add`;
     }
 
+    getClient() {
+        return this.ipfsCleint;
+    }
+
     addFileAsync(pathToFile) {
         return new Promise((resolve, rejected) => {
             const buffer = fs.readFileSync(pathToFile);

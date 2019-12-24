@@ -13,7 +13,7 @@ class Stream {
 	constructor(ipfs, nameOfStreem, path, ffmpegRecorder, ipfsApi) {
 		this.ipfsApi = ipfsApi;
 		this.ipfs = ipfs;
-		this.ipfsStreamUploader = new IpfsStreamUploader(this.ipfs);
+		this.ipfsStreamUploader = new IpfsStreamUploader(this.ipfsApi.getClient());
 		this.ipfsready = false;
 		this.headers = '#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:8\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:EVENT\n';
 		this.blocks = [];
@@ -180,30 +180,21 @@ class Stream {
 				EXTINF: `EXTINF:${videoDuration}`,
 				FILE_NAME: fileName
 			};
-			const buffer = fs.readFileSync(filePath);
-			this.ipfs.add(buffer, (err, result) => {
-				if (err) {
+			const chunkHash = await this.ipfsApi.addFileAsync(filePath);
+			this.ipfsStreamUploader.addChunkToIpfsDAGAsync(fileName,chunkData.EXTINF,chunkHash)
+				.then(async (streamBlock) => {
+					try {
+						await this.roomBroadcaster.updateLastStreamBlockAsync(streamBlock); //update last block data in global room broadcaster
+						//this.roomBroadcaster.startBroadcastAboutStreamBlock(streamBlock);
+						this.roomBroadcaster.setLastStreamBlock(streamBlock);
+					} catch(err) {
+						throw err;
+					}
+				})
+				.catch((err) => {
 					logger.printErr(err);
 					throw err;
-				}
-				const chunkHash = result[0].hash;
-				console.log(`Chunk uploaded with result: \n${JSON.stringify((result))}`);
-				//create block in DAG
-				this.ipfsStreamUploader.addChunkToIpfsDAGAsync(fileName,chunkData.EXTINF,chunkHash)
-					.then(async (streamBlock) => {
-						try {
-							await this.roomBroadcaster.updateLastStreamBlockAsync(streamBlock); //update last block data in global room broadcaster
-							//this.roomBroadcaster.startBroadcastAboutStreamBlock(streamBlock);
-							this.roomBroadcaster.setLastStreamBlock(streamBlock);
-						} catch(err) {
-							throw err;
-						}
-					})
-					.catch((err) => {
-						logger.printErr(err);
-						throw err;
-					});
-			});
+				});
 
 			this.currentVideoChunkID++;
 
@@ -211,6 +202,11 @@ class Stream {
 			console.error(`Unable handle chunk upload from stream: ${err.message}`);
 			logger.printErr(err);
 		}
+	}
+
+	async addChunkToIpfs(chunkPath) {
+
+		
 	}
 
 	stop() {
