@@ -21,7 +21,7 @@ class IpfsBinRunner {
         ///ip4/127.0.0.1/tcp/5001
         //http://127.0.0.1:5001/webui
         const splitted = apiServerLine.split('\n');
-        const webUiStr = splitted[10];
+        const webUiStr = splitted.find(line => line.includes('WebUI'));
         const urlBySplitted = webUiStr.split(' ');
         this.url = urlBySplitted[1].replace('webui','');
         console.log(`IPFS BINARY API: \n ${this.url}`);

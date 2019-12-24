@@ -10,7 +10,7 @@ const appConfig = require('./appFilesConfig');
 const localServer = require('./src/localServer/localServer');
 const StreamersDataHandler = require('./src/Managers/StreamersDataHandler');
 const IpfsBinRunner = require(`./src/ipfsBinWork/IpfsBinRunner`);
-
+const IpfsApiController = require(`./src/ipfsBinWork/IpfsApiController`);
 //ROOMS
 const SavedGlobalRoomListener = require('./src/PubsubRooms/SavedGlobalRoomListener');
 const SavedGlobalRoom = require('./src/PubsubRooms/SavedGlobalRoom');
@@ -67,7 +67,8 @@ let globalRoomListener;
 let streamersDataHandler;
 let savedGlobalRoomListener;
 let ipfsRunner;
-async function InitializeAppAsync(debug = false) {
+let ipfsApi;
+async function InitializeAppAsync(debug = true) {
 
     try {
         await loadPageByName(PAGES.LOADING_PAGE);
@@ -108,6 +109,7 @@ async function InitializeAppAsync(debug = false) {
 //Calls when the app and dependencies already initialized
 async function onAppInitialized() {
     ipfsRunner = new IpfsBinRunner();
+    ipfsApi = new IpfsApiController(ipfsRunner);
     await loadDefaultPageAsync();
 }
 
