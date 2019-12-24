@@ -167,7 +167,7 @@ async function loadPageByName(pageName, args)  {
             }
             case PAGES.STREAMER_INFO_PAGE: {
                 createWindowAsync(STREAMERINFO_PAGE_LINK).then((win) => {
-                    _currentPage = new StreamerInfoPage(IpfsInstance, IpfsNodeID, ipc, win);
+                    _currentPage = new StreamerInfoPage(IpfsInstance, IpfsNodeID, ipc, win, ipfsApi);
                 });
                 break;
             }

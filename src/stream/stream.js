@@ -10,8 +10,8 @@ const logger = require('../data/logger');
 const appConfig = require('../../appFilesConfig');
 class Stream {
 
-	constructor(ipfs, nameOfStreem, path, ffmpegRecorder) {
-		console.log(`Try initialize sream with fields: \n ${ipfs} \n ${nameOfStreem}`);
+	constructor(ipfs, nameOfStreem, path, ffmpegRecorder, ipfsApi) {
+		this.ipfsApi = ipfsApi;
 		this.ipfs = ipfs;
 		this.ipfsStreamUploader = new IpfsStreamUploader(this.ipfs);
 		this.ipfsready = false;

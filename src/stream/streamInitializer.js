@@ -5,7 +5,8 @@ const appConfig = require('../../appFilesConfig');
 const FFmpegController = require('../capturing/ffmpegController');
 const logger = require('../data/logger');
 class StreamInitializer {
-    constructor(IPFSinstance) {               
+    constructor(IPFSinstance, ipfsApi) {
+        this.ipfsApi = ipfsApi;               
         this.ipfs = IPFSinstance;
         //reset at start
         this.resetStream();     
@@ -44,7 +45,8 @@ class StreamInitializer {
             this.fullVideoPath = pathModule.join(this.getModuleFolderPath(videoFolderName), streamName);
             const playListPath = pathModule.join(this.fullVideoPath, 'master.m3u8');
             this.ffmpegRecorder = this.ffmpegController.getFFmpegRecorder(playListPath);
-            this.stream = new Stream(this.ipfs, streamName, this.fullVideoPath, this.ffmpegRecorder);
+            this.stream = new Stream(this.ipfs, streamName, this.fullVideoPath, this.ffmpegRecorder,
+                this.ipfsApi);
             this.stream.createRooms();
             this.streamName = streamName;
             this.deviceParser = this.ffmpegController.getDeviceParser();

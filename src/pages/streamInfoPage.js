@@ -9,15 +9,16 @@ const StreamInfoGenerator = require('../data/StreamerInfoGenerator.js');
 const jsonHelper = require('../helpers/JSONHelpers');
 
 class StreamInfoPage extends PageBase{
-  constructor(ipfs, ipfsNodeID, electronIPC, pageWindow) {
+  constructor(ipfs, ipfsNodeID, electronIPC, pageWindow, ipfsApi) {
       super();
       //initialize class mebmers:
+      this.ipfsApi = ipfsApi;
       this.ipfs = ipfs;
       this.ipfsNodeID = ipfsNodeID;
       this.electronIPC = electronIPC;
       this.pageWindow = pageWindow;
       this.dataReadyHelper = new DataReadyHelper();
-      this.streamInitializer = new StreamInitializer(this.ipfs);
+      this.streamInitializer = new StreamInitializer(this.ipfs, this.ipfsApi);
       this.streamerInfo = null;
       this.subscribeToIpcEvents(this.electronIPC);      
       
