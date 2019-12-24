@@ -9,6 +9,7 @@ const logger = require('./src/data/logger');
 const appConfig = require('./appFilesConfig');
 const localServer = require('./src/localServer/localServer');
 const StreamersDataHandler = require('./src/Managers/StreamersDataHandler');
+const IpfsBinRunner = require(`./src/ipfsBinWork/IpfsBinRunner`);
 
 //ROOMS
 const SavedGlobalRoomListener = require('./src/PubsubRooms/SavedGlobalRoomListener');
@@ -65,7 +66,7 @@ let currentWindow;
 let globalRoomListener;
 let streamersDataHandler;
 let savedGlobalRoomListener;
-
+let ipfsRunner;
 async function InitializeAppAsync(debug = false) {
 
     try {
@@ -106,6 +107,7 @@ async function InitializeAppAsync(debug = false) {
 
 //Calls when the app and dependencies already initialized
 async function onAppInitialized() {
+    ipfsRunner = new IpfsBinRunner();
     await loadDefaultPageAsync();
 }
 
@@ -221,10 +223,15 @@ function createWindowAsync(linkToPage) {
         
         // Будет вызвано, когда окно будет закрыто.
         currentWindow.on('closed', () => {
+            const ipfsProcess = ipfsRunner.getProcess();
+            if(ipfsProcess) {
+                ipfsProcess.stdin.pause();
+                ipfsProcess.kill();
+            }
             // Разбирает объект окна, обычно вы можете хранить окна     
             // в массиве, если ваше приложение поддерживает несколько окон в это время,
             // тогда вы должны удалить соответствующий элемент.
-            currentWindow = null
+            currentWindow = null;
         })        
     });
 }
