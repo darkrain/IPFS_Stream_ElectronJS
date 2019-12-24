@@ -16,9 +16,8 @@ class IpfsApiController {
         //swarm
         //TODO: Why errors of connect!?
         let swarmArr =  [
-            "/ip4/0.0.0.0/tcp/4002",
-            "/ip4/127.0.0.1/tcp/4003/ws",
-            "/dns4/wrtc-star.discovery.libp2p.io/tcp/443/wss/p2p-webrtc-star"
+            "/ip4/0.0.0.0/tcp/5001",
+            "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
           ]
         
         for(let rawAddr of swarmArr) {
