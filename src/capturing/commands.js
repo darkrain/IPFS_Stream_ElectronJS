@@ -35,7 +35,7 @@ function getWindowsDshowCommand() {
         '-f', 'hls', 
         '-pix_fmt', 'yuv420p', //to support 4:2:2 resoultion
         '-hls_list_size', '1000000',
-        '-hls_time', '50',
+        '-hls_time', '20',
         '-hls_playlist_type', 'event', 
     ];
     return commands;
