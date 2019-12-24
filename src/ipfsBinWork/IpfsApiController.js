@@ -11,7 +11,7 @@ class IpfsApiController {
         }
         this.fullUrl = this.ipfsBinRunner.getUrl();
 
-        this.ipfsCleint = IpfsHttpClient(this.fullUrl);
+        this.ipfsCleint = IpfsHttpClient('http://localhost:5001'); // (the default in Node.js)
 
         //swarm
         //TODO: Why errors of connect!?
