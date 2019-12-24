@@ -5,6 +5,7 @@ const pathModule = require('path');
 const fs = require('fs');
 
 const videoPath = pathModule.resolve('C:\\Users\\intfl\\Videos\\fromIPFS');
+const testFilePath = pathModule.join(videoPath, 'yodaTest.mp4');
 
 describe('Test functions from data handlers', () => {
     const delay = 2000;
@@ -13,12 +14,17 @@ describe('Test functions from data handlers', () => {
 
     let bufferData = null;
     //video file hash
-    const hash = "QmfZMmf5xGhxcnv1ytzuAWidodwYgKGkcQky1ohcneAbau";
+    let hash = null;
 
     before(async () => {
         ipfsRunner = new IpfsBinRunner();
         await new Promise(resolve => setTimeout(resolve, delay));
         ipfsApi = new IpfsApiController(ipfsRunner);
+    });
+
+    it('should ADD data to IPFS', async () => {
+        hash = await ipfsApi.addFileAsync(testFilePath);
+        assert.equal(hash === null, false);
     });
 
     it('Should GET data by hash', async () => {
@@ -33,6 +39,15 @@ describe('Test functions from data handlers', () => {
     it('Should correct save file in FS', () => {
         const newFileName = `downloaded.mp4`;
         const pathToSave = pathModule.join(videoPath, newFileName);
-        fs.writeFileSync(pathToSave, bufferData);
+        let isDone = false;
+        try {
+            fs.writeFileSync(pathToSave, bufferData);
+            isDone = true;
+        } catch(err) {
+            console.error(err.toString());
+            isDone = false;
+        }
+        
+        assert.equal(isDone, true);
     });
 });
