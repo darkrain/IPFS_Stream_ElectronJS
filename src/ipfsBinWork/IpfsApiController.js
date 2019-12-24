@@ -1,6 +1,6 @@
-const request = require('request');
 const IpfsHttpClient = require('ipfs-http-client');
 const fs = require('fs');
+const multiaddr = require('multiaddr');
 
 class IpfsApiController {
     constructor(ipfsBinRunner) {
@@ -12,6 +12,24 @@ class IpfsApiController {
         this.fullUrl = this.ipfsBinRunner.getUrl();
 
         this.ipfsCleint = IpfsHttpClient(this.fullUrl);
+
+        //swarm
+        //TODO: Why errors of connect!?
+        let swarmArr =  [
+            "/ip4/0.0.0.0/tcp/4002",
+            "/ip4/127.0.0.1/tcp/4003/ws",
+            "/dns4/wrtc-star.discovery.libp2p.io/tcp/443/wss/p2p-webrtc-star"
+          ]
+        
+        for(let rawAddr of swarmArr) {
+            const addr = multiaddr(rawAddr);
+            this.ipfsCleint.swarm.connect(addr).then(() => {
+                console.log(`IPFS API: \n Connected : ${rawAddr} !`);
+            }).catch((err) => {
+                console.error(`IPFS API: \n Fail to connect : ${rawAddr} \n ${err.toString()}!`);    
+            });
+        }
+
         this.API_URL.GET = `${this.fullUrl}api/v0/get`;
         this.API_URL.ADD = `${this.fullUrl}api/v0/add`;
     }
