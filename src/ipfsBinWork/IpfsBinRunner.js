@@ -11,20 +11,19 @@ class IpfsBinRunner {
             const msgStr = msg.toString();
             console.log(`IPFS BIN: ${msgStr}`);
 
-            if(msg.includes('API')) {
+            if(msg.includes('WebUI')) {
                 this.parseApiServer(msgStr);
             }
         });
     }
 
     parseApiServer(apiServerLine) {
-        const splittedBySpace = apiServerLine.split(' ');
-        const addr = splittedBySpace[4];
         ///ip4/127.0.0.1/tcp/5001
-        //http://127.0.0.1:5001/
-        const splittedAddr = addr.split('/');
-        this.url = `http://${splittedAddr[2]}:${splittedAddr[4]}/`;
-
+        //http://127.0.0.1:5001/webui
+        const splitted = apiServerLine.split('\n');
+        const webUiStr = splitted[10];
+        const urlBySplitted = webUiStr.split(' ');
+        this.url = urlBySplitted[1].replace('webui','');
         console.log(`IPFS BINARY API: \n ${this.url}`);
     }
 
