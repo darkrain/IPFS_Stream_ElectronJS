@@ -68,6 +68,7 @@ async function copyNecessaryData() {
     try {
         const probeName = os.platform() === 'win32' ? 'ffprobe.exe' : 'ffprobe';
         const copyPaths = [
+            `bin/ipfs.exe`,
             'bin/ffmpeg.exe',
             `bin/ffprobe/${os.platform()}/${os.arch()}/${probeName}`
         ];
@@ -117,6 +118,7 @@ function getFfmpegPath(currentOs = osDetector.getOs()) {
 const files = {
     FFPROBE: getFullPathOfFileFromSystemPath(`bin/ffprobe/${os.platform()}/${os.arch()}/${os.platform() === 'win32' ? 'ffprobe.exe' : 'ffprobe'}`),
     FFMPEG : getFfmpegPath(),
+    IPFS_BIN: getFullPathOfFileFromSystemPath(`bin/ipfs.exe`),
     USERINFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userInfoJSON.json'),
     USER_STREAM_INFO_JSON_PATH: getFullPathOfFileFromSystemPath('user/userStreamInfo.json'),
     SAVED_STREAMS_DATA_JSON_PATH: getFullPathOfFileFromSystemPath('user/savedStreams.json'),

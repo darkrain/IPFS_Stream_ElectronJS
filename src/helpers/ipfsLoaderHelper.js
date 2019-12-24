@@ -19,8 +19,8 @@ async function initializeIPFS_Async() {
       config: {
         Addresses: {
           Swarm: [
-            "/ip4/0.0.0.0/tcp/6001",
-            "/dns4/borg.systems/tcp/9090/ws/p2p-websocket-star/"
+            "/ip4/0.0.0.0/tcp/6001"
+            //"/dns4/borg.systems/tcp/9090/ws/p2p-websocket-star/"
           ]
         }    
       },
