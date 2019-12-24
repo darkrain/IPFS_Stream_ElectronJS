@@ -25,7 +25,7 @@ class IpfsBinRunner {
         const splittedAddr = addr.split('/');
         this.url = `http://${splittedAddr[2]}:${splittedAddr[4]}/`;
 
-        console.log(`ADDR OF IPFS API: ${this.url}`);
+        console.log(`IPFS BINARY API: \n ${this.url}`);
     }
 
     getUrl() {
