@@ -19,3 +19,7 @@
     width: 150px;
     height: 150px;
 }
+
+video {
+    width: 100%;
+}
