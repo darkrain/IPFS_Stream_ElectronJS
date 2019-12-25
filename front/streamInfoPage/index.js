@@ -10,7 +10,11 @@ const gameEventPrototype = {
     gameEventDescription: null
 }
 
+let defaultImageBase64 = null;
+
 $( document ).ready(function() {
+
+    createDefaultImage();
 
     subscribeToGameDataUiHandlers();
 
@@ -68,6 +72,10 @@ $( document ).ready(function() {
         if(currentImageCropper) {
             const croppedData = currentImageCropper.getCroppedCanvas({maxWidth: imageOpts.width, maxHeight: imageOpts.height}).toDataURL('image/jpeg');
             $('[name="avaBase64"]').val(croppedData);
+        } else {
+            if(defaultImageBase64) {
+                $('[name="avaBase64"]').val(defaultImageBase64);
+            }
         }
 
         let form = $(event.target);
@@ -90,6 +98,19 @@ $( document ).ready(function() {
     //test
     //GAME_EVENTS_DATA['smartContractGame']();
 })
+
+function createDefaultImage() {
+    if(this.defaultImageBase64)
+        return;
+    
+    const imgElem = document.createElement('img');
+    imgElem.src = './img/default_video.png';
+    imgElem.addEventListener('load', (event) => {
+        defaultImageBase64 = getDataUrl(event.currentTarget);
+        console.log(`Default image has been cached!`);
+    });
+    
+}
 
 function subscribeToGameDataUiHandlers() {
     const createEventBtn = document.getElementById('createGameEventBtn');
