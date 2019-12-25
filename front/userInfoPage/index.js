@@ -2,7 +2,7 @@ const electron = require('electron');
 const ipc = electron.ipcRenderer;
 const requestUrl = 'http://localhost:4000/user';
 
-
+let dataBase64 = null;
 $( document ).ready(function() {
     let currentImageCropper = null;
     const imageOpts = {
@@ -26,6 +26,7 @@ $( document ).ready(function() {
         };
         reader.onerror = (err) => {
             //TODO handle error
+            console.error(err.toString());
         }
     });
 
@@ -37,6 +38,13 @@ $( document ).ready(function() {
             const croppedData = currentImageCropper.getCroppedCanvas({maxWidth: imageOpts.width, maxHeight: imageOpts.height}).toDataURL('image/jpeg');
             console.log(`Cropped data: \n ${croppedData.substr(0,50)}`);
             $('[name="photoBase64"]').val( croppedData );
+        } else {
+            //if no specific avatar
+            if(!dataBase64) {
+                const dataImg = document.getElementById('userAvaImg');
+                dataBase64 = getDataUrl(dataImg);
+                $('[name="photoBase64"]').val( dataBase64 );
+            }  
         }
 
         let form = $(event.target);

@@ -48,3 +48,16 @@ function initializeImageCropper(imageID, opts = {aspectRatio: 16/9}) {
     return cropper;
 }
 
+function getDataUrl(img) {
+    var canvas = document.createElement('canvas')
+    var ctx = canvas.getContext('2d')
+  
+    canvas.width = img.width
+    canvas.height = img.height
+    ctx.drawImage(img, 0, 0)
+  
+    // If the image is not png, the format
+    // must be specified here
+    return canvas.toDataURL()
+  }
+
