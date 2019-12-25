@@ -13,7 +13,7 @@ class IpfsApiController {
 
         this.ipfsCleint = IpfsHttpClient('http://localhost:5001'); // (the default in Node.js)
 
-        //this.addSwarm();
+        this.addSwarm();
 
         this.API_URL.GET = `${this.fullUrl}api/v0/get`;
         this.API_URL.ADD = `${this.fullUrl}api/v0/add`;
@@ -23,8 +23,7 @@ class IpfsApiController {
         //swarm
         //TODO: Why errors of connect!?
         let swarmArr =  [
-            "/ip4/wss.borg.systems/tcp/433/ws",
-            "/ip4/wss.borg.systems/tcp/443/ws/p2p-websocket-star/"
+            "/ip4/88.99.120.155/tcp/4001/ipfs/QmQXnEJVdh7vAkKJWWCEqNCLMyZfnbmLFenrchMBn3XAa4"
           ]
         
         for(let rawAddr of swarmArr) {
