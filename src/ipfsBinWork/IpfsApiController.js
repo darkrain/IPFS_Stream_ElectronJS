@@ -13,7 +13,7 @@ class IpfsApiController {
 
         this.ipfsCleint = IpfsHttpClient('http://localhost:5001'); // (the default in Node.js)
 
-        //addSwarm();
+        //this.addSwarm();
 
         this.API_URL.GET = `${this.fullUrl}api/v0/get`;
         this.API_URL.ADD = `${this.fullUrl}api/v0/add`;
@@ -23,17 +23,22 @@ class IpfsApiController {
         //swarm
         //TODO: Why errors of connect!?
         let swarmArr =  [
-            "/ip4/0.0.0.0/tcp/5001",
-            "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
+            "/ip4/wss.borg.systems/tcp/433/ws",
+            "/ip4/wss.borg.systems/tcp/443/ws/p2p-websocket-star/"
           ]
         
         for(let rawAddr of swarmArr) {
-            const addr = multiaddr(rawAddr);
-            this.ipfsCleint.swarm.connect(addr).then(() => {
-                console.log(`IPFS API: \n Connected : ${rawAddr} !`);
-            }).catch((err) => {
-                console.error(`IPFS API: \n Fail to connect : ${rawAddr} \n ${err.toString()}!`);    
-            });
+            try {
+                const addr = multiaddr(rawAddr);
+                this.ipfsCleint.bootstrap.add(rawAddr).then(() => {
+                    console.log(`IPFS API: \n Connected : ${rawAddr} !`);
+                }).catch((err) => {
+                    console.error(`IPFS API: \n Fail to connect : ${rawAddr} \n ${err.toString()}!`);    
+                });
+            } catch(err) {
+                console.error(`IPFS API ERROR CONNECTED TO ${rawAddr} ! COZ: \n ${err.toString()}`);
+                continue;
+            }
         }
     }
 
