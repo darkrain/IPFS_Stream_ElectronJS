@@ -109,7 +109,7 @@ async function InitializeAppAsync(debug = true) {
 //Calls when the app and dependencies already initialized
 async function onAppInitialized() {
     ipfsRunner = new IpfsBinRunner();
-    ipfsApi = new IpfsApiController(ipfsRunner);
+    ipfsApi = new IpfsApiController(ipfsRunner, IpfsInstance);
     await loadDefaultPageAsync();
 }
 
@@ -221,7 +221,7 @@ function createWindowAsync(linkToPage) {
         });
         
         // Отображаем средства разработчика.
-        currentWindow.webContents.openDevTools();
+        //currentWindow.webContents.openDevTools();
         
         // Будет вызвано, когда окно будет закрыто.
         currentWindow.on('closed', () => {
