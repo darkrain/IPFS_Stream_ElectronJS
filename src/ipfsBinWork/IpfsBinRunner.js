@@ -3,18 +3,33 @@ const {spawn, exec} = require('child_process');
 
 class IpfsBinRunner {
     constructor() {
-        const opt = [
-            'daemon'
-        ];
-        this.ipfsProcess = spawn(appConfig.files.IPFS_BIN, opt);
-        this.ipfsProcess.stdout.on(`data`, (msg) => {
-            const msgStr = msg.toString();
-            console.log(`IPFS BIN: ${msgStr}`);
 
-            if(msg.includes('WebUI')) {
-                this.parseApiServer(msgStr);
-            }
+        const initCmd = ['init'];
+        this.ipfsProcess = spawn(appConfig.files.IPFS_BIN, initCmd);
+        this.ipfsProcess.stdout.on('data', (msg) => {
+            console.log(`IPFS BIN INITALIZATION: \n ${msg.toString()}`);
         });
+        this.ipfsProcess.stderr.on('error', (err) => {
+            console.error(`IPFS BIN initialziation ERROR! \n ${err.toString()}`);
+        })
+        this.ipfsProcess.once('close', (code, signal) => {
+            this.ipfsProcess.kill();
+            const opt = [
+                'daemon'
+            ];
+            this.ipfsProcess = spawn(appConfig.files.IPFS_BIN, opt);
+            this.ipfsProcess.stdout.on(`data`, (msg) => {
+                const msgStr = msg.toString();
+                console.log(`IPFS BIN: ${msgStr}`);
+    
+                if(msg.includes('WebUI')) {
+                    this.parseApiServer(msgStr);
+                }
+            });
+            this.ipfsProcess.stderr.on('error', (err) => {
+                console.error(`IPFS BIN ERROR! \n ${err.toString()}`);
+            })
+        });      
     }
 
     parseApiServer(apiServerLine) {
