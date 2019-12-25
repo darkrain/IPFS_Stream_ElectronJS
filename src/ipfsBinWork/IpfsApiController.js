@@ -27,7 +27,6 @@ class IpfsApiController {
         //swarm
         //TODO: Why errors of connect!?
 
-        return;
         let swarmArr =  [
             "/dns4/ws-star.discovery.libp2p.io/tcp/443/ws/p2p-websocket-star/"
         ]
