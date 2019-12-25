@@ -198,16 +198,12 @@ class StreamWatchPage extends PageBase{
             const bufferFromIpfs = await this.ipfsApi.getFileAsync(chunkHash);
             const chunkName = 'master' + this.lastBlockIndex + '.ts';
             const chunkPath = pathModule.join(this.streamerVideoFolder, chunkName);
-            fs.writeFileSync(chunkPath,bufferFromIpfs, (err) => {
-                if(err) {
-                    rejected(err);
-                }
-                chunkData.fileName = chunkName;
-                chunkData.extInf = extInf;
-                resolve();
-            });
+            fs.writeFileSync(chunkPath,bufferFromIpfs);
+            chunkData.fileName = chunkName;
+            chunkData.extInf = extInf;
         
         } catch(err) {
+            console.error(`CHUNK LOAD FAILED! \n ${err.toString()}`);
             throw err;
         }
         return chunkData;
