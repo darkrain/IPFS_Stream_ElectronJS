@@ -13,6 +13,13 @@ class IpfsApiController {
 
         this.ipfsCleint = IpfsHttpClient('http://localhost:5001'); // (the default in Node.js)
 
+        //addSwarm();
+
+        this.API_URL.GET = `${this.fullUrl}api/v0/get`;
+        this.API_URL.ADD = `${this.fullUrl}api/v0/add`;
+    }
+
+    addSwarm() {
         //swarm
         //TODO: Why errors of connect!?
         let swarmArr =  [
@@ -28,9 +35,6 @@ class IpfsApiController {
                 console.error(`IPFS API: \n Fail to connect : ${rawAddr} \n ${err.toString()}!`);    
             });
         }
-
-        this.API_URL.GET = `${this.fullUrl}api/v0/get`;
-        this.API_URL.ADD = `${this.fullUrl}api/v0/add`;
     }
 
     getClient() {
