@@ -96,7 +96,12 @@ function loadVideoByTag(url, videoElem, specificConfig = null) {
             liveSyncDurationCount: 1,
             maxMaxBufferLength: 1000,
             maxStarvationDelay: 2,
-            maxLoadingDelay: 2
+            maxLoadingDelay: 2,
+            fpsDroppedMonitoringPeriod: 2500,
+            fpsDroppedMonitoringThreshold: 0.1,
+            manifestLoadingTimeOut : 5000,
+            levelLoadingTimeOut: 5000,
+            fragLoadingTimeOut: 10000
         };
         
 
