@@ -12,7 +12,8 @@
     "clean": "node devDataRemover.js",
     "share": "electron-builder --dir && node buildScripts/copyBuild.js",
     "new-router": "node scripts/routerScaffolding.js",
-    "clear-data": "node scripts/userDataRemover.js"
+    "clear-data": "node scripts/userDataRemover.js",
+    "clear-video": "node scripts/videoDataRemove.js"
   },
   "build": {
     "productName": "BorgStream",
