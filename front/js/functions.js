@@ -48,16 +48,58 @@ function initializeImageCropper(imageID, opts = {aspectRatio: 16/9}) {
     return cropper;
 }
 
+//CONVERT IMG TO BASE64 fUNC
 function getDataUrl(img) {
-    var canvas = document.createElement('canvas')
-    var ctx = canvas.getContext('2d')
-  
-    canvas.width = img.width
-    canvas.height = img.height
-    ctx.drawImage(img, 0, 0)
-  
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+
     // If the image is not png, the format
     // must be specified here
-    return canvas.toDataURL()
-  }
+    return canvas.toDataURL();
+}
+
+//load VIDEO player by URL
+// args: videoElem = may be id string or HTMLElement
+function loadVideoByTag(url, videoElem, specificConfig = null) {
+    const httpPath = url;
+    console.log(`Try to get video from url:${httpPath}`);
+    
+    let video = null;
+    if(typeof(videoElem) === 'string' ) {
+        video = document.getElementById(videoElem);
+    } 
+    if(videoElem instanceof HTMLElement) {
+        video = videoElem;
+    }
+
+    if(video === null) {
+        throw new Error(`CANNOT PARSE videoElem type! It should be HTMLElement or STRING!`);
+    }
+
+	if(Hls.isSupported()) {
+		const hls = new Hls();
+		hls.loadSource(httpPath);
+    hls.attachMedia(video);
+    
+    if(specificConfig !== null) {
+        
+        for(let keyOfSpecificConfig in specificConfig) {
+            if(hls.config[keyOfSpecificConfig]) {
+                hls.config[keyOfSpecificConfig] = specificConfig[keyOfSpecificConfig];
+                console.log(`HLS config key ${keyOfSpecificConfig} changed to: ${hls.config[keyOfSpecificConfig]}!`)
+            }
+        }
+    } 
+
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {						
+        video.play();
+        video.volume = 0;
+    });
+	}
+}
+
 

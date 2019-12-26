@@ -301,18 +301,7 @@ $(document).ready(function() {
 
 // ### Client event subscriber handlers ###
 ipc.on('video-playlist-path-changed', (event, args) => {
-	const httpPath = args;
-	console.log(`Try to get video from url:${httpPath}`);
-	var video = document.getElementById('video-player');
-	if(Hls.isSupported()) {
-		const hls = new Hls();
-		hls.loadSource(httpPath);
-		hls.attachMedia(video);
-		hls.on(Hls.Events.MANIFEST_PARSED, () => {						
-			video.play();
-			video.volume = 0;
-		});
-	}
+  loadVideoByTag(args, 'video-player', {maxBufferHole: 1});
 });
 
 ipc.on('watcher-count-update', (event, args) => {

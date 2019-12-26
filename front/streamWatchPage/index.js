@@ -59,15 +59,7 @@ ipc.on('stream-loaded', (event, args) => {
 	videoElem.controls = true;
 	playerRow.append(videoElem);
 
-    const httpPath = args;
-	if(Hls.isSupported()) {
-		const hls = new Hls();
-		hls.loadSource(httpPath);
-		hls.attachMedia(videoElem);
-		hls.on(Hls.Events.MANIFEST_PARSED, () => {
-			videoElem.play();
-		});
-	}
+	loadVideoByTag(args, videoElem);
 });
 
 ipc.on('gameEventEnded', (event, args) => {
