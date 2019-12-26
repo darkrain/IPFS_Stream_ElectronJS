@@ -221,7 +221,7 @@ function createWindowAsync(linkToPage) {
         });
         
         // Отображаем средства разработчика.
-        //currentWindow.webContents.openDevTools();
+        currentWindow.webContents.openDevTools();
         
         // Будет вызвано, когда окно будет закрыто.
         currentWindow.on('closed', () => {
