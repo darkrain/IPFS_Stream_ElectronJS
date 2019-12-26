@@ -101,7 +101,8 @@ function loadVideoByTag(url, videoElem, specificConfig = null) {
             fpsDroppedMonitoringThreshold: 0.1,
             manifestLoadingTimeOut : 5000,
             levelLoadingTimeOut: 5000,
-            fragLoadingTimeOut: 10000
+            fragLoadingTimeOut: 10000,
+            startPosition: 0
         };
         
 
