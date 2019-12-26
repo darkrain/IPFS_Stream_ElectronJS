@@ -86,20 +86,37 @@ function loadVideoByTag(url, videoElem, specificConfig = null) {
     hls.attachMedia(video);
     
     if(specificConfig !== null) {
+        changeVideoConfig(hls.config, specificConfig);
+    }  else {
+        //Default config, more info: https://github.com/video-dev/hls.js/blob/master/docs/API.md#startposition
+        const defaultConfig = {
+            maxBufferHole: 1,
+            fragLoadingMaxRetry: 1,
+            levelLoadingMaxRetry: 1,
+            liveSyncDurationCount: 1,
+            maxMaxBufferLength: 1000,
+            maxStarvationDelay: 2,
+            maxLoadingDelay: 2
+        };
         
-        for(let keyOfSpecificConfig in specificConfig) {
-            if(hls.config[keyOfSpecificConfig]) {
-                hls.config[keyOfSpecificConfig] = specificConfig[keyOfSpecificConfig];
-                console.log(`HLS config key ${keyOfSpecificConfig} changed to: ${hls.config[keyOfSpecificConfig]}!`)
-            }
-        }
-    } 
+
+        changeVideoConfig(hls.config, defaultConfig)
+    }
 
     hls.on(Hls.Events.MANIFEST_PARSED, () => {						
         video.play();
         video.volume = 0;
     });
 	}
+}
+
+function changeVideoConfig(baseConfig, newConfig) {
+    for(let keyOfSpecificConfig in newConfig) {
+        if(baseConfig[keyOfSpecificConfig]) {
+            baseConfig[keyOfSpecificConfig] = newConfig[keyOfSpecificConfig];
+            console.log(`HLS config key ${keyOfSpecificConfig} changed to: ${baseConfig[keyOfSpecificConfig]}!`)
+        }
+    }  
 }
 
 

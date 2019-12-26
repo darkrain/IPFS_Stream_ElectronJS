@@ -54,11 +54,13 @@ $(document).ready(function() {
 });
 
 ipc.on('stream-loaded', (event, args) => {
+	//dynamycly creation player
 	const playerRow = document.getElementById('playerRow');
 	const videoElem = document.createElement('video');
 	videoElem.controls = true;
 	playerRow.append(videoElem);
-
+	
+	//common call for HLS playable
 	loadVideoByTag(args, videoElem);
 });
 
