@@ -398,7 +398,7 @@ async function paymentForFalse() {
     });
     return result;
   } catch(err) {
-    throw err;
+    throw onContractError(err);
   }
 }
 
@@ -416,8 +416,13 @@ async function paymentForTrue() {
     });
     return result;
   } catch(err) {
-    throw err;
+    throw onContractError(err);
   }
+}
+
+function onContractError(err) {
+  toastr["error"](err.toString(), "Контракт не выполнен");
+  return err;
 }
 
 function onGameEventFinish(isTrue) {

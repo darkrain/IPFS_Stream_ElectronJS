@@ -4,3 +4,9 @@ it will be crash at start because package 'get-video-info' removed.
 To restore this package: 
 1. clone https://github.com/intfloatbool/get-video-info.git into node_modules
 2. cd there, and run 'npm install'
+
+IF IPFS WONT DOWNLOAD CHUNKS
+
+try to remove all ipfs folders:
+/users/NAME/.borgStream/ipfs
+/users/NAME/.ipfs
