@@ -241,12 +241,12 @@ const contractAbi = [
   }
 ]
 const gameContractData = {
-	contractAdress: '0x32b8F3bf896CC274FD1EA25a87643760e38052c4',
+	contractAdress: '0xb5Bd17a9529583036c863FeA25C7f5f24B710a3f',
 	abi: contractAbi,
 	ownerInfo: {
-		addr: '0x1Beb9d65b32baB67B006acdA68d4CB72a1448123',
-		privateKey: '579ed8998b8b46c28c49f35a5b1936fa35262a6e1e29dda7d09adea5e41fb146',
-		mnemonic: 'float dilemma live penalty surround photo laptop art harsh utility wrong dilemma'
+		addr: '0x6A3fc1bab874318F4696cDfa15Ee5b9eD49Ae158',
+		privateKey: '4888a629b009289c6890ce997c3942db07007bf9b1ea1e79a450b4b2c73af996',
+		mnemonic: 'critic tell allow impose afford job degree level undo top umbrella column'
 	}
 }
 
@@ -359,7 +359,7 @@ function initializeWeb3() {
 		window.web3 = new Web3(web3.currentProvider);
 	} else {
 		// set the provider you want from Web3.providers
-		window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+		window.web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/80863635bd9a43afa39e50b97b42497e"));
   }
   
   window.mainContract = new web3.eth.Contract(gameContractData.abi, gameContractData.contractAdress, ContractOpts);
