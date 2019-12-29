@@ -51,7 +51,8 @@
     "md5": "^2.2.1",
     "multiaddr": "^7.2.1",
     "node-watch": "0.6.3",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "web3-utils": "^1.2.4"
   },
   "devDependencies": {
     "electron": "^6.0.0",

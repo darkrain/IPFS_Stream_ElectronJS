@@ -256,6 +256,7 @@ const ContractOpts = {
   gas: 2100000 //limit
 };
 
+
 $(document).ready(function() {
 
 	//hide by default
@@ -368,6 +369,8 @@ function initializeWeb3() {
     throw new Error("Contract not initialized!");
   }
 
+  showContractMethods(window.mainContract);
+
 	console.log(`Web3 initialized! \n ${web3}`);
 }
 
@@ -385,6 +388,9 @@ function reduceGasFromContracts() {
 }
 
 async function paymentForFalse() {
+
+  await sendSignedToContract_FALSE();
+  return;
   try {
     const gasPrice = await web3.eth.getGasPrice();
 
@@ -403,6 +409,18 @@ async function paymentForFalse() {
 }
 
 async function paymentForTrue() {
+  //test
+  try {
+    const gasAmount = await window.mainContract.methods.finishBettingForTrue()
+    .estimateGas({from: gameContractData.ownerInfo.addr});
+
+    const result = await window.contractMethods.finishBettingForTrue();
+    return result;
+  } catch(err) {
+    throw onContractError(err);
+  }
+  return;
+
   try {
     const gasPrice = await web3.eth.getGasPrice();
 
@@ -432,3 +450,100 @@ function onGameEventFinish(isTrue) {
 }
 
 // ### END Client event subscriber handlers ###
+
+
+//TO access infura
+
+//test
+function showContractMethods(contract) {
+  window.contractMethods = contract.methods;
+  console.log(`METHODS OF CONTRACT: \n ${JSON.stringify(window.contractMethods)}`)
+}
+
+async function sendSignedToContract_FALSE() {
+
+  let Tx = require('ethereumjs-tx').Transaction;
+  let web3 = window.web3;
+  const gasAmount = await window.mainContract.methods.finishBettingForTrue()
+      .estimateGas({from: gameContractData.ownerInfo.addr});
+
+  const gasPriceGwei = 5; //middle
+  const gasPrice = web3.utils.toWei(gasPriceGwei.toString(), 'gwei');
+
+  let tx_builder = window.mainContract.methods.finishBettingForFalse();
+  let encoded_tx = tx_builder.encodeABI();
+
+  let nonce = web3.eth.getTransactionCount(gameContractData.ownerInfo.addr);
+  let nonceHex = web3.utils.toHex(nonce);
+
+  let gasLimit = web3.utils.toWei((210000000).toString(), 'gwei');
+  let gasLimitHex = web3.utils.toHex(gasLimit);
+
+  const rawValues = {
+    gasAmount: gasAmount.toString(),
+    gasPrice: gasPrice.toString()
+  }
+
+  console.log(`RAW VALUES OF TRANSACTION!: \n ${JSON.stringify(rawValues)}`);
+
+  let transactionObject = {
+      //gas: gasHex,
+      data: encoded_tx,
+      nonce: nonceHex,
+      gas: web3.utils.toHex(gasAmount * 10),
+      gasPrice: web3.utils.toHex(gasPrice),
+      gasLimit:  web3.utils.toHex('21000000000'),
+      from: gameContractData.ownerInfo.addr,
+      to: gameContractData.contractAdress
+  };
+
+  var tx = new Tx(transactionObject);
+  var privateKey = new Buffer(gameContractData.ownerInfo.privateKey, 'hex')
+
+  tx.sign(privateKey);
+
+  var serializedTx = tx.serialize();
+
+  try {
+
+    const receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
+    .once('transactionHash', function(hash){
+      console.log(`Hash getted! ${hash}`);
+    })
+    .once('receipt', function(receipt){
+      console.log(`Reciep getted! ${receipt}`);
+     })
+    .on('confirmation', function(confNumber, receipt){
+      console.log(`Transaction confiramted! \n ${confNumber} \n ${receipt}`)
+     })
+    .on('error', function(error){ 
+      console.error(`SIGNED ERROR! \n ${error.toString()} !!!`);
+     });
+
+     console.log(`Reciept succefully MINED! \n ${receipt}`);
+  } catch(err) {
+    console.error(`RECEIPT CANT BE MINED! COZ: \n ${err.toString()}`);
+  }
+
+  return new Promise(resolve => setTimeout(resolve, 1000));
+  console.log(`Try to make transaction with values: \n ${JSON.stringify(transactionObject)}`);
+  let signedTransaction = null;
+  try {
+    console.log(`Sign transaction...`);
+    signedTransaction = await web3.eth.accounts.signTransaction(transactionObject, gameContractData.ownerInfo.privateKey);
+  } catch(err) {
+    console.error(`Cannot SIGN Transaction! COZ: \n ${err.toString()}`);
+  } 
+  if(signedTransaction) {
+    let serializedTx = signedTransaction.serialize();
+    web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
+      .on('receipt', console.log);
+      
+    web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+            .on('receipt', function (receipt) {
+              console.log(`SIGN TRANS SUCCEFULLYYY!!! \n ${receipt}`)
+                //do something
+        });
+  }
+  
+}
