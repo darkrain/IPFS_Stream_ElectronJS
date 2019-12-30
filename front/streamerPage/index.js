@@ -387,55 +387,12 @@ function reduceGasFromContracts() {
   });
 }
 
-async function paymentForFalse() {
-
-  await sendSignedToContract_FALSE();
-  return;
-  try {
-    const gasPrice = await web3.eth.getGasPrice();
-
-    const gasAmount = await window.mainContract.methods.finishBettingForFalse()
-      .estimateGas({from: gameContractData.ownerInfo.addr});
-    
-    const result = await window.mainContract.methods.finishBettingForFalse().send({
-      from: gameContractData.ownerInfo.addr,
-      gasPrice: gasPrice,
-      gas: gasAmount
-    });
-    return result;
-  } catch(err) {
-    throw onContractError(err);
-  }
+function paymentForFalse() {
+  return sendSignedToContract_FALSE();
 }
 
-async function paymentForTrue() {
-  //test
-  try {
-    const gasAmount = await window.mainContract.methods.finishBettingForTrue()
-    .estimateGas({from: gameContractData.ownerInfo.addr});
-
-    const result = await window.contractMethods.finishBettingForTrue();
-    return result;
-  } catch(err) {
-    throw onContractError(err);
-  }
-  return;
-
-  try {
-    const gasPrice = await web3.eth.getGasPrice();
-
-    const gasAmount = await window.mainContract.methods.finishBettingForTrue()
-      .estimateGas({from: gameContractData.ownerInfo.addr});
-    
-    const result = await window.mainContract.methods.finishBettingForTrue().send({
-      from: gameContractData.ownerInfo.addr,
-      gasPrice: gasPrice,
-      gas: gasAmount
-    });
-    return result;
-  } catch(err) {
-    throw onContractError(err);
-  }
+function paymentForTrue() {
+  return sendSignedToContract_TRUE();
 }
 
 function onContractError(err) {
@@ -446,7 +403,7 @@ function onContractError(err) {
 function onGameEventFinish(isTrue) {
   ipc.send('gameEventEnded', isTrue); 
   //Скрываем панель управления
-  //setActiveGameEventControls(false);
+  setActiveGameEventControls(false);
 }
 
 // ### END Client event subscriber handlers ###
@@ -461,10 +418,10 @@ function showContractMethods(contract) {
 }
 
 async function sendSignedToContract_FALSE() {
-
+  console.log(`TRY TO EXECUTE WIN FALSE`);
   let Tx = require('ethereumjs-tx').Transaction;
   let web3 = window.web3;
-  const gasAmount = await window.mainContract.methods.finishBettingForTrue()
+  const gasAmount = await window.mainContract.methods.finishBettingForFalse()
       .estimateGas({from: gameContractData.ownerInfo.addr});
 
   const gasPriceGwei = 5; //middle
@@ -473,18 +430,21 @@ async function sendSignedToContract_FALSE() {
   let tx_builder = window.mainContract.methods.finishBettingForFalse();
   let encoded_tx = tx_builder.encodeABI();
 
-  let nonce = web3.eth.getTransactionCount(gameContractData.ownerInfo.addr);
+  const addrForNonce = gameContractData.ownerInfo.addr;
+  let nonce = await web3.eth.getTransactionCount(addrForNonce);
   let nonceHex = web3.utils.toHex(nonce);
 
   let gasLimit = web3.utils.toWei((210000000).toString(), 'gwei');
   let gasLimitHex = web3.utils.toHex(gasLimit);
 
   let web3GasPrice = await web3.eth.getGasPrice();
-  
+  let lastBlock = await web3.eth.getBlock("latest");
+  let gasLimitOfLastBlock = lastBlock.gasLimit;
   const rawValues = {
-    gas: 3000000, 
-    gasPrice: web3GasPrice, 
-    nonce: nonce,
+    gas: (gasAmount * 5).toString(), 
+    gasPrice: (8000000000).toString(), //8 gwei in WEI
+    nonce: nonce.toString(), // << nonce is matter for AWAITING to accept transaction
+    gasLimit: (gasLimitOfLastBlock * 1000000).toString()
   }
 
   console.log(`RAW VALUES OF TRANSACTION!: \n ${JSON.stringify(rawValues)}`);
@@ -492,10 +452,10 @@ async function sendSignedToContract_FALSE() {
   let transactionObject = {
       //gas: gasHex,
       data: encoded_tx,
-      nonce: nonceHex,
+      nonce: web3.utils.toHex(rawValues.nonce),
       gas: web3.utils.toHex(rawValues.gas),
       gasPrice: web3.utils.toHex(rawValues.gasPrice),
-      gasLimit:  web3.utils.toHex('21000000000'),
+      gasLimit:  web3.utils.toHex(rawValues.gasLimit),
       from: gameContractData.ownerInfo.addr,
       to: gameContractData.contractAdress
   };
@@ -517,36 +477,90 @@ async function sendSignedToContract_FALSE() {
       console.log(`Reciep getted! ${receipt}`);
      })
     .on('confirmation', function(confNumber, receipt){
-      console.log(`Transaction confiramted! \n ${confNumber} \n ${receipt}`)
+      console.log(`FALSE WINS: Transaction confiramted! \n ${confNumber} \n ${receipt}`)
      })
     .on('error', function(error){ 
       console.error(`SIGNED ERROR! \n ${error.toString()} !!!`);
      });
 
-     console.log(`Reciept succefully MINED! \n ${receipt}`);
+     console.log(`FALSE WINS: Reciept succefully MINED! \n ${receipt}`);
   } catch(err) {
     console.error(`RECEIPT CANT BE MINED! COZ: \n ${err.toString()}`);
   }
 
-  return new Promise(resolve => setTimeout(resolve, 1000));
-  console.log(`Try to make transaction with values: \n ${JSON.stringify(transactionObject)}`);
-  let signedTransaction = null;
-  try {
-    console.log(`Sign transaction...`);
-    signedTransaction = await web3.eth.accounts.signTransaction(transactionObject, gameContractData.ownerInfo.privateKey);
-  } catch(err) {
-    console.error(`Cannot SIGN Transaction! COZ: \n ${err.toString()}`);
-  } 
-  if(signedTransaction) {
-    let serializedTx = signedTransaction.serialize();
-    web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
-      .on('receipt', console.log);
-      
-    web3.eth.sendSignedTransaction(signedTx.rawTransaction)
-            .on('receipt', function (receipt) {
-              console.log(`SIGN TRANS SUCCEFULLYYY!!! \n ${receipt}`)
-                //do something
-        });
+  return new Promise(resolve => setTimeout(resolve, 1000));  
+}
+
+async function sendSignedToContract_TRUE() {
+  console.log(`TRY TO EXECUTE WIN TRUE`);
+  let Tx = require('ethereumjs-tx').Transaction;
+  let web3 = window.web3;
+  const gasAmount = await window.mainContract.methods.finishBettingForTrue()
+      .estimateGas({from: gameContractData.ownerInfo.addr});
+
+  const gasPriceGwei = 5; //middle
+  const gasPrice = web3.utils.toWei(gasPriceGwei.toString(), 'gwei');
+
+  let tx_builder = window.mainContract.methods.finishBettingForTrue();
+  let encoded_tx = tx_builder.encodeABI();
+
+  const addrForNonce = gameContractData.ownerInfo.addr;
+  let nonce = await web3.eth.getTransactionCount(addrForNonce);
+  let nonceHex = web3.utils.toHex(nonce);
+
+  let gasLimit = web3.utils.toWei((210000000).toString(), 'gwei');
+  let gasLimitHex = web3.utils.toHex(gasLimit);
+
+  let web3GasPrice = await web3.eth.getGasPrice();
+  let lastBlock = await web3.eth.getBlock("latest");
+  let gasLimitOfLastBlock = lastBlock.gasLimit;
+  const rawValues = {
+    gas: (gasAmount * 5).toString(), 
+    gasPrice: (8000000000).toString(), //8 gwei in WEI
+    nonce: nonce.toString(), // << nonce is matter for AWAITING to accept transaction
+    gasLimit: (gasLimitOfLastBlock * 1000000).toString()
   }
-  
+
+  console.log(`RAW VALUES OF TRANSACTION!: \n ${JSON.stringify(rawValues)}`);
+
+  let transactionObject = {
+      //gas: gasHex,
+      data: encoded_tx,
+      nonce: web3.utils.toHex(rawValues.nonce),
+      gas: web3.utils.toHex(rawValues.gas),
+      gasPrice: web3.utils.toHex(rawValues.gasPrice),
+      gasLimit:  web3.utils.toHex(rawValues.gasLimit),
+      from: gameContractData.ownerInfo.addr,
+      to: gameContractData.contractAdress
+  };
+
+  var tx = new Tx(transactionObject);
+  var privateKey = new Buffer(gameContractData.ownerInfo.privateKey, 'hex')
+
+  tx.sign(privateKey);
+
+  var serializedTx = tx.serialize();
+
+  try {
+
+    const receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
+    .once('transactionHash', function(hash){
+      console.log(`Hash getted! ${hash}`);
+    })
+    .once('receipt', function(receipt){
+      console.log(`Reciep getted! ${receipt}`);
+     })
+    .on('confirmation', function(confNumber, receipt){
+      console.log(`TRUE WINS: Transaction confiramted! \n ${confNumber} \n ${receipt}`)
+     })
+    .on('error', function(error){ 
+      console.error(`SIGNED ERROR! \n ${error.toString()} !!!`);
+     });
+
+     console.log(`TRUE WINS: Reciept succefully MINED! \n ${receipt}`);
+  } catch(err) {
+    console.error(`RECEIPT CANT BE MINED! COZ: \n ${err.toString()}`);
+  }
+
+  return new Promise(resolve => setTimeout(resolve, 1000));  
 }
