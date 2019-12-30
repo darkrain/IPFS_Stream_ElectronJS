@@ -120,7 +120,7 @@ function changeVideoConfig(baseConfig, newConfig) {
     for(let keyOfSpecificConfig in newConfig) {
         if(baseConfig[keyOfSpecificConfig]) {
             baseConfig[keyOfSpecificConfig] = newConfig[keyOfSpecificConfig];
-            console.log(`HLS config key ${keyOfSpecificConfig} changed to: ${baseConfig[keyOfSpecificConfig]}!`)
+            //console.log(`HLS config key ${keyOfSpecificConfig} changed to: ${baseConfig[keyOfSpecificConfig]}!`)
         }
     }  
 }

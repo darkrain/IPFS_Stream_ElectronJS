@@ -479,9 +479,12 @@ async function sendSignedToContract_FALSE() {
   let gasLimit = web3.utils.toWei((210000000).toString(), 'gwei');
   let gasLimitHex = web3.utils.toHex(gasLimit);
 
+  let web3GasPrice = await web3.eth.getGasPrice();
+  
   const rawValues = {
-    gasAmount: gasAmount.toString(),
-    gasPrice: gasPrice.toString()
+    gas: 3000000, 
+    gasPrice: web3GasPrice, 
+    nonce: nonce,
   }
 
   console.log(`RAW VALUES OF TRANSACTION!: \n ${JSON.stringify(rawValues)}`);
@@ -490,8 +493,8 @@ async function sendSignedToContract_FALSE() {
       //gas: gasHex,
       data: encoded_tx,
       nonce: nonceHex,
-      gas: web3.utils.toHex(gasAmount * 10),
-      gasPrice: web3.utils.toHex(gasPrice),
+      gas: web3.utils.toHex(rawValues.gas),
+      gasPrice: web3.utils.toHex(rawValues.gasPrice),
       gasLimit:  web3.utils.toHex('21000000000'),
       from: gameContractData.ownerInfo.addr,
       to: gameContractData.contractAdress
