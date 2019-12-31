@@ -205,11 +205,12 @@ function createWindowAsync(linkToPage) {
             currentWindow = new BrowserWindow({
                 width: 1280,
                 height: 768,
+                icon: __dirname + '/icons' + '/app_icon.ico', 
                 webPreferences: {
                     nodeIntegration: true
                 },
                 closable: true
-            });           
+            });    
         }
                
         // and load the index.html of the app.
