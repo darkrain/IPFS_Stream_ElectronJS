@@ -19,8 +19,9 @@
     "productName": "BorgStream",
     "appId": "borgSystems.Stream",
     "win": {
+      "icon": "icons/app_iconPNG.png",
       "target": [
-        "portable"
+        "portable"  
       ]
     },
     "portable": {

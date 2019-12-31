@@ -205,7 +205,7 @@ function createWindowAsync(linkToPage) {
             currentWindow = new BrowserWindow({
                 width: 1280,
                 height: 768,
-                icon: __dirname + '/icons' + '/app_icon.ico', 
+                icon: __dirname + '/icons' + '/app_iconPNG.png', 
                 webPreferences: {
                     nodeIntegration: true
                 },
