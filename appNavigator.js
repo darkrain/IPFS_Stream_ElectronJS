@@ -126,17 +126,15 @@ function subscribeToPeersRoom() {
             if(msgData == myID)
                 return;
             console.log(`PEER JOINED IN STREAM APP! \n ${msgData}`);
-            ipfsApi.addPeerAsync(msgData).then(() => {
-                console.log(`PEER ${msgData} added!`);
-            });
+            ipfsApi.addPeerAsync(msgData);
         })
         ipfsApi.getId().then((idObj) => {
             const peerId = idObj.id.toString();
             console.log(`+ + + LOOOK THIS IS YOUR ID BY BINARY IPFS: + + + \n ${peerId}`);
             myID = peerId;
 
-            const timeToSpam = 10000;
-            setTimeout(() => {
+            const timeToSpam = 5000;
+            setInterval(() => {
                 peersRoom.broadcast(peerId);
 
             }, timeToSpam);
