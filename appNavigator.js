@@ -112,18 +112,27 @@ async function InitializeAppAsync(debug = true) {
 async function onAppInitialized() {
     ipfsRunner = new IpfsBinRunner();
     ipfsApi = new IpfsApiController(ipfsRunner, IpfsInstance);
-    subscribeToPeersRoom();
+    const delayToConnectPeerRoom = 5000;
+    setTimeout(subscribeToPeersRoom, delayToConnectPeerRoom);
     await loadDefaultPageAsync();
 }
 
+let myID = null;
 function subscribeToPeersRoom() {
     peersRoom = Room(IpfsInstance, 'stream_peers_room');
     peersRoom.on('message', (msg) => {
         const msgData = msg.data.toString();
+        if(msgData == myID)
+            return;
         console.log(`PEER JOINED IN STREAM APP! \n ${msgData}`);
         ipfsApi.addPeer(msgData);
     })
-    peersRoom.broadcast(ipfsApi.PEER_ID);
+    ipfsApi.getId().then((idObj) => {
+        const peerId = idObj.id.toString();
+        console.log(`+ + + LOOOK THIS IS YOUR ID BY BINARY IPFS: + + + \n ${peerId}`);
+        myID = peerId;
+        peersRoom.broadcast(peerId);
+    });
 }
 
 async function loadDefaultPageAsync() {
