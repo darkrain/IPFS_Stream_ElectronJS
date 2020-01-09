@@ -17,7 +17,7 @@ class IpfsApiController {
 
         this.ipfsCleint = IpfsHttpClient('http://localhost:5001'); // (the default in Node.js)
 
-        const peerTime = 5000;
+        const peerTime = 7000;
         setTimeout(() => {
             this.addSwarm();
         }, peerTime);
@@ -50,7 +50,7 @@ class IpfsApiController {
         for(let rawAddr of swarmArr) {
             try {
                 const addr = multiaddr(rawAddr);
-                this.ipfsCleint.swarm.connect(rawAddr).then(() => {
+                this.ipfsCleint.bootstrap.add(rawAddr).then(() => {
                     console.log(`IPFS API: \n Connected : ${rawAddr} !`);
                 }).catch((err) => {
                     console.error(`IPFS API: \n Fail to connect : ${rawAddr} \n ${err.toString()}!`);    
