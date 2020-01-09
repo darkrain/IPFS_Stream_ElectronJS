@@ -16,7 +16,7 @@ class IpfsApiController {
         this.fullUrl = this.ipfsBinRunner.getUrl();
 
         this.ipfsCleint = IpfsHttpClient('http://localhost:5001'); // (the default in Node.js)
-        const peerTime = 3000;
+        const peerTime = 5000;
         setTimeout(() => {
             this.addSwarm();
         }, peerTime);
@@ -48,7 +48,7 @@ class IpfsApiController {
         //TODO: Why errors of connect!?
 
         let swarmArr =  [
-            //"/ip4/88.99.120.155/tcp/6001/ipfs/QmQXnEJVdh7vAkKJWWCEqNCLMyZfnbmLFenrchMBn3XAa4"
+            "/ip4/157.245.81.248/tcp/4001/ipfs/QmPZQEhSEVDwa127CFKo92BUxNwJrgJe7EP3eGooaD5BCX"
         ]
         for(let rawAddr of swarmArr) {
             try {
