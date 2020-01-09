@@ -16,7 +16,11 @@ class IpfsApiController {
         this.fullUrl = this.ipfsBinRunner.getUrl();
 
         this.ipfsCleint = IpfsHttpClient('http://localhost:5001'); // (the default in Node.js)
-
+        this.PEER_ID = null;
+        this.ipfsCleint.id().then((idObj) => {
+            console.log(`CORRECT IPFS CLIENT LOCALHOSOT:5001 = ${idObj.id}`);
+            this.PEER_ID = idObj.id;
+        });
         const peerTime = 3000;
         setTimeout(() => {
             this.addSwarm();

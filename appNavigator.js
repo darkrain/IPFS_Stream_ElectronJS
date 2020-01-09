@@ -118,10 +118,12 @@ async function onAppInitialized() {
 
 function subscribeToPeersRoom() {
     peersRoom = Room(IpfsInstance, 'stream_peers_room');
-    peersRoom.on('peer joined', (peer) => {
-        console.log(`PEER JOINED IN STREAM APP! \n ${peer}`);
-        ipfsApi.addPeer(peer);
+    peersRoom.on('message', (msg) => {
+        const msgData = msg.data.toString();
+        console.log(`PEER JOINED IN STREAM APP! \n ${msgData}`);
+        ipfsApi.addPeer(msgData);
     })
+    peersRoom.broadcast(ipfsApi.PEER_ID);
 }
 
 async function loadDefaultPageAsync() {
