@@ -31,6 +31,8 @@ class IpfsBinRunner {
         });      
 
         setTimeout(() => {
+
+            return; //Not delete
             this.bootstrapRemoveProcess = spawn(appConfig.files.IPFS_BIN, ['bootstrap' ,'rm' ,'--all']);
             this.bootstrapRemoveProcess.stderr.on('error', (err) => {
                 console.error(`IPFS BIN BOOTSTRAP ERROR! \n Cannot remove bootstraps coz: \n ${err.toString()}`);

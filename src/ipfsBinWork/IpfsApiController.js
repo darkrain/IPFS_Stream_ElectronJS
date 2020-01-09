@@ -45,7 +45,7 @@ class IpfsApiController {
         //TODO: Why errors of connect!?
 
         let swarmArr =  [
-            "/ip4/88.99.120.155/tcp/6001/ipfs/QmQXnEJVdh7vAkKJWWCEqNCLMyZfnbmLFenrchMBn3XAa4"
+            //"/ip4/88.99.120.155/tcp/6001/ipfs/QmQXnEJVdh7vAkKJWWCEqNCLMyZfnbmLFenrchMBn3XAa4"
         ]
         for(let rawAddr of swarmArr) {
             try {
