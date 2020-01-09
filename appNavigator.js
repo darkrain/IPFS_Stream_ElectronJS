@@ -134,7 +134,12 @@ function subscribeToPeersRoom() {
             const peerId = idObj.id.toString();
             console.log(`+ + + LOOOK THIS IS YOUR ID BY BINARY IPFS: + + + \n ${peerId}`);
             myID = peerId;
-            peersRoom.broadcast(peerId);
+
+            const timeToSpam = 10000;
+            setTimeout(() => {
+                peersRoom.broadcast(peerId);
+
+            }, timeToSpam);
         });
     });    
 }

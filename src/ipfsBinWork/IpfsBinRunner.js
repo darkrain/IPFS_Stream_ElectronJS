@@ -28,23 +28,7 @@ class IpfsBinRunner {
             this.ipfsProcess.stderr.on('error', (err) => {
                 console.error(`IPFS BIN ERROR! \n ${err.toString()}`);
             })
-        });      
-
-        setTimeout(() => {
-
-            return; //Not delete
-            this.bootstrapRemoveProcess = spawn(appConfig.files.IPFS_BIN, ['bootstrap' ,'rm' ,'--all']);
-            this.bootstrapRemoveProcess.stderr.on('error', (err) => {
-                console.error(`IPFS BIN BOOTSTRAP ERROR! \n Cannot remove bootstraps coz: \n ${err.toString()}`);
-            });
-            this.bootstrapRemoveProcess.stdout.on('data', (msg) => {
-                console.log(`IPFS BIN BOOTSTRAP: \n DATA: ${msg.toString()}`);
-            });
-            this.bootstrapRemoveProcess.once('close', (code, signal) => {
-                console.log(`CODE: \n${code}`);
-                console.log(`IPFS BIN BOOTSTRAP: \n Bootstrap process closed!`);
-            });
-        }, 6000);      
+        });       
     }
 
     parseApiServer(apiServerLine) {
