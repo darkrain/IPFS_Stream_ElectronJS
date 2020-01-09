@@ -4,6 +4,9 @@ const multiaddr = require('multiaddr');
 
 class IpfsApiController {
     constructor(ipfsBinRunner, oldIpfs) {
+
+        this.peerList = new Set();
+
         this.oldIpfs = oldIpfs;
         this.ipfsBinRunner = ipfsBinRunner;
         this.API_URL = {
@@ -23,6 +26,20 @@ class IpfsApiController {
         this.API_URL.ADD = `${this.fullUrl}api/v0/add`;
     }
 
+    addPeer(peerId) {
+        if(this.peerList.has(peerId)) {
+            return;
+        }
+        const peerUrl = `/p2p-circuit/p2p/${peerId}`;
+        this.ipfsCleint.swarm.connect(peerUrl).then(() => {
+            console.log(`IPFS API: \n EXTERNAL CLIENT SWARM Connected : ${peerUrl} !`)
+            this.peerList.add(peerId); ;
+        }).catch((err) => {
+            console.error(`IPFS API: \n Fail  CLIENT to connect : ${peerUrl} \n ${err.toString()}!`);    
+        });
+        
+    }
+    
     addSwarm() {
         //swarm
         //TODO: Why errors of connect!?

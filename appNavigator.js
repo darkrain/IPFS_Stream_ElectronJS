@@ -11,10 +11,11 @@ const localServer = require('./src/localServer/localServer');
 const StreamersDataHandler = require('./src/Managers/StreamersDataHandler');
 const IpfsBinRunner = require(`./src/ipfsBinWork/IpfsBinRunner`);
 const IpfsApiController = require(`./src/ipfsBinWork/IpfsApiController`);
+const Room = require('ipfs-pubsub-room');
+
 //ROOMS
 const SavedGlobalRoomListener = require('./src/PubsubRooms/SavedGlobalRoomListener');
 const SavedGlobalRoom = require('./src/PubsubRooms/SavedGlobalRoom');
-
 //Tests
 const testRunner = require('./test/moduleDynamicTests/TestRunner');
 
@@ -68,6 +69,7 @@ let streamersDataHandler;
 let savedGlobalRoomListener;
 let ipfsRunner;
 let ipfsApi;
+let peersRoom;
 async function InitializeAppAsync(debug = true) {
 
     try {
@@ -110,7 +112,16 @@ async function InitializeAppAsync(debug = true) {
 async function onAppInitialized() {
     ipfsRunner = new IpfsBinRunner();
     ipfsApi = new IpfsApiController(ipfsRunner, IpfsInstance);
+    subscribeToPeersRoom();
     await loadDefaultPageAsync();
+}
+
+function subscribeToPeersRoom() {
+    peersRoom = Room(IpfsInstance, 'stream_peers_room');
+    peersRoom.on('peer joined', (peer) => {
+        console.log(`PEER JOINED IN STREAM APP! \n ${peer}`);
+        ipfsApi.addPeer(peer);
+    })
 }
 
 async function loadDefaultPageAsync() {

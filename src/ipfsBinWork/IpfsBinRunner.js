@@ -3,9 +3,6 @@ const {spawn, exec} = require('child_process');
 
 class IpfsBinRunner {
     constructor() {
-
-        this.peerList = new Set();
-
         const initCmd = ['init'];
         this.ipfsProcess = spawn(appConfig.files.IPFS_BIN, initCmd);
         this.ipfsProcess.stdout.on('data', (msg) => {
@@ -46,14 +43,6 @@ class IpfsBinRunner {
                 console.log(`IPFS BIN BOOTSTRAP: \n Bootstrap process closed!`);
             });
         }, 6000);      
-    }
-
-    addPeer(peerId) {
-        if(this.peerList.has(peerId)) {
-            return;
-        }
-
-        this.peerList.add(peerId);
     }
 
     parseApiServer(apiServerLine) {
