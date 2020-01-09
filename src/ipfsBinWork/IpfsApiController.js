@@ -16,6 +16,7 @@ class IpfsApiController {
         this.fullUrl = this.ipfsBinRunner.getUrl();
 
         this.ipfsCleint = IpfsHttpClient('http://localhost:5001'); // (the default in Node.js)
+
         this.API_URL.GET = `${this.fullUrl}api/v0/get`;
         this.API_URL.ADD = `${this.fullUrl}api/v0/add`;
     }
@@ -24,17 +25,27 @@ class IpfsApiController {
         return this.ipfsCleint.id();
     }
 
-    addPeer(peerId) {
+    async addPeerAsync(peerId) {
         if(this.peerList.has(peerId)) {
             return;
         }
         const peerUrl = `/p2p-circuit/p2p/${peerId}`;
-        this.ipfsCleint.swarm.connect(peerUrl).then(() => {
-            console.log(`IPFS API: \n EXTERNAL CLIENT SWARM Connected : ${peerUrl} !`)
-            this.peerList.add(peerId); ;
-        }).catch((err) => {
-            console.error(`IPFS API: \n Fail  CLIENT to connect : ${peerUrl} \n ${err.toString()}!`);    
-        });
+        const delay = 2000;
+        let isConnected = false;
+        while(isConnected === false)
+        {
+            try {
+                await this.ipfsCleint.swarm.connect(peerUrl);
+                console.log(`IPFS API: \n EXTERNAL CLIENT SWARM Connected : ${peerUrl} !`);
+                this.peerList.add(peerId); 
+                isConnected = true;
+            } catch(err) {
+                console.error(`IPFS API: \n Fail  CLIENT to connect : ${peerUrl} \n ${err.toString()}!`);    
+                await new Promise((resolve) => setTimeout(resolve, delay));
+                isConnected = false;
+                continue;
+            }
+        }
         
     }
     

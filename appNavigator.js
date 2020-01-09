@@ -126,7 +126,9 @@ function subscribeToPeersRoom() {
             if(msgData == myID)
                 return;
             console.log(`PEER JOINED IN STREAM APP! \n ${msgData}`);
-            ipfsApi.addPeer(msgData);
+            ipfsApi.addPeerAsync(msgData).then(() => {
+                console.log(`PEER ${msgData} added!`);
+            });
         })
         ipfsApi.getId().then((idObj) => {
             const peerId = idObj.id.toString();
