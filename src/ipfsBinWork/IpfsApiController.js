@@ -16,11 +16,6 @@ class IpfsApiController {
         this.fullUrl = this.ipfsBinRunner.getUrl();
 
         this.ipfsCleint = IpfsHttpClient('http://localhost:5001'); // (the default in Node.js)
-        const peerTime = 5000;
-        setTimeout(() => {
-            this.addSwarm();
-        }, peerTime);
-
         this.API_URL.GET = `${this.fullUrl}api/v0/get`;
         this.API_URL.ADD = `${this.fullUrl}api/v0/add`;
     }
@@ -43,7 +38,7 @@ class IpfsApiController {
         
     }
     
-    addSwarm() {
+    async addSwarmAsync() {
         //swarm
         //TODO: Why errors of connect!?
 
@@ -53,11 +48,8 @@ class IpfsApiController {
         for(let rawAddr of swarmArr) {
             try {
                 const addr = multiaddr(rawAddr);
-                this.ipfsCleint.swarm.connect(rawAddr).then(() => {
-                    console.log(`IPFS API: \n Connected : ${rawAddr} !`);
-                }).catch((err) => {
-                    console.error(`IPFS API: \n Fail to connect : ${rawAddr} \n ${err.toString()}!`);    
-                });
+                await this.ipfsCleint.swarm.connect(rawAddr);
+                console.log(`IPFS API: \n Connected : ${rawAddr} !`);
             } catch(err) {
                 console.error(`IPFS API ERROR CONNECTED TO ${rawAddr} ! COZ: \n ${err.toString()}`);
                 continue;

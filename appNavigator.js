@@ -119,20 +119,22 @@ async function onAppInitialized() {
 
 let myID = null;
 function subscribeToPeersRoom() {
-    peersRoom = Room(IpfsInstance, 'stream_peers_room');
-    peersRoom.on('message', (msg) => {
-        const msgData = msg.data.toString();
-        if(msgData == myID)
-            return;
-        console.log(`PEER JOINED IN STREAM APP! \n ${msgData}`);
-        ipfsApi.addPeer(msgData);
-    })
-    ipfsApi.getId().then((idObj) => {
-        const peerId = idObj.id.toString();
-        console.log(`+ + + LOOOK THIS IS YOUR ID BY BINARY IPFS: + + + \n ${peerId}`);
-        myID = peerId;
-        peersRoom.broadcast(peerId);
-    });
+    ipfsApi.addSwarmAsync().then(() => {
+        peersRoom = Room(IpfsInstance, 'stream_peers_room');
+        peersRoom.on('message', (msg) => {
+            const msgData = msg.data.toString();
+            if(msgData == myID)
+                return;
+            console.log(`PEER JOINED IN STREAM APP! \n ${msgData}`);
+            ipfsApi.addPeer(msgData);
+        })
+        ipfsApi.getId().then((idObj) => {
+            const peerId = idObj.id.toString();
+            console.log(`+ + + LOOOK THIS IS YOUR ID BY BINARY IPFS: + + + \n ${peerId}`);
+            myID = peerId;
+            peersRoom.broadcast(peerId);
+        });
+    });    
 }
 
 async function loadDefaultPageAsync() {
