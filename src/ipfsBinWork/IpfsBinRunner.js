@@ -4,6 +4,8 @@ const {spawn, exec} = require('child_process');
 class IpfsBinRunner {
     constructor() {
 
+        this.peerList = new Set();
+
         const initCmd = ['init'];
         this.ipfsProcess = spawn(appConfig.files.IPFS_BIN, initCmd);
         this.ipfsProcess.stdout.on('data', (msg) => {
@@ -11,7 +13,7 @@ class IpfsBinRunner {
         });
         this.ipfsProcess.stderr.on('error', (err) => {
             console.error(`IPFS BIN initialziation ERROR! \n ${err.toString()}`);
-        })
+        });
         this.ipfsProcess.once('close', (code, signal) => {
             this.ipfsProcess.kill();
             const opt = [
@@ -30,6 +32,28 @@ class IpfsBinRunner {
                 console.error(`IPFS BIN ERROR! \n ${err.toString()}`);
             })
         });      
+
+        setTimeout(() => {
+            this.bootstrapRemoveProcess = spawn(appConfig.files.IPFS_BIN, ['bootstrap' ,'rm' ,'--all']);
+            this.bootstrapRemoveProcess.stderr.on('error', (err) => {
+                console.error(`IPFS BIN BOOTSTRAP ERROR! \n Cannot remove bootstraps coz: \n ${err.toString()}`);
+            });
+            this.bootstrapRemoveProcess.stdout.on('data', (msg) => {
+                console.log(`IPFS BIN BOOTSTRAP: \n DATA: ${msg.toString()}`);
+            });
+            this.bootstrapRemoveProcess.once('close', (code, signal) => {
+                console.log(`CODE: \n${code}`);
+                console.log(`IPFS BIN BOOTSTRAP: \n Bootstrap process closed!`);
+            });
+        }, 6000);      
+    }
+
+    addPeer(peerId) {
+        if(this.peerList.has(peerId)) {
+            return;
+        }
+
+        this.peerList.add(peerId);
     }
 
     parseApiServer(apiServerLine) {
