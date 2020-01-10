@@ -56,7 +56,10 @@ class IpfsApiController {
         //TODO: Why errors of connect!?
         const awaitTime = 2000;
         let swarmArr =  [
-            "/ip4/157.245.81.248/tcp/4001/ipfs/QmYvxfwEGPGgT9jDD7ZMFMLsdKjNnZ8YnN6DqzMsJcGY2T"
+            "/ip4/157.245.81.248/tcp/4001/ipfs/QmYvxfwEGPGgT9jDD7ZMFMLsdKjNnZ8YnN6DqzMsJcGY2T",
+            "/ip4/134.209.182.80/tcp/4001/ipfs/QmbFyizZaQ1p1yuiABsnmVXigx72ZyaHspnea8Mn8VNbNX",
+            "/ip4/134.209.184.98/tcp/4001/ipfs/QmQzzLeU2conNXTFKE1jBCsh1r34s9eaa2HpGyZznUKw8C",
+            "/ip4/134.209.22.30/tcp/4001/ipfs/QmTsp9GHpgZQbjWn8WpASyz5A4RoehKhVruiZq2BBr3pjw"
         ]
         for(let rawAddr of swarmArr) {
             let isConnected = false;
