@@ -54,18 +54,22 @@ class IpfsApiController {
     async addSwarmAsync() {
         //swarm
         //TODO: Why errors of connect!?
-
+        const awaitTime = 2000;
         let swarmArr =  [
             "/ip4/157.245.81.248/tcp/4001/ipfs/QmYvxfwEGPGgT9jDD7ZMFMLsdKjNnZ8YnN6DqzMsJcGY2T"
         ]
         for(let rawAddr of swarmArr) {
-            try {
-                const addr = multiaddr(rawAddr);
-                await this.ipfsCleint.swarm.connect(rawAddr);
-                console.log(`IPFS API: \n Connected : ${rawAddr} !`);
-            } catch(err) {
-                console.error(`IPFS API ERROR CONNECTED TO ${rawAddr} ! COZ: \n ${err.toString()}`);
-                continue;
+            let isConnected = false;
+            while(isConnected === false) {
+                try {
+                    await this.ipfsCleint.swarm.connect(rawAddr);
+                    console.log(`IPFS API: \n Connected : ${rawAddr} !`);
+                    isConnected = true;
+                } catch(err) {
+                    isConnected = false;
+                    console.error(`IPFS API: \n CANNOT connect to ${rawAddr}, try again...`);
+                    await new Promise((resolve) => setTimeout(resolve, awaitTime));
+                }
             }
         }
     }
