@@ -130,7 +130,8 @@ const folders = {
     USER_DATA_PATH: getFullPathOfFileFromSystemPath('user/userData'),
     USER_PHOTO_PATH: getFullPathOfFileFromSystemPath('img/photo'),
     STREAM_RECORDS_FOLDER: getFullPathOfFileFromSystemPath('user/streamRecords'),
-    TEMP_FOLDER: getFullPathOfFileFromSystemPath('user/TEMP')
+    TEMP_FOLDER: getFullPathOfFileFromSystemPath('user/TEMP'),
+    IPFS_REPO: path.join(_HOME_, '.ipfs')
 };
 
 const fileSizes = {

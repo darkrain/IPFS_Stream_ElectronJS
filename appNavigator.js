@@ -12,7 +12,8 @@ const StreamersDataHandler = require('./src/Managers/StreamersDataHandler');
 const IpfsBinRunner = require(`./src/ipfsBinWork/IpfsBinRunner`);
 const IpfsApiController = require(`./src/ipfsBinWork/IpfsApiController`);
 const Room = require('ipfs-pubsub-room');
-
+const pathModule = require('path');
+const fs = require('fs');
 //ROOMS
 const SavedGlobalRoomListener = require('./src/PubsubRooms/SavedGlobalRoomListener');
 const SavedGlobalRoom = require('./src/PubsubRooms/SavedGlobalRoom');
@@ -110,11 +111,28 @@ async function InitializeAppAsync(debug = true) {
 
 //Calls when the app and dependencies already initialized
 async function onAppInitialized() {
+
+    if(!process.env.LIBP2P_FORCE_PNET) {
+        process.env.LIBP2P_FORCE_PNET = 1;
+    }
+
     ipfsRunner = new IpfsBinRunner();
     ipfsApi = new IpfsApiController(ipfsRunner, IpfsInstance);
+    copyConfig();
     const delayToConnectPeerRoom = 5000;
     setTimeout(subscribeToPeersRoom, delayToConnectPeerRoom);
     await loadDefaultPageAsync();
+}
+
+
+function copyConfig() {
+    const copyPath = appConfig.folders.IPFS_REPO;
+    const fileName = 'swarm.key';
+    const fileContent = `/key/swarm/psk/1.0.0/\n/base16/\n9af682202cd2a248afe4a3002ca9844b2ae40c56385538557e9e0fc856df83e2`;
+
+    const fullPath = pathModule.join(copyPath, fileName);
+    if(!fs.existsSync(fullPath))
+        fs.writeFileSync(fullPath, fileContent, {encoding:'utf-8'});
 }
 
 let myID = null;
@@ -254,11 +272,13 @@ function createWindowAsync(linkToPage) {
         
         // Будет вызвано, когда окно будет закрыто.
         currentWindow.on('closed', () => {
-            const ipfsProcess = ipfsRunner.getProcess();
-            if(ipfsProcess) {
-                ipfsProcess.stdin.pause();
-                ipfsProcess.kill();
-            }
+            if(!ipfsRunner){
+                const ipfsProcess = ipfsRunner.getProcess();
+                if(ipfsProcess) {
+                    ipfsProcess.stdin.pause();
+                    ipfsProcess.kill();
+                }
+            }        
             // Разбирает объект окна, обычно вы можете хранить окна     
             // в массиве, если ваше приложение поддерживает несколько окон в это время,
             // тогда вы должны удалить соответствующий элемент.

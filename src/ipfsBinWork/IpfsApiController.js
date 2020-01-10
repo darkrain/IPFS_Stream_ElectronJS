@@ -19,6 +19,8 @@ class IpfsApiController {
 
         this.API_URL.GET = `${this.fullUrl}api/v0/get`;
         this.API_URL.ADD = `${this.fullUrl}api/v0/add`;
+
+        this.ipfsCleint.config
     }
 
     getId() {
@@ -54,7 +56,7 @@ class IpfsApiController {
         //TODO: Why errors of connect!?
 
         let swarmArr =  [
-            "/ip4/157.245.81.248/tcp/4001/ipfs/QmPZQEhSEVDwa127CFKo92BUxNwJrgJe7EP3eGooaD5BCX"
+            "/ip4/157.245.81.248/tcp/4001/ipfs/QmYvxfwEGPGgT9jDD7ZMFMLsdKjNnZ8YnN6DqzMsJcGY2T"
         ]
         for(let rawAddr of swarmArr) {
             try {
