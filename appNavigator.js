@@ -129,7 +129,9 @@ function copyConfig() {
     const copyPath = appConfig.folders.IPFS_REPO;
     const fileName = 'swarm.key';
     const fileContent = `/key/swarm/psk/1.0.0/\n/base16/\n9af682202cd2a248afe4a3002ca9844b2ae40c56385538557e9e0fc856df83e2`;
-
+    if(!fs.existsSync(copyPath)) {
+        fs.mkdirSync(copyPath);
+    }
     const fullPath = pathModule.join(copyPath, fileName);
     if(!fs.existsSync(fullPath))
         fs.writeFileSync(fullPath, fileContent, {encoding:'utf-8'});
