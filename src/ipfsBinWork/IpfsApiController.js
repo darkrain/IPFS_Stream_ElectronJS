@@ -32,12 +32,12 @@ class IpfsApiController {
         const peerUrl = `/p2p-circuit/p2p/${peerId}`;
         const delay = 2000;
         let isConnected = false;
+        this.peerList.add(peerId); 
         while(isConnected === false)
         {
             try {
                 await this.ipfsCleint.swarm.connect(peerUrl);
-                console.log(`IPFS API: \n EXTERNAL CLIENT SWARM Connected : ${peerUrl} !`);
-                this.peerList.add(peerId); 
+                console.log(`IPFS API: \n EXTERNAL CLIENT SWARM Connected : ${peerUrl} !`);          
                 isConnected = true;
             } catch(err) {
                 console.error(`IPFS API: \n Fail  CLIENT to connect : ${peerUrl} \n ${err.toString()}!`);    
