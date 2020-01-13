@@ -14,7 +14,7 @@ class ChatRoom {
         
         this.chatRoom.setMaxListeners(0);
         this.chatRoomEvent = new ChatRoomEvent();
-        
+        this.chatRoomEvent.removeListener('onMessage');
         this.removeListenersAsync().then(() => {
             this.chatRoom.on('message', (msg) => {
                 const messageBase64Content = msg.data.toString();
@@ -35,10 +35,16 @@ class ChatRoom {
 
     }
 
+    leaveFromRoomAsync() {
+        return this.chatRoom.leave();
+    }
+
     removeListenersAsync() {
         this.chatRoom.eventNames().forEach(n => {
             this.chatRoom.removeAllListeners(n);
-            console.log(`Chat room event cleaning: ${n}`);
+        });
+        this.chatRoomEvent.eventNames().forEach(n => {
+            this.chatRoomEvent.removeAllListeners(n);
         });
         return new Promise(resolve => setTimeout(resolve,2000));
     }

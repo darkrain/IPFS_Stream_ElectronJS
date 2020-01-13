@@ -131,6 +131,7 @@ class StreamWatchPage extends PageBase{
         //Enable streamers handler for global room again!
         this.streamersDataHandler.setActive(true); 
         this.nodeRoom.removeAllListeners();
+        this.chatRoomInitializer.stopAsync();
         if(this.streamerRoom) {
             this.streamerRoom.leave().then(() => {
                 console.log("LEave from room!");

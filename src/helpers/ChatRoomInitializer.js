@@ -41,5 +41,9 @@ class ChatRoomInitializer {
             chatRoomInitializerObj.streamChatRoom.sendMessage(msgData);
         });
     }
+
+    stopAsync() {
+        return this.streamChatRoom.leaveFromRoomAsync();
+    }
 }
 module.exports = ChatRoomInitializer;
