@@ -1,12 +1,11 @@
-const Room = require('ipfs-pubsub-room');
 const EventEmitter = require('events');
-
 class ChatRoomEvent extends EventEmitter { }
 
 class ChatRoom {
     //streamer hash is the channelName + nodeID as base64, which should be same as streamer room
     //where spamming info about chunks...
     constructor(ipfs, streamerHash) {
+        const Room = require('ipfs-pubsub-room');
         this.ipfs = ipfs;
         this.streamerHash = streamerHash;
         this.chatRoomName = this.getChatRoomname();
