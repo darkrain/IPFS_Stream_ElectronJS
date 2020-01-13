@@ -173,7 +173,7 @@ async function loadPageByName(pageName, args)  {
             console.log("Stop last page: " + _currentPage.constructor.name);
             await Promise.resolve(_currentPage.stop());
         }
-        resetAppData(); //this function reset all data listeners from another objects, so memory leak is decreasing...
+        await resetAppDataAsync(); //this function reset all data listeners from another objects, so memory leak is decreasing...
 
         switch(pageName) {       
             case PAGES.USER_INFO_PAGE: {
@@ -314,9 +314,9 @@ app.on('activate', () => {
     //}
   });
 
-function resetAppData() {
+async function resetAppDataAsync() {
     console.log("APP_NAVIGATOR: Reseting all app data.");
-    clearAllIPCListeners();
+    await clearAllIPCListenersAsync();
     clearIPFSListeners();
     updateNavIpcFunctions(); 
 }
@@ -336,11 +336,13 @@ function clearIPFSListeners() {
     }
 }
 
-function clearAllIPCListeners() {
+function clearAllIPCListenersAsync() {
     ipc.eventNames().forEach(n => {
         ipc.removeAllListeners(n);
         console.log(`Ipc event cleared!: ${n}`);
       });
+
+      return new Promise(resolve => setTimeout(resolve, 2000));
 }
 
 //Handle uncaught exceptions
