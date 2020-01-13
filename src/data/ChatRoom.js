@@ -14,7 +14,8 @@ class ChatRoom {
         
         this.chatRoom.setMaxListeners(0);
         this.chatRoomEvent = new ChatRoomEvent();
-        removeListenersAsync().then(() => {
+        
+        this.removeListenersAsync().then(() => {
             this.chatRoom.on('message', (msg) => {
                 const messageBase64Content = msg.data.toString();
                 const buffer = new Buffer(messageBase64Content, 'base64');
