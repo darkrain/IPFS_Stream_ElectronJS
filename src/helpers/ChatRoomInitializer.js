@@ -23,6 +23,7 @@ class ChatRoomInitializer {
             });
     }
     async initialize() {
+        const chatRoomInitializerObj = this;
         if(!this.ipfsID) {
             this.ipfsID = await new Promise(resolve => {
                 chatRoomInitializerObj.ipfs.id((err, res) => {
@@ -31,7 +32,7 @@ class ChatRoomInitializer {
                 });
             });
         }
-        const chatRoomInitializerObj = this;
+   
         this.streamChatRoom = new ChatRoom(this.ipfs, this.streamerInfo.hashOfStreamer);
         this.streamChatRoom.chatRoomEvent.on('onMessage', async messageData => {
             
