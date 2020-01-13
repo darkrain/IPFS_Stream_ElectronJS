@@ -34,11 +34,11 @@ class ChatRoomInitializer {
         }
    
         this.streamChatRoom = new ChatRoom(this.ipfs, this.streamerInfo.hashOfStreamer);
-        this.streamChatRoom.chatRoomEvent.on('onMessage', async messageData => {
+        this.streamChatRoom.chatRoomEvent.on('onMessage', messageData => {
             
             const isMyMessage = messageData.from === this.ipfsID;
             messageData.isMyMessage = isMyMessage;
-            const messageContent = messageData.data.toString();
+            const messageContent = messageData.message;
 
             //avoid duplicates
             if(this.lastMessageData.peerId === messageData.from && this.lastMessageData.msgContent === messageContent) {

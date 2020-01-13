@@ -24,7 +24,7 @@ class ChatRoom {
 
     }
 
-    handleMessage(msg) {
+    handleMessage = (msg) => {
         const messageBase64Content = msg.data.toString();
         const buffer = new Buffer(messageBase64Content, 'base64');
         const rawData = buffer.toString();
@@ -33,7 +33,7 @@ class ChatRoom {
             const messageData = JSON.parse(rawData);
             this.chatRoomEvent.emit('onMessage', messageData);
         } catch(err) {
-            console.error(`Cannot get message from chat! Coz: ${err.message}`);
+            console.error(`Cannot get message from chat! Coz: ${err.toString()}`);
         }
     }
 
