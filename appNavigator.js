@@ -337,7 +337,10 @@ function clearIPFSListeners() {
 }
 
 function clearAllIPCListeners() {
-    ipc.removeAllListeners();
+    ipc.eventNames().forEach(n => {
+        ipc.removeAllListeners(n);
+        console.log(`Ipc event cleared!: ${n}`);
+      });
 }
 
 //Handle uncaught exceptions
