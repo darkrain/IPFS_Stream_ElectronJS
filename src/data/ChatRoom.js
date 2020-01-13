@@ -17,23 +17,24 @@ class ChatRoom {
         this.removeListenersAsync().then(() => {
             const listenersNow = this.chatRoom.listenerCount('message');
             console.log(`********************\n LISTENERS OF CHAT MESSAGE: ${listenersNow}\n********************`);
-            this.chatRoom.on('message', (msg) => {
-                const messageBase64Content = msg.data.toString();
-                const buffer = new Buffer(messageBase64Content, 'base64');
-                const rawData = buffer.toString();
-                console.log(`Message from CHAAT: ${JSON.stringify(rawData)}`);
-                try {
-                    const messageData = JSON.parse(rawData);
-                    this.chatRoomEvent.emit('onMessage', messageData);
-                } catch(err) {
-                    console.error(`Cannot get message from chat! Coz: ${err.message}`);
-                }
-                
-            });
+            this.chatRoom.on('message', this.handleMessage);
         }).catch(err => {
             console.error(`CHAT ROOM ERROR! \n ${err.toString()}`)
         });   
 
+    }
+
+    handleMessage(msg) {
+        const messageBase64Content = msg.data.toString();
+        const buffer = new Buffer(messageBase64Content, 'base64');
+        const rawData = buffer.toString();
+        console.log(`Message from CHAAT: ${JSON.stringify(rawData)}`);
+        try {
+            const messageData = JSON.parse(rawData);
+            this.chatRoomEvent.emit('onMessage', messageData);
+        } catch(err) {
+            console.error(`Cannot get message from chat! Coz: ${err.message}`);
+        }
     }
 
     leaveFromRoomAsync() {
@@ -41,6 +42,7 @@ class ChatRoom {
     }
 
     removeListenersAsync() {
+        this.chatRoom.removeListener('message', this.handleMessage);
         this.chatRoom.eventNames().forEach(n => {
             this.chatRoom.removeAllListeners(n);
         });

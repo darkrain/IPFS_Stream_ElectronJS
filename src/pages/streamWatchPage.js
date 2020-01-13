@@ -68,8 +68,8 @@ class StreamWatchPage extends PageBase{
         this.ipc.on('exit-watch', (event, args) => {
             //Some actions on exit watch page...
         });
-        this.ipc.on('gotoGlobalPage', async (event, args) => {
-            await this.onExitAsync();
+        this.ipc.on('gotoGlobalPage', (event, args) => {
+            this.onExitAsync();
             super.goToGlobalPage();
         });
 
@@ -130,8 +130,8 @@ class StreamWatchPage extends PageBase{
     async onExitAsync() {
         //Enable streamers handler for global room again!
         this.streamersDataHandler.setActive(true); 
-        await this.nodeRoom.removeAllListeners();
-        await this.chatRoomInitializer.stopAsync();
+        this.nodeRoom.removeAllListeners();
+        this.chatRoomInitializer.stopAsync();
         if(this.streamerRoom) {
             await this.streamerRoom.leave();
         }
