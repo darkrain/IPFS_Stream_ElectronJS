@@ -127,14 +127,16 @@ class StreamWatchPage extends PageBase{
         });
     }
 
-    async onExitAsync() {
+    onExitAsync() {
         //Enable streamers handler for global room again!
         this.streamersDataHandler.setActive(true); 
         this.nodeRoom.removeAllListeners();
         this.chatRoomInitializer.stopAsync();
         if(this.streamerRoom) {
-            await this.streamerRoom.leave();
+            this.streamerRoom.leave();
         }
+
+        return new Promise(resolve => setTimeout(resolve, 2000));
     }
 
     async endPlayListAsync() {

@@ -43,11 +43,11 @@ class ChatRoomInitializer {
             //avoid duplicates
             if(this.lastMessageData.peerId === messageData.from && this.lastMessageData.msgContent === messageContent) {
                 return;
-            }
-
-            this.lastMessageData.peerId = messageData.from;
-            this.lastMessageData.msgContent = messageContent;
-            chatRoomInitializerObj.win.webContents.send('chatMessageGetted', messageData);
+            } else {
+                this.lastMessageData.peerId = messageData.from;
+                this.lastMessageData.msgContent = messageContent;
+                chatRoomInitializerObj.win.webContents.send('chatMessageGetted', messageData);
+            }       
         });
         //when you try to send message
         this.ipc.on('onMessageSend', (event, msgText) => {

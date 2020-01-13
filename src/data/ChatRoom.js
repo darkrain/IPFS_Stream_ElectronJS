@@ -11,7 +11,6 @@ class ChatRoom {
         this.streamerHash = streamerHash;
         this.chatRoomName = this.getChatRoomname();
         this.chatRoom = Room(this.ipfs, this.chatRoomName);
-        
         this.chatRoom.setMaxListeners(0);
         this.chatRoomEvent = new ChatRoomEvent();
         this.removeListenersAsync().then(() => {
