@@ -127,7 +127,7 @@ class StreamWatchPage extends PageBase{
         });
     }
 
-    onExitAsync() {
+    async onExitAsync() {
         //Enable streamers handler for global room again!
         this.streamersDataHandler.setActive(true); 
         await this.nodeRoom.removeAllListeners();
