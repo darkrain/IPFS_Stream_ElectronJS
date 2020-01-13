@@ -11,8 +11,13 @@ class ChatRoom {
         this.streamerHash = streamerHash;
         this.chatRoomName = this.getChatRoomname();
         this.chatRoom = Room(this.ipfs, this.chatRoomName);
+        
         this.chatRoom.setMaxListeners(0);
         this.chatRoomEvent = new ChatRoomEvent();
+
+        this.chatRoom.removeAllListeners('message');
+        this.chatRoomEvent.removeAllListeners('onMessage');
+
         this.removeListenersAsync().then(() => {
             const listenersNow = this.chatRoom.listenerCount('message');
             console.log(`********************\n LISTENERS OF CHAT MESSAGE: ${listenersNow}\n********************`);
@@ -41,6 +46,7 @@ class ChatRoom {
     }
 
     removeListenersAsync() {
+        this.chatRoom.prependOnceListener
         this.chatRoom.removeListener('message', this.handleMessage);
         this.chatRoom.eventNames().forEach(n => {
             this.chatRoom.removeAllListeners(n);
