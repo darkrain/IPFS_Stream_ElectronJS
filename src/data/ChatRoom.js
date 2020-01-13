@@ -11,24 +11,35 @@ class ChatRoom {
         this.streamerHash = streamerHash;
         this.chatRoomName = this.getChatRoomname();
         this.chatRoom = Room(this.ipfs, this.chatRoomName);
-        this.chatRoom.removeAllListeners();
+        
         this.chatRoom.setMaxListeners(0);
         this.chatRoomEvent = new ChatRoomEvent();
+        removeListenersAsync().then(() => {
+            this.chatRoom.on('message', (msg) => {
+                const messageBase64Content = msg.data.toString();
+                const buffer = new Buffer(messageBase64Content, 'base64');
+                const rawData = buffer.toString();
+                console.log(`Message from CHAAT: ${JSON.stringify(rawData)}`);
+                try {
+                    const messageData = JSON.parse(rawData);
+                    this.chatRoomEvent.emit('onMessage', messageData);
+                } catch(err) {
+                    console.error(`Cannot get message from chat! Coz: ${err.message}`);
+                }
+                
+            });
+        }).catch(err => {
+            console.error(`CHAT ROOM ERROR! \n ${err.toString()}`)
+        });   
 
-        this.chatRoom.on('message', (msg) => {
-            const messageBase64Content = msg.data.toString();
-            const buffer = new Buffer(messageBase64Content, 'base64');
-            const rawData = buffer.toString();
-            console.log(`Message from CHAAT: ${JSON.stringify(rawData)}`);
-            try {
-                const messageData = JSON.parse(rawData);
-                this.chatRoomEvent.emit('onMessage', messageData);
-            } catch(err) {
-                console.error(`Cannot get message from chat! Coz: ${err.message}`);
-            }
-            
+    }
+
+    removeListenersAsync() {
+        this.chatRoom.eventNames().forEach(n => {
+            this.chatRoom.removeAllListeners(n);
+            console.log(`Chat room event cleaning: ${n}`);
         });
-
+        return new Promise(resolve => setTimeout(resolve,2000));
     }
 
     sendMessage(messageObj) {
