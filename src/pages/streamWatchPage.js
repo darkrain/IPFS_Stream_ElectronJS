@@ -69,7 +69,7 @@ class StreamWatchPage extends PageBase{
             //Some actions on exit watch page...
         });
         this.ipc.on('gotoGlobalPage', async (event, args) => {
-            this.onExit();
+            await this.onExitAsync();
             super.goToGlobalPage();
         });
 
@@ -127,15 +127,13 @@ class StreamWatchPage extends PageBase{
         });
     }
 
-    onExit() {
+    onExitAsync() {
         //Enable streamers handler for global room again!
         this.streamersDataHandler.setActive(true); 
-        this.nodeRoom.removeAllListeners();
-        this.chatRoomInitializer.stopAsync();
+        await this.nodeRoom.removeAllListeners();
+        await this.chatRoomInitializer.stopAsync();
         if(this.streamerRoom) {
-            this.streamerRoom.leave().then(() => {
-                console.log("LEave from room!");
-            })
+            await this.streamerRoom.leave();
         }
     }
 

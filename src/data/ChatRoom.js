@@ -15,6 +15,8 @@ class ChatRoom {
         this.chatRoom.setMaxListeners(0);
         this.chatRoomEvent = new ChatRoomEvent();
         this.removeListenersAsync().then(() => {
+            const listenersNow = this.chatRoom.listenerCount('message');
+            console.log(`********************\n LISTENERS OF CHAT MESSAGE: ${listenersNow}\n********************`);
             this.chatRoom.on('message', (msg) => {
                 const messageBase64Content = msg.data.toString();
                 const buffer = new Buffer(messageBase64Content, 'base64');
