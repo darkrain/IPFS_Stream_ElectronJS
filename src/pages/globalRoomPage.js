@@ -12,7 +12,7 @@ class GlobalRoomPage extends PageBase {
         this.savedStreamsDataHandler = new SavedStreamsDataHandler();
 
         //Call at start
-        this.updatePageAboutStreamers();
+        //this.updatePageAboutStreamers();
 
         //subscribe to streamerDataHandler event to update data:
         this.streamersDataHandler.dataEvent.on('dataChanged', () => {
