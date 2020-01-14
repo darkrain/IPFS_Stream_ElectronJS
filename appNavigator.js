@@ -340,7 +340,6 @@ function clearIPFSListeners() {
 function clearAllIPCListenersAsync() {
     ipc.eventNames().forEach(n => {
         ipc.removeAllListeners(n);
-        console.log(`Ipc event cleared!: ${n}`);
       });
 
       return new Promise(resolve => setTimeout(resolve, 2000));
