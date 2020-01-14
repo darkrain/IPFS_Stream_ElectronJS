@@ -53,7 +53,8 @@ async function generateDataForStreamerAsync(streamerObj, ipfs) {
         lastStreamBlockEncoded: streamerObj.lastStreamBlockEncoded,
         streamerAvaBase64: streamAvaBase64,
         userAvaBase64: userAvaBase64,
-        gameData: streamerObj.gameData
+        gameData: streamerObj.gameData,
+        updatedTimeStamp: streamerObj.updatedTimeStamp
     };
     
     return streamData;
@@ -61,18 +62,29 @@ async function generateDataForStreamerAsync(streamerObj, ipfs) {
 
 async function getStreamersDataAsync(ipfs) {
     try{
+        const currentDate = Date.now();
         const streamersList = await getListOfStreamersAsync();
         const streamersData = [];
         for(let i = 0; i < streamersList.length; i++) {
             const streamer = streamersList[i];
             console.log("Added streamer info in array: " + JSON.stringify(streamer));
             const generatedStreamerData = await generateDataForStreamerAsync(streamer, ipfs);
-            streamersData.push(generatedStreamerData); 
+
+            if(isStreamInfoUpOfDate(generatedStreamerData, currentDate) === true)
+                streamersData.push(generatedStreamerData); 
         }
         return streamersData;
     } catch(err) {
         throw err;
     }   
+}
+
+//check is streamer not old
+const maxDifferenceMs = 12000; //12 seconds
+function isStreamInfoUpOfDate(streamerObj, currentDate) {
+    const streamerDate = streamerObj.updatedTimeStamp;
+    const differenceTimeStamp = currentDate - streamerDate;
+    return differenceTimeStamp < maxDifferenceMs;
 }
 
 module.exports = {

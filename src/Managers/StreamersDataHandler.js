@@ -100,7 +100,10 @@ class StreamersDataHandler {
         }
     }
 
-    async saveStreamerInfoInLocalFileIfItNotExistsAsync(streamerInfoJson) {
+    async saveStreamerInfoInLocalFileIfItNotExistsAsync(streamerInfoJsonOriginal) {
+        const streamerInfoJson = Object.assign({}, streamerInfoJsonOriginal);
+        //add date to info:
+        streamerInfoJson.updatedTimeStamp = Date.now();
         await new Promise((resolve, rejected) => {
             //create jsonArray if its not exists
             if(!fs.existsSync(STREAMERS_DATA_PATH)) {
@@ -132,11 +135,14 @@ class StreamersDataHandler {
 
                 if(isStreamerExists === true) {
                     //update watchers count if streamer already exists
+                    //also update time about updated
                     try {
                         const streamersArray = JSON.parse(fileData);
                         const founded = streamersArray.find(streamer => streamer.hashOfStreamer === streamerInfoJson.hashOfStreamer);
 
                         if(founded) {
+                            //update the timestamp
+                            founded.updatedTimeStamp = Date.now();
                             founded.watchersCount = streamerInfoJson.watchersCount;
                             founded.lastStreamBlockEncoded = streamerInfoJson.lastStreamBlockEncoded;
                             //write in file
@@ -150,9 +156,9 @@ class StreamersDataHandler {
                     } catch(err) {
                         rejected(err);
                     }
-                } else {
-                    let fileDataInJsonArray = JSON.parse(fileData);
-                    //if streamer not exist write info about him in file
+                } else { //if streamer not exist write info about him in file
+
+                    let fileDataInJsonArray = JSON.parse(fileData);      
                     fileDataInJsonArray.push(streamerInfoJson);
                     fs.writeFile(STREAMERS_DATA_PATH, JSON.stringify(fileDataInJsonArray), (err) => {
                         if(err) {
