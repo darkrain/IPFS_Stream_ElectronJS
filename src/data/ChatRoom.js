@@ -32,8 +32,9 @@ class ChatRoom {
     }
 
     leaveFromRoomAsync() {
+        this.chatRoomEvent.removeAllListeners('onMessage');
         this.chatRoom.removeAllListeners('message');
-        return this.chatRoom.leave();
+        return Promise.resolve();
     }
 
     sendMessage(messageObj) {
