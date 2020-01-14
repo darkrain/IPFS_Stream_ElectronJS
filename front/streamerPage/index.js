@@ -268,7 +268,9 @@ $(document).ready(function() {
 		initializeWeb3();
     setActiveGameEventControls(true);
     subscribeToContractControlButtons();
-	})
+  })
+  
+  chatSendMsgByEnterInitialization(document.getElementById('messageInput'), document.getElementById('sendMsgBtn'));
 
 	$('#backBtn').click(function(){
 		ipc.send('backBtnClicked');

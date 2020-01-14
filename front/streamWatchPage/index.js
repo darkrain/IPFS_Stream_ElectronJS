@@ -46,9 +46,12 @@ $(document).ready(function() {
 		initializeGameData(args);
 	})
 
+	const messageInputElement = document.getElementById('messageInput');
+
+	chatSendMsgByEnterInitialization(messageInputElement, document.getElementById('sendMsgBtn'));
+
 	$('#sendMsgBtn').click(function () {
-		const messageInput = document.getElementById('messageInput');
-		ipc.send('onMessageSend', messageInput.value);
+		ipc.send('onMessageSend', messageInputElement.value);
 		messageInput.value = '';
 	});
 });
