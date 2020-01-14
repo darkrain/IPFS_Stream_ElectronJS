@@ -54,8 +54,7 @@ class StreamersDataHandler {
             this.globalRoomListener.getOnStreamDataRecievedEvent().on('message_recieved',async (msg) => {
                 if(this.isActive === false)
                     return;
-                const messageStr = msg.data.toString();
-                console.log(`Message getted: \n from: ${msg.from} \n `);
+                const messageStr = msg.data.toString();       
                 const isMyStream = await this.isMyStreamAsync(msg.from);
                 if(isMyStream === true) {
                     return;

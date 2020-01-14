@@ -20,6 +20,8 @@ class StreamRoomBroadcaster {
         this.lastStreamBlock = null;
         this.broadcastIntervalTime = 2000;
 
+        this.lastBlockID = 0;
+
         this.intervalTime = setInterval(() => {
             this.startBroadcastAboutStreamBlock(this.lastStreamBlock);
         }, this.broadcastIntervalTime);
@@ -87,8 +89,7 @@ class StreamRoomBroadcaster {
                 streamerInfo.lastStreamBlockEncoded = this.lastStreamBlockEncoded;
                 const jsonSTR = JSON.stringify(streamerInfo);
                 const encoded64Data = roomBroadcasterObj.getEncodedData(jsonSTR);
-    
-                console.log(`Broadcast about stream in ${GLOBAL_ROOM_NAME} !`);
+
                 globalRoomBroadcaster.broadcast(encoded64Data);
 
                 //update watchersCount
@@ -139,7 +140,8 @@ class StreamRoomBroadcaster {
             this.lastEncodedBlock = encodedBlock;
             this.roomCounter.setLastStreamBlock(encodedBlock);
             this.streamerRoom.broadcast(encodedBlock);
-            console.log(`Broadcasted about block!`);
+            console.log(`Broadcasted about block #${this.lastBlockID}!`);
+            this.lastBlockID++;
         }).catch((err) => {
             logger.printErr(err);
             throw err;

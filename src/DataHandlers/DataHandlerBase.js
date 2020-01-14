@@ -50,6 +50,7 @@ class DataHandlerBase {
 
     async readDataAsync() {
         if(!fs.existsSync(this.filePath)) {
+            console.log(`Saved streams data file.json not exists in path: ${this.filePath} !!, skip...`);
             return [];
         }
         const fileDataArray = await new Promise((resolve, rejected) => {

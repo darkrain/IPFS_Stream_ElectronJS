@@ -43,6 +43,7 @@ class GlobalRoomPage extends PageBase {
             generatedData.recordKey = streamData.recordKey;
             return generatedData;
         }));
+
         this.win.webContents.send(`savedStreamsUpdated`, convertedStreamersInfo);
     }
 }

@@ -62,14 +62,14 @@ const DEFAULT_PAGE =  userInfoLoader.isUserDataReady() ? PAGES.GLOBAL_ROOM_PAGE 
 //*** End Named constants ***
 
 //Necessary vars
-let IpfsInstance;
+let IpfsInstance; // IPFS instance of JS implementation for Pubsub using
 let IpfsNodeID;
 let currentWindow;
 let globalRoomListener;
 let streamersDataHandler;
 let savedGlobalRoomListener;
 let ipfsRunner;
-let ipfsApi;
+let ipfsApi;    // IPFS binary instance for Video handling!
 let peersRoom;
 async function InitializeAppAsync(debug = true) {
 
@@ -196,7 +196,7 @@ async function loadPageByName(pageName, args)  {
                 }
                 createWindowAsync(STREAM_PAGE_LINK).then((win) => {
                     _currentPage = new StreamPage(IpfsInstance, streamInitializer, win, ipc, streamerInfo,
-                        gameData);
+                        gameData, ipfsApi);
                 });
                 break;
             }
@@ -228,7 +228,7 @@ async function loadPageByName(pageName, args)  {
             }
             case PAGES.WATCH_SAVED_STREAM_PAGE: {
                 createWindowAsync(WATCH_SAVED_STREAM_PAGE_LINK).then((win) => {
-                   _currentPage = new WatchSavedStreamPage(ipc, IpfsInstance, win, args.recordKey);
+                   _currentPage = new WatchSavedStreamPage(ipc, IpfsInstance, win, args.recordKey, ipfsApi);
                 });
                 break;
             }

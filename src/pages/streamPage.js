@@ -5,9 +5,10 @@ const SavedGlobalRoom = require('../PubsubRooms/SavedGlobalRoom');
 const url = require('url');
 
 class StreamPage extends PageBase{
-  constructor(ipfs, streamInitializer, win, electronIPC, streamerInfo, gameData) {
+  constructor(ipfs, streamInitializer, win, electronIPC, streamerInfo, gameData, ipfsApi) {
       super();
       try {
+          this.ipfsApi = ipfsApi; // < API for video
           this.ipfs = ipfs;
           this.electronIPC = electronIPC;
           this.pageWindow = win;
@@ -54,7 +55,7 @@ class StreamPage extends PageBase{
     ipc.on('backBtnClicked', (event, args) => {
         super.goToGlobalPage();
     });
-    ipc.on('saveStreamClicked', (event, args) => {
+    ipc.on('saveStreamClicked', async (event, args) => {
       console.log(`TRY to SAVE stream...`);
         try {
             const lastBlock = this.streamInitializer.getStreamUploader().getLastSteamBlock();
@@ -63,20 +64,17 @@ class StreamPage extends PageBase{
                 super.goToGlobalPage();
                 return;
             }
-            this.streamSaver = new StreamSaver(this.ipfs, lastBlock, this.streamerInfo);
-            this.streamSaver.getAllSavedStreamData().then((data) => {
-                if(!this.savedGlobalRoom) {
-                    this.savedGlobalRoom = new SavedGlobalRoom(this.ipfs);
-                }
-                this.savedGlobalRoom.sendMessage(data);
-
-            }).catch(err => {
-                throw err;
-            });
+            this.streamSaver = new StreamSaver(this.ipfsApi.getClient(), lastBlock, this.streamerInfo);
+            const savedData =  await this.streamSaver.getAllSavedStreamData();
+            if(!this.savedGlobalRoom) 
+              this.savedGlobalRoom = new SavedGlobalRoom(this.ipfs);
+          
+          console.log(`Broadcast about saved stream message! \n ${savedData}`);
+          this.savedGlobalRoom.sendMessage(savedData);
 
             super.goToGlobalPage();
         } catch(err) {
-            throw err;
+            console.error(`CANNOT SAVE STREAM! COZ: \n ${err.toString()}`);
         }
     });
     //### END IPC calls ###

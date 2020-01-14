@@ -3,13 +3,13 @@ const appConfig = require('../../appFilesConfig');
 const pathModule = require('path');
 const fs = require('fs');
 const SavedStreamsDataHandler = require('../DataHandlers/SavedStreamsDataHandler');
-const localServer = require('../localServer/localServer');
 const hlsPlaylistManager = require('../data/hlsPlaylistManager');
 const getVideoInfo = require('get-video-info');
 
 class WatchSavedStreamPage extends PageBase {
-    constructor(ipc,ipfs, win, recordKey) {
+    constructor(ipc,ipfs, win, recordKey, ipfsApi) {
         super();
+        this.ipfsApi = ipfsApi.getClient();
         this.ipc = ipc;
         this.ipfs = ipfs;
         this.win = win;
@@ -89,7 +89,7 @@ class WatchSavedStreamPage extends PageBase {
         }
         try {
              await new Promise((resolve, rejected) => {
-                this.ipfs.get(chunkHash, (err, files) => {
+                this.ipfsApi.get(chunkHash, (err, files) => {
                     if(err) {
                         rejected(err);
                     }

@@ -20,6 +20,7 @@ class StreamSaver {
         return this.savedData;
     }
 
+    //PROBLEM WITH SAVING
     async downloadAllHashes() {
         //firstable add last chunkHash
         const hashes = [];

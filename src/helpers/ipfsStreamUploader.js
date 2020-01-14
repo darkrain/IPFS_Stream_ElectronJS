@@ -41,8 +41,6 @@ class IpfsStreamUploader {
                 const cidEcnoded = cid.toBaseEncodedString();
                 blockJsonData.dagCID = cidEcnoded;
                 streamUpdater.setPreviousBlockHash(cidEcnoded);
-                console.log("Stream block uploaded to DAG with data \n " + JSON.stringify(blockJsonData));
-                console.log("Hash of this block: " + cidEcnoded);
                 this.lastBlock = blockJsonData;
                 resolve(blockJsonData);
               });
