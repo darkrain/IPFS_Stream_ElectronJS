@@ -125,16 +125,39 @@ function changeVideoConfig(baseConfig, newConfig) {
     }  
 }
 
+let isTextWriting = false;
 function chatSendMsgByEnterInitialization(inputElement, buttonElement) {
+    addTextWritingFunction(inputElement);
     inputElement.addEventListener("keyup", function(event) {
-        // Number 13 is the "Enter" key on the keyboard
-        if (event.keyCode === 13) {
+
+        if(isTextWriting === true) {
+            return;
+        }
+       
+        const enterKeyCode = 13;
+        
+        if (event.keyCode === enterKeyCode) {
           // Cancel the default action, if needed
           event.preventDefault();
           // Trigger the button element with a click
           buttonElement.click();
         }
       }); 
+}
+
+function addTextWritingFunction(inputElement) {
+    const altKeyCode = 18;
+    const shiftKeyCode = 16;
+    inputElement.addEventListener("keydown", function(event) {
+        if(event.keyCode === shiftKeyCode || event.keyCode === altKeyCode) {
+            isTextWriting = true;
+        }
+    });
+    inputElement.addEventListener("keyup", function(event) {
+        if(event.keyCode === shiftKeyCode || event.keyCode === altKeyCode) {
+            isTextWriting = false;
+        }
+    });
 }
 
 
