@@ -93,6 +93,7 @@ class StreamPage extends PageBase{
   stop() {
     return new Promise((resolve, reject) => {
       super.stop();
+      clearInterval(this.streamInitializer.getStreamRoomBroadcaster().intervalTime);
       this.streamInitializer.stopStream();
       resolve();
     }); 

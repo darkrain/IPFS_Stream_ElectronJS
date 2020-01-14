@@ -65,6 +65,7 @@ class WatchSavedStreamPage extends PageBase {
 
         for(let i = 0; i < chunkHashesArr.length; i++ ) {
             try {
+                console.log(`Try download saved Chunk #${i}...`);
                 const hash = chunkHashesArr[i];
                 const chunkInfo = await this.downloadVideoChunkAsync(hash, i);
                 if(chunkInfo !== null) {
