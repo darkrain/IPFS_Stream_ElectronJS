@@ -261,7 +261,7 @@ $(document).ready(function() {
 
 	//hide by default
 	setActiveGameEventControls(false);
-
+  const chatElement = document.getElementById('chatElement');
 	ipc.on('gameEventReady', (event, args) => {
 		const gameData = args;
 		updateGameEventDialogByData(gameData);
@@ -294,7 +294,7 @@ $(document).ready(function() {
 
 	$('#sendMsgBtn').click(function () {
 		const messageInput = document.getElementById('messageInput');
-
+    scrollDownToElement(chatElement);
 		if( messageInput.value === '')
 			return false;
 		ipc.send('onMessageSend', messageInput.value);
@@ -321,7 +321,6 @@ function isConfirm() {
 function subscribeToContractControlButtons() {
     const btnTakeIt = document.getElementById('btnTakeIt');
     const loseItBtn = document.getElementById('loseIt');
-
     btnTakeIt.onclick = () => {
       if(isConfirm() === false)
         return;

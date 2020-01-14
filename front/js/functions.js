@@ -160,5 +160,13 @@ function addTextWritingFunction(inputElement) {
     });
 }
 
+function scrollDownToElement(element) {
+    const delay = 250;
+    setTimeout(() => {
+        const height = element.scrollHeight;
+        element.scrollTo(0, height);
+    }, delay);  
+}
+
 
 
