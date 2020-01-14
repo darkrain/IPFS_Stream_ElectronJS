@@ -15,16 +15,7 @@ class ChatRoom {
         this.chatRoomEvent = new ChatRoomEvent();
 
         this.chatRoom.removeAllListeners('message');
-        this.chatRoomEvent.removeAllListeners('onMessage');
-
-        this.removeListenersAsync().then(() => {
-            const listenersNow = this.chatRoom.listenerCount('message');
-            console.log(`********************\n LISTENERS OF CHAT MESSAGE: ${listenersNow}\n********************`);
-            this.chatRoom.on('message', this.handleMessage);
-        }).catch(err => {
-            console.error(`CHAT ROOM ERROR! \n ${err.toString()}`)
-        });   
-
+        this.chatRoom.addListener('message', this.handleMessage);
     }
 
     handleMessage = (msg) => {
@@ -41,19 +32,8 @@ class ChatRoom {
     }
 
     leaveFromRoomAsync() {
+        this.chatRoom.removeAllListeners('message');
         return this.chatRoom.leave();
-    }
-
-    removeListenersAsync() {
-        this.chatRoom.prependOnceListener
-        this.chatRoom.removeListener('message', this.handleMessage);
-        this.chatRoom.eventNames().forEach(n => {
-            this.chatRoom.removeAllListeners(n);
-        });
-        this.chatRoomEvent.eventNames().forEach(n => {
-            this.chatRoomEvent.removeAllListeners(n);
-        });
-        return new Promise(resolve => setTimeout(resolve,2000));
     }
 
     sendMessage(messageObj) {

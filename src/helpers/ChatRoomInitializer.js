@@ -34,7 +34,9 @@ class ChatRoomInitializer {
         }
    
         this.streamChatRoom = new ChatRoom(this.ipfs, this.streamerInfo.hashOfStreamer);
-        this.streamChatRoom.chatRoomEvent.on('onMessage', messageData => {
+        this.streamChatRoom.chatRoomEvent.removeAllListeners('onMessage');
+        
+        this.streamChatRoom.chatRoomEvent.addListener('onMessage', messageData => {
             
             const isMyMessage = messageData.from === this.ipfsID;
             messageData.isMyMessage = isMyMessage;
@@ -61,6 +63,7 @@ class ChatRoomInitializer {
     }
 
     stopAsync() {
+        this.streamChatRoom.chatRoomEvent.removeAllListeners('onMessage');
         return this.streamChatRoom.leaveFromRoomAsync();
     }
 }

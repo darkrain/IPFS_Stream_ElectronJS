@@ -1,10 +1,8 @@
 const Room = require('ipfs-pubsub-room');
 const dataConverter = require('../helpers/dataConverters.js');
 const pathModule = require('path');
-const ChatRoom = require('../data/ChatRoom');
 const ChatRoomInitializer = require('../helpers/ChatRoomInitializer');
 const fs = require('fs');
-const localServer = require('../localServer/localServer.js');
 const PageBase = require('./pageBase');
 const appConfig = require('../../appFilesConfig');
 const STREAMERS_DATA_PATH = pathModule.join(appConfig.folders.USER_DATA_PATH ,'streamers');

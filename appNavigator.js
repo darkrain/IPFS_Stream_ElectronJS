@@ -172,6 +172,7 @@ async function loadPageByName(pageName, args)  {
         if(_currentPage) {
             console.log("Stop last page: " + _currentPage.constructor.name);
             await Promise.resolve(_currentPage.stop());
+            delete _currentPage;
         }
         await resetAppDataAsync(); //this function reset all data listeners from another objects, so memory leak is decreasing...
 
