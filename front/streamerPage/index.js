@@ -287,7 +287,9 @@ $(document).ready(function() {
 		}
 
 		let messageHtml = chatItem.render(args);
-		$('tbody',chatBody).append(messageHtml)
+    $('tbody',chatBody).append(messageHtml)
+    
+    scrollDownToElement(chatElement);
 	});
 
 	

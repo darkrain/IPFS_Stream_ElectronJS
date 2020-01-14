@@ -9,6 +9,9 @@ const contractsAdresses = {
 }
 
 $(document).ready(function() {
+
+	const chatElement = document.getElementById('chatElement');
+
 	ipc.on('streamerDataGetted', (event, args) => {
 		const streamData = args;
 		$('#streamerNameBlock').text(streamData.streamerName);
@@ -35,7 +38,8 @@ $(document).ready(function() {
 		}
 
 		let messageHtml = chatItem.render(args);
-		$('tbody',chatBody).append(messageHtml)
+		$('tbody',chatBody).append(messageHtml);
+		scrollDownToElement(chatElement);
 	});
 
 	ipc.on('onStreamEnded', (event, args) => {
@@ -53,6 +57,7 @@ $(document).ready(function() {
 	$('#sendMsgBtn').click(function () {
 		ipc.send('onMessageSend', messageInputElement.value);
 		messageInput.value = '';
+		scrollDownToElement(chatElement);
 	});
 });
 
