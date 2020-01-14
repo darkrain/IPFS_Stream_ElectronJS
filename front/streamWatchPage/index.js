@@ -64,7 +64,7 @@ ipc.on('stream-loaded', (event, args) => {
 	playerRow.append(videoElem);
 	
 	//common call for HLS playable
-	loadVideoByTag(args, videoElem);
+	loadVideoByTag(args, videoElem, null, 1);
 });
 
 ipc.on('gameEventEnded', (event, args) => {

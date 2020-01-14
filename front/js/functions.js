@@ -64,7 +64,7 @@ function getDataUrl(img) {
 
 //load VIDEO player by URL
 // args: videoElem = may be id string or HTMLElement
-function loadVideoByTag(url, videoElem, specificConfig = null) {
+function loadVideoByTag(url, videoElem, specificConfig = null, volume = 1) {
     const httpPath = url;
     console.log(`Try to get video from url:${httpPath}`);
     
@@ -111,7 +111,7 @@ function loadVideoByTag(url, videoElem, specificConfig = null) {
 
     hls.on(Hls.Events.MANIFEST_PARSED, () => {						
         video.play();
-        video.volume = 0;
+        video.volume = volume;
     });
 	}
 }

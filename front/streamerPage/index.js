@@ -304,7 +304,7 @@ $(document).ready(function() {
 
 // ### Client event subscriber handlers ###
 ipc.on('video-playlist-path-changed', (event, args) => {
-  loadVideoByTag(args, 'video-player');
+  loadVideoByTag(args, 'video-player', null, 0);
 });
 
 ipc.on('watcher-count-update', (event, args) => {
