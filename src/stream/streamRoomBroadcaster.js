@@ -139,7 +139,7 @@ class StreamRoomBroadcaster {
             this.lastEncodedBlock = encodedBlock;
             this.roomCounter.setLastStreamBlock(encodedBlock);
             this.streamerRoom.broadcast(encodedBlock);
-            console.log(`Broadcasted about block! \n encoded: ${encodedBlock}`);
+            console.log(`Broadcasted about block!`);
         }).catch((err) => {
             logger.printErr(err);
             throw err;

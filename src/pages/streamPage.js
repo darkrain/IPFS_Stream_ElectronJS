@@ -55,6 +55,7 @@ class StreamPage extends PageBase{
         super.goToGlobalPage();
     });
     ipc.on('saveStreamClicked', (event, args) => {
+      console.log(`TRY to SAVE stream...`);
         try {
             const lastBlock = this.streamInitializer.getStreamUploader().getLastSteamBlock();
             if(!lastBlock) {
