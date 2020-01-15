@@ -256,7 +256,7 @@ const ContractOpts = {
   gas: 2100000 //limit
 };
 
-
+let videoElement = null;
 $(document).ready(function() {
 
 	//hide by default
@@ -301,12 +301,18 @@ $(document).ready(function() {
 			return false;
 		ipc.send('onMessageSend', messageInput.value);
 		messageInput.value = '';
-	});
+  });
+  
+  videoElement = document.getElementById('video-player');
+  videoElement.style.display = 'none';
 });
 
 // ### Client event subscriber handlers ###
 ipc.on('video-playlist-path-changed', (event, args) => {
-  loadVideoByTag(args, 'video-player', null, 0);
+  const videoPlug = document.getElementById('video-plug');
+  videoPlug.style.display = "none";
+  videoElement.style.display = "block";
+  loadVideoByTag(args, videoElement, null, 0);
 });
 
 ipc.on('watcher-count-update', (event, args) => {

@@ -63,6 +63,9 @@ $(document).ready(function() {
 
 ipc.on('stream-loaded', (event, args) => {
 	//dynamycly creation player
+	const videoPlug = document.getElementById('video-plug');
+	videoPlug.style.display = "none";
+	
 	const playerRow = document.getElementById('playerRow');
 	const videoElem = document.createElement('video');
 	videoElem.controls = true;
