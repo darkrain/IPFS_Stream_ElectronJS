@@ -312,7 +312,7 @@ $(document).ready(function() {
     'Синхронизация звука...',
     'Подключение к сети...'
   ];
-  showMessagesAsync(prependMsg, messages, 3500);
+  showMessagesAsync(prependMsg, messages, 4500);
 
 });
 
