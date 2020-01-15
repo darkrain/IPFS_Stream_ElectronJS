@@ -64,7 +64,9 @@ class WatchSavedStreamPage extends PageBase {
         }
 
         for(let i = 0; i < chunkHashesArr.length; i++ ) {
-            try {
+            if(this.isEnabled === false)
+                    break;
+            try {       
                 console.log(`Try download saved Chunk #${i}...`);
                 const hash = chunkHashesArr[i];
                 const chunkInfo = await this.downloadVideoChunkAsync(hash, i);
@@ -79,7 +81,8 @@ class WatchSavedStreamPage extends PageBase {
                 throw err;
             }
         }
-        await hlsPlaylistManager.appendEndToPlaylistAsync(this.m3uPath);
+        if(this.isEnabled === true)
+            await hlsPlaylistManager.appendEndToPlaylistAsync(this.m3uPath);
     }
 
     async downloadVideoChunkAsync(chunkHash, index) {
