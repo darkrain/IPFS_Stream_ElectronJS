@@ -341,8 +341,7 @@ function clearAllIPCListenersAsync() {
     ipc.eventNames().forEach(n => {
         ipc.removeAllListeners(n);
       });
-
-      return new Promise(resolve => setTimeout(resolve, 2000));
+      return new Promise(resolve => setTimeout(resolve, 500));
 }
 
 //Handle uncaught exceptions
