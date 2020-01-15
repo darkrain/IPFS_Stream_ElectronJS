@@ -305,6 +305,15 @@ $(document).ready(function() {
   
   videoElement = document.getElementById('video-player');
   videoElement.style.display = 'none';
+
+  const prependMsg = document.getElementById('prependMsg');
+  const messages = [
+    'Синхронизация видео...',
+    'Синхронизация звука...',
+    'Подключение к сети...'
+  ];
+  showMessagesAsync(prependMsg, messages, 3500);
+
 });
 
 // ### Client event subscriber handlers ###

@@ -180,4 +180,15 @@ function isAllSymbolsLineBreak(str) {
     return isAllBreak;
 }
 
+async function showMessagesAsync(textElement, messagesArray, delayTime = 2000) {
+    for(let msg of messagesArray) {
+        textElement.innerText = msg;
+        await waitTimeAsync(delayTime);
+    }
+}
+
+function waitTimeAsync(time) {
+    return new Promise(r => setTimeout(r, time));
+}
+
 

@@ -61,6 +61,14 @@ $(document).ready(function() {
 		messageInput.value = '';
 		scrollDownToElement(chatElement);
 	});
+
+	const prependMsg = document.getElementById('prependMsg');
+	const messages = [
+		'Подключение пиров...',
+		'Загрузка потока...',
+		'Запуск плеера...'
+	];
+	showMessagesAsync(prependMsg, messages, 2000);
 });
 
 ipc.on('stream-loaded', (event, args) => {
