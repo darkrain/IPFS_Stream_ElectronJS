@@ -168,5 +168,16 @@ function scrollDownToElement(element) {
     }, delay);  
 }
 
+function isAllSymbolsLineBreak(str) {
+    let isAllBreak = true;
+    for(let i = 0; i < str.length; i++) {
+        let char = str.charAt(i);
+        if(char !=='\n') {
+            isAllBreak = false;
+        }
+    }
+
+    return isAllBreak;
+}
 
 

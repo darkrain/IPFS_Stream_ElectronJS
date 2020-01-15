@@ -55,6 +55,8 @@ $(document).ready(function() {
 	chatSendMsgByEnterInitialization(messageInputElement, document.getElementById('sendMsgBtn'));
 
 	$('#sendMsgBtn').click(function () {
+		if(isAllSymbolsLineBreak(messageInputElement.value))
+			return;
 		ipc.send('onMessageSend', messageInputElement.value);
 		messageInput.value = '';
 		scrollDownToElement(chatElement);

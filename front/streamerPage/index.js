@@ -297,8 +297,8 @@ $(document).ready(function() {
 	$('#sendMsgBtn').click(function () {
 		const messageInput = document.getElementById('messageInput');
     scrollDownToElement(chatElement);
-		if( messageInput.value === '')
-			return false;
+		if( messageInput.value === '' || isAllSymbolsLineBreak(messageInput.value))
+      return false;
 		ipc.send('onMessageSend', messageInput.value);
 		messageInput.value = '';
   });
