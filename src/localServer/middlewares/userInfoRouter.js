@@ -105,7 +105,6 @@ router.delete('/', async (req, res) => {
 //Returns response code;
 function checkUser(userObj) {
     return new Promise((resolve, rejected) => {
-        console.log('USER OBJECT: \n' + JSON.stringify(userObj));
         try {
             const userKeys = Object.keys(userObj);
             const necessaryKeys = [{key:'name', name: "Имя"}, {key:'nickname', name: 'Ник'} , {key: 'photoBase64', name:'Аватар' }];
