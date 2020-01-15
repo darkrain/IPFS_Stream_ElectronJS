@@ -83,6 +83,7 @@ $( document ).ready(function() {
 
         sendFormData(requestUrl, formData, (result) => {
             if(result.status === 'SUCCESS'){
+                document.getElementById('openStreamBtn').disabled = true;
                 ipc.send('goToStream');
             }else{
                 let textErr = '';

@@ -51,6 +51,7 @@ $( document ).ready(function() {
         let formData = getFormData(form);
         sendFormData(requestUrl, formData, (result) => {
             if(result.status === 'SUCCESS'){
+                document.getElementById('createAccountBtn').disabled = true;
                 ipc.send('openGlobalRoomPage');
             }else{
                 let textErr = '';

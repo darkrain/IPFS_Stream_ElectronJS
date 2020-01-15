@@ -273,10 +273,12 @@ $(document).ready(function() {
   chatSendMsgByEnterInitialization(document.getElementById('messageInput'), document.getElementById('sendMsgBtn'));
 
 	$('#backBtn').click(function(){
+    document.getElementById('backBtn').disabled = true;
 		ipc.send('backBtnClicked');
 	});
 
 	$('#saveStreamBtn').click(() => {
+    document.getElementById('saveStreamBtn').disabled = true;
 		ipc.send('saveStreamClicked');
 	});
 

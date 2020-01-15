@@ -20,18 +20,21 @@ $( document ).ready(function() {
         });
 
 
-    $('#CreateStreamButton').click(function(){
-        const args = {
-            pageName: 'streamerInfoPage',
-            pageArgs: 'none'
-        };
-        ipc.send('goto-page', args);
-    });
+        const createStreamBtn = document.getElementById('CreateStreamButton');
+        createStreamBtn.addEventListener('click', () => {
+            const args = {
+                pageName: 'streamerInfoPage',
+                pageArgs: 'none'
+            };
+            createStreamBtn.disabled = true;
+            ipc.send('goto-page', args);
+        });
 
     $('body').on('click', '[data-watch]', (e) => {
         const isLive = $(event.target).attr('isLive') === 'true';
         e.preventDefault();
         const dataKey = $(event.target).attr('data-watch');
+        e.target.disabled = true;
         goToPageByType(isLive, dataKey);
     });
 
