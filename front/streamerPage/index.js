@@ -343,6 +343,12 @@ function subscribeToContractControlButtons() {
     btnTakeIt.onclick = () => {
       if(isConfirm() === false)
         return;
+
+      if(window.isDebug === true) {
+        onGameEventFinish(true);
+        console.warn(`window.isDebug = true, so  BLOCKHAIN ITERACTION SKIPPED!`)
+        return;
+      }
       paymentForTrue().then((result) => {
         console.log(`TRUE executed! \n ${result}`);
       }).catch(err => {
@@ -354,6 +360,11 @@ function subscribeToContractControlButtons() {
     loseItBtn.onclick = () => {
       if(isConfirm() === false)
         return;
+      if(window.isDebug === true) {
+        onGameEventFinish(false);
+        console.warn(`window.isDebug = true, so  BLOCKHAIN ITERACTION SKIPPED!`)
+        return;
+      }
       paymentForFalse().then((result) => {
         console.log(`False executed! \n ${result}`);
       }).catch(err => {
