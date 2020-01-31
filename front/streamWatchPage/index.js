@@ -90,7 +90,7 @@ ipc.on('gameEventEnded', (event, args) => {
 });
 
 function onGameEventEnded(isTrue) {
-	alert(`Ставки закрыты! Стример ${isTrue ? "провалил задание!" : "выполнил задание!"}`);
+	alert(`Ставки закрыты! Стример ${isTrue ? "выполнил задание!" : "провалил задание!"}`);
 	const makeBetBtn = document.getElementById('makeBetBtn');
 	const betBtnText = document.getElementById('betBtnText');
 	const gameEventName = document.getElementById('gameEventName');
